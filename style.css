@@ -113,7 +113,7 @@ nav {
     font-size: 15px;
     border-radius: 10px;
     position: absolute;
-    right: 35px;
+    right: 50px;
     width: 0;
     height: 30px;
     top: 50%;
@@ -134,7 +134,7 @@ nav {
 
 .search-btn i {
     color: #1F1F1F;
-    font-size: 20px;
+    font-size: 23px;
 }
 
 .footer {
