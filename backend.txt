@@ -1,0 +1,28 @@
+puff-lab/
+├── app/                                    # Core application code
+│   ├── Http/
+│   │   ├── Controllers/                    # API controllers
+│   │   │   ├── ProductController.php
+│   │   │   ├── OrderController.php
+│   │   │   └── ...
+│   │   ├── Middleware/                     # Request middleware
+│   │   │   └── Resources/                  # API resources
+│   │   ├── ProductResource.php
+│   │   └── ...
+│   ├── Models/                             # Database models
+│   └── Services/                           # Business logic
+├── bootstrap/                              # Framework bootstrap files
+├── config/                                 # Configuration files
+├── database/                               # Migrations, seeds, factories
+│   ├── migrations/                         # Database migrations
+│   └── seeders/                            # Database seeders
+├── public/                                 # Publicly accessible files
+├── resources/                              # Views, frontend assets
+├── routes/                                 # Route definitions
+│   └── api.php                             # API routes
+├── storage/                                # Logs, cache, uploads
+├── tests/                                  # Test files
+├── vendor/                                 # Composer dependencies
+├── .env                                    # Environment variables
+├── artisan                                 # Command-line interface
+└── composer.json                           # PHP dependencies
