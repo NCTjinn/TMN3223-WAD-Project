@@ -9,7 +9,7 @@ document.querySelector('.search-btn').addEventListener('click', function(e) {
     } else {
         // Open the search box and keep it open
         input.classList.add('open');
-        input.style.width = '140px';
+        input.style.width = '200px';
         input.style.opacity = '1';
         input.style.visibility = 'visible';
         input.focus();
