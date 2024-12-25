@@ -1,42 +1,22 @@
-/your_project
-│
-├── /assets                # Static assets (images, CSS, JavaScript, etc.)
-│   ├── /css               # CSS files for styling
-│   │   └── styles.css
-│   ├── /js                # JavaScript files for client-side interactivity
-│   │   └── scripts.js
-│   ├── /images            # Images used in the application
-│   │   └── logo.png
-│
-├── /includes              # Reusable PHP classes and configurations
-│   ├── config.php         # Database connection and app settings
-│   ├── User.php           # User class for handling user-related logic
-│   ├── Product.php        # Product class for handling product-related logic
-│   ├── Order.php          # Order class for order management
-│   ├── Cart.php           # Cart class for shopping cart functionality
-│   ├── Review.php         # Review class for product reviews
-│   ├── Reward.php         # Reward class for handling user rewards
-│   ├── Admin.php          # Admin class for administrative functions
-│
-├── /views                 # Frontend views/templates
-│   ├── index.php          # Homepage
-│   ├── product.php        # Product details page
-│   ├── cart.php           # Shopping cart page
-│   ├── checkout.php       # Checkout page
-│   ├── login.php          # Login/Signup page
-│   ├── admin.php          # Admin dashboard
-│
-├── /api                   # API endpoints (if you expose APIs)
-│   ├── user_api.php       # Endpoints related to user actions
-│   ├── product_api.php    # Endpoints related to products
-│   ├── order_api.php      # Endpoints related to orders
-│
-├── /database              # Database setup and migration scripts
-│   ├── database-setup.sql # SQL script to initialise the database
-│
-├── /middleware            # Middleware for authentication and validation
-│   ├── auth_middleware.php # Middleware to handle JWT or session auth
-│
-├── .htaccess              # Apache configuration for URL rewriting
-├── composer.json          # (Optional) For dependency management if using Composer
-└── README.md              # Documentation for the project
+/project-root
+    /api
+        users.php           // User-related API endpoints
+        orders.php          // Order-related API endpoints
+        products.php        // Product-related API endpoints
+        admin.php           // Admin-related API endpoints
+    /includes
+        Database.php        // Database connection class
+        Admin.php           // Admin functionality class
+        User.php            // User functionality class
+        Order.php           // Order functionality class
+        Product.php         // Product functionality class
+    /config
+        config.php          // Configuration file
+    /public
+        index.php           // Entry point, routes to appropriate APIs
+    /logs
+        error.log           // Logs for debugging
+    /tests
+        api_tests.php       // Automated tests for APIs
+    /docs
+        README.md           // Documentation
