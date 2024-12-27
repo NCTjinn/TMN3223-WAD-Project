@@ -1,206 +1,146 @@
-/* General Reset */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Poppins', sans-serif;
-}
+document.addEventListener('DOMContentLoaded', function () {
+    const profileIcon = document.getElementById('profile-icon');
+    const profileDropdown = document.getElementById('dropdown-menu');
+    const notificationIcon = document.querySelector('.fa-bell');
+    const notificationDropdown = document.createElement('div');
 
-/* Header Styling */
-.admin-header {
-    background-color: #C2C9AD; /* Light greenish tone */
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 20px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
+    // Dynamically create notification dropdown
+    notificationDropdown.className = 'dropdown-menu';
+    notificationDropdown.id = 'notification-dropdown';
 
-/* Logo Section */
-.admin-header .logo img {
-    height: 40px;
-    width: auto;
-}
+    // Notifications data
+    const notifications = [
+        { message: "New user registered", isRead: false },
+        { message: "System backup completed", isRead: true },
+        { message: "New comment on blog post", isRead: false },
+    ];
 
-/* Utility Icons Section */
-.admin-header .utilities {
-    display: flex;
-    align-items: center;
-    gap: 25px; /* Add space between icons */
-}
+    // Render notifications
+    function renderNotifications() {
+        notificationDropdown.innerHTML = `
+            <div class="dropdown-header">Notifications</div>
+            <button class="mark-all-btn">Mark All as Read</button>
+        `;
 
-/* Icon Styles - Notification & Profile */
-.admin-header .utilities .icon,
-.admin-header .user-dropdown i {
-    font-size: 32px; /* Same size for both icons */
-    color: #1F1F1F; /* Consistent color */
-    cursor: pointer;
-    transition: transform 0.3s, color 0.3s;
-}
+        notifications.forEach((notification, index) => {
+            const unreadClass = notification.isRead
+                ? ''
+                : `<span class="unread-indicator"></span>`;
+            notificationDropdown.innerHTML += `
+                <div class="notification-item" data-index="${index}">
+                    ${unreadClass}
+                    <div class="notification-text">
+                        <span class="notification-title">${notification.message}</span>
+                        <span class="notification-time">5 mins ago</span>
+                    </div>
+                </div>
+            `;
+        });
 
-.admin-header .utilities .icon:hover,
-.admin-header .user-dropdown i:hover {
-    color: #6c7a5d; /* Hover effect */
-    transform: scale(1.1);
-}
+        const markAllBtn = notificationDropdown.querySelector('.mark-all-btn');
+        markAllBtn.addEventListener('click', () => {
+            notifications.forEach((n) => (n.isRead = true));
+            renderNotifications();
+        });
 
-/* User Dropdown */
-.admin-header .user-dropdown {
-    position: relative;
-}
+        const notificationItems = notificationDropdown.querySelectorAll('.notification-item');
+        notificationItems.forEach((item) => {
+            item.addEventListener('click', (e) => {
+                const index = e.currentTarget.getAttribute('data-index');
+                notifications[index].isRead = true;
+                renderNotifications();
+            });
+        });
+    }
 
-.admin-header .user-dropdown i {
-    font-size: 36px; /* Adjust icon size */
-    color: #1F1F1F; /* Match theme color */
-    cursor: pointer;
-    transition: transform 0.3s, color 0.3s;
-}
+    // Append notification dropdown to the body
+    document.body.appendChild(notificationDropdown);
 
-.admin-header .user-dropdown i:hover {
-    color: #6c7a5d; /* Hover effect matching the theme */
-    transform: scale(1.1);
-}
+    // Position notification dropdown
+    function positionNotificationDropdown() {
+        const rect = notificationIcon.getBoundingClientRect();
+        let dropdownTop = rect.bottom + window.scrollY + 10; // Add spacing
+        let dropdownLeft = rect.left;
 
-/* Fade-in Animation for Dropdown */
-.dropdown-menu {
-    display: none; /* Hidden by default */
-    position: absolute;
-    top: calc(100% + 10px); /* Slightly below the trigger */
-    right: 0;
-    width: 300px;
-    background-color: #fff;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-    border-radius: 10px;
-    z-index: 10;
-    overflow: hidden;
-    opacity: 0;
-    transform: translateY(-10px);
-    transition: opacity 0.3s ease, transform 0.3s ease;
-}
+        if (dropdownTop + 300 > window.innerHeight + window.scrollY) {
+            dropdownTop = rect.top + window.scrollY - 300 - 10;
+        }
+        if (dropdownLeft + 300 > window.innerWidth) {
+            dropdownLeft = window.innerWidth - 310;
+        }
 
-.dropdown-menu.active {
-    display: block;
-    opacity: 1;
-    transform: translateY(0);
-}
+        notificationDropdown.style.position = 'absolute';
+        notificationDropdown.style.top = `${dropdownTop}px`;
+        notificationDropdown.style.left = `${dropdownLeft}px`;
+    }
 
-/* Badge Styles */
-.badge {
-    position: absolute;
-    top: 5px; /* Adjust for perfect alignment */
-    right: 5px; /* Adjust for perfect alignment */
-    background-color: #ff5722; /* Bright color for notifications */
-    color: white;
-    font-size: 12px;
-    font-weight: bold;
-    border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    visibility: hidden; /* Hidden by default */
-}
+    // Toggle notification dropdown
+    notificationIcon.addEventListener('click', function (e) {
+        e.stopPropagation();
+        const isActive = notificationDropdown.classList.contains('active');
+        closeAllDropdowns();
+        if (!isActive) {
+            positionNotificationDropdown();
+            notificationDropdown.classList.add('active');
+        }
+    });
 
-/* Badge Parent Container for Positioning */
-.notification-icon {
-    position: relative;
-}
+    // Toggle profile dropdown
+    profileIcon.addEventListener('click', function (e) {
+        e.stopPropagation();
+        const isActive = profileDropdown.classList.contains('active');
+        closeAllDropdowns();
+        if (!isActive) {
+            profileDropdown.classList.add('active');
+        }
+    });
 
+    // Close all dropdowns when clicking outside
+    document.addEventListener('click', function (e) {
+        if (
+            !e.target.closest('.user-dropdown') &&
+            !e.target.closest('.icon') &&
+            !e.target.closest('#notification-dropdown')
+        ) {
+            closeAllDropdowns();
+        }
+    });
 
-/* Active State for Profile Icon */
-.user-dropdown i.active {
-    color: #6c7a5d; /* Active color */
-    transform: scale(1.1); /* Slight enlargement for active state */
-}
+    // Helper function to close all dropdowns
+    function closeAllDropdowns() {
+        notificationDropdown.classList.remove('active');
+        profileDropdown.classList.remove('active');
+    }
 
-/* Dropdown Header */
-.dropdown-header {
-    background-color: #C2C9AD;
-    padding: 10px 15px;
-    font-size: 16px;
-    font-weight: bold;
-    color: #1F1F1F;
-    text-align: center;
-    border-bottom: 1px solid #aab79f;
-}
+    // Update notification badge
+    function updateNotificationBadge(count) {
+        const badge = document.getElementById('notification-badge');
+        
+        if (count > 0) {
+            badge.textContent = count; // Update badge number
+            badge.style.visibility = 'visible'; // Show the badge
+        } else {
+            badge.style.visibility = 'hidden'; // Hide the badge
+        }
+    }
+    
+    // Simulate fetching unread notifications
+    function fetchNotifications() {
+        // Replace this with your actual API call
+        fetch('/api/notifications/unread')
+            .then((response) => response.json())
+            .then((data) => {
+                const unreadCount = data.unreadCount || 0; // Default to 0 if no unreadCount is present
+                updateNotificationBadge(unreadCount);
+            })
+            .catch(console.error);
+    }
+    
+    // Call the function periodically or on page load
+    fetchNotifications();
+    setInterval(fetchNotifications, 60000); // Check every 60 seconds
 
+    // Initial render of notifications
+    renderNotifications();
 
-/* Dropdown Items */
-.dropdown-menu a,
-.notification-item {
-    display: flex;
-    align-items: center;
-    padding: 12px 20px;
-    text-decoration: none;
-    color: #1F1F1F;
-    font-size: 14px;
-    border-bottom: 1px solid #f0f0f0;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-.notification-item:last-child,
-.dropdown-menu a:last-child {
-    border-bottom: none;
-}
-
-.dropdown-menu a:hover,
-.notification-item:hover {
-    background-color: #f5f5f5;
-    transform: scale(1.02);
-}
-
-/* Unread Indicator */
-.notification-item .unread-indicator {
-    width: 10px;
-    height: 10px;
-    background-color: #ff5722;
-    border-radius: 50%;
-    margin-right: 15px;
-}
-
-/* Notification Text Section */
-.notification-text {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-}
-
-/* Notification Title */
-.notification-title {
-    font-weight: bold;
-    margin-bottom: 2px;
-}
-
-/* Notification Time */
-.notification-time {
-    font-size: 12px;
-    color: #777;
-}
-
-/* Mark All as Read Button */
-button.mark-all-btn {
-    font-size: 14px;
-    padding: 10px 15px;
-    background-color: #6c7a5d;
-    color: white;
-    border: none;
-    width: 100%;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-button.mark-all-btn:hover {
-    background-color: #556d4f;
-}
-
-/* Footer Styling */
-.admin-footer {
-    background-color: #C2C9AD;
-    text-align: center;
-    padding: 20px 10px;
-    color: #1F1F1F;
-    margin-top: 20px;
-    box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
-}
+});
