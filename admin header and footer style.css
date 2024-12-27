@@ -225,33 +225,9 @@ button.mark-all-btn:hover {
 /* Layout */
 .admin-layout {
     display: flex;
-    height: calc(100vh - 120px); /* Full height minus header and footer */
+    height: 100%; /* Full height minus header and footer */
     position: relative;
     overflow: hidden;
-}
-
-/* Main Content */
-.admin-content {
-    margin-top: 70px; /* Offset for fixed header */
-    margin-left: 70px; /* Offset for fixed sidebar */
-    padding: 20px;
-    background-color: #F2EDD3; /* Content background */
-    height: calc(100vh - 70px); /* Full height minus header */
-    overflow-y: auto; /* Enable scrolling for content */
-}
-
-/* Scrollbar Customization */
-.admin-content::-webkit-scrollbar {
-    width: 8px;
-}
-
-.admin-content::-webkit-scrollbar-thumb {
-    background: #C2C9AD;
-    border-radius: 5px;
-}
-
-.admin-content::-webkit-scrollbar-thumb:hover {
-    background: #6c7a5d;
 }
 
 /* Sidebar */
@@ -329,15 +305,16 @@ button.mark-all-btn:hover {
 
 .admin-sidebar:hover ~ .admin-content::before {
     content: '';
-    position: fixed; /* Fixed to ensure it spans the visible viewport and scrollable area */
-    top: 70px; /* Match the header height */
-    left: 70px; /* Match the sidebar width */
-    width: calc(100vw - 70px); /* Take up the remaining width after the sidebar */
-    height: calc(100vh - 70px); /* Take up the remaining height after the header */
-    background-color: rgba(0, 0, 0, 0.3); /* Stronger overlay for dimming */
-    pointer-events: none; /* Ensure interaction with content remains possible */
-    z-index: 10; /* Ensure it sits above the content */
+    position: fixed; /* Fixed to span the viewport */
+    top: 70px; /* Match the height of the fixed header */
+    left: 70px; /* Match the width of the sidebar */
+    width: calc(100vw - 70px); /* Cover the rest of the viewport */
+    height: calc(100vh - 70px); /* Cover the viewport below the header */
+    background-color: rgba(0, 0, 0, 0.3); /* Dimming effect */
+    pointer-events: none; /* Allow interaction with the content */
+    z-index: 1; /* Ensure it appears above .admin-content but below sidebar */
 }
+
 
 
 /* Tooltip for Collapsed State */
@@ -363,6 +340,38 @@ button.mark-all-btn:hover {
 }
 
 
+@media screen and (max-width: 768px) {
+    .admin-sidebar {
+        width: 100%; /* Sidebar takes full width for mobile */
+        position: static; /* Ensure it stacks with content */
+    }
+    .admin-content {
+        margin-left: 0; /* Remove sidebar offset */
+    }
+}
 
+/* Main Content */
+.admin-content {
+    margin-top: 70px; /* Offset for fixed header */
+    margin-left: 70px; /* Offset for fixed sidebar */
+    margin-bottom: 60px;
+    padding: 20px;
+    background-color: #F2EDD3; /* Content background */
+    height: 100%; /* Full height minus header */
+    overflow-y: auto; /* Enable scrolling for content */
+    width: 100%;
+}
 
+/* Scrollbar Customization */
+.admin-content::-webkit-scrollbar {
+    width: 8px;
+}
 
+.admin-content::-webkit-scrollbar-thumb {
+    background: #C2C9AD;
+    border-radius: 5px;
+}
+
+.admin-content::-webkit-scrollbar-thumb:hover {
+    background: #6c7a5d;
+}
