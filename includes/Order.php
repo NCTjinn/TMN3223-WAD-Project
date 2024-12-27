@@ -171,4 +171,50 @@ class Order {
         $stmt->bindParam(":voucher_code", $voucherCode);
         return $stmt->execute();
     }
+
+    public function getUserOrders($userId) {
+        try {
+            $query = "SELECT o.order_id, o.tracking_number, o.status, o.estimated_delivery, 
+                             t.total_amount, t.delivery_fee, t.tax_amount, t.voucher_code, 
+                             td.product_id, td.quantity, td.price_per_item, td.subtotal, 
+                             p.name AS product_name
+                      FROM Orders o
+                      JOIN Transactions t ON o.transaction_id = t.transaction_id
+                      JOIN Transaction_Details td ON t.transaction_id = td.transaction_id
+                      JOIN Products p ON td.product_id = p.product_id
+                      WHERE t.user_id = :user_id
+                      ORDER BY o.order_id DESC";
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindParam(":user_id", $userId);
+            $stmt->execute();
+
+            $orders = [];
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                $orderId = $row['order_id'];
+                if (!isset($orders[$orderId])) {
+                    $orders[$orderId] = [
+                        'order_id' => $row['order_id'],
+                        'tracking_number' => $row['tracking_number'],
+                        'status' => $row['status'],
+                        'estimated_delivery' => $row['estimated_delivery'],
+                        'total_amount' => $row['total_amount'],
+                        'delivery_fee' => $row['delivery_fee'],
+                        'tax_amount' => $row['tax_amount'],
+                        'voucher_code' => $row['voucher_code'],
+                        'items' => []
+                    ];
+                }
+                $orders[$orderId]['items'][] = [
+                    'product_id' => $row['product_id'],
+                    'product_name' => $row['product_name'],
+                    'quantity' => $row['quantity'],
+                    'price_per_item' => $row['price_per_item'],
+                    'subtotal' => $row['subtotal']
+                ];
+            }
+            return array_values($orders);
+        } catch (PDOException $e) {
+            return ['status' => 'error', 'message' => $e->getMessage()];
+        }
+    }
 }
