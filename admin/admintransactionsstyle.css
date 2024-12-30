@@ -1,0 +1,586 @@
+/* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Header Styling */
+.admin-header {
+    background-color: #C2C9AD; /* Light greenish tone */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: fixed; /* Fixed header */
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000; /* Ensure it stays above other elements */
+    height: 70px; /* Fixed height */
+}
+
+/* Adjust Main Content Background */
+body {
+    background-color: #F2EDD3; /* Matches the content background */
+}
+
+/* Logo Section */
+.admin-header .logo img {
+    height: 40px;
+    width: auto;
+}
+
+/* Utility Icons Section */
+.admin-header .utilities {
+    display: flex;
+    align-items: center;
+    gap: 25px; /* Add space between icons */
+}
+
+/* Icon Styles - Notification & Profile */
+.admin-header .utilities .icon,
+.admin-header .user-dropdown i {
+    font-size: 32px; /* Same size for both icons */
+    color: #1F1F1F; /* Consistent color */
+    cursor: pointer;
+    transition: transform 0.3s, color 0.3s;
+}
+
+.admin-header .utilities .icon:hover,
+.admin-header .user-dropdown i:hover {
+    color: #6c7a5d; /* Hover effect */
+    transform: scale(1.1);
+}
+
+/* User Dropdown */
+.admin-header .user-dropdown {
+    position: relative;
+}
+
+.admin-header .user-dropdown i {
+    font-size: 36px; /* Adjust icon size */
+    color: #1F1F1F; /* Match theme color */
+    cursor: pointer;
+    transition: transform 0.3s, color 0.3s;
+}
+
+.admin-header .user-dropdown i:hover {
+    color: #6c7a5d; /* Hover effect matching the theme */
+    transform: scale(1.1);
+}
+
+/* Fade-in Animation for Dropdown */
+.dropdown-menu {
+    display: none; /* Hidden by default */
+    position: absolute;
+    top: calc(100% + 10px); /* Slightly below the trigger */
+    right: 0;
+    width: 300px;
+    background-color: #fff;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    z-index: 10;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.dropdown-menu.active {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Badge Styles */
+.badge {
+    position: absolute;
+    top: 5px; /* Adjust for perfect alignment */
+    right: 5px; /* Adjust for perfect alignment */
+    background-color: #ff5722; /* Bright color for notifications */
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    visibility: hidden; /* Hidden by default */
+}
+
+/* Badge Parent Container for Positioning */
+.notification-icon {
+    position: relative;
+}
+
+
+/* Active State for Profile Icon */
+.user-dropdown i.active {
+    color: #6c7a5d; /* Active color */
+    transform: scale(1.1); /* Slight enlargement for active state */
+}
+
+/* Dropdown Header */
+.dropdown-header {
+    background-color: #C2C9AD;
+    padding: 10px 15px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #1F1F1F;
+    text-align: center;
+    border-bottom: 1px solid #aab79f;
+}
+
+
+/* Dropdown Items */
+.dropdown-menu a,
+.notification-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    text-decoration: none;
+    color: #1F1F1F;
+    font-size: 14px;
+    border-bottom: 1px solid #f0f0f0;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.notification-item:last-child,
+.dropdown-menu a:last-child {
+    border-bottom: none;
+}
+
+.dropdown-menu a:hover,
+.notification-item:hover {
+    background-color: #f5f5f5;
+    transform: scale(1.02);
+}
+
+/* Unread Indicator */
+.notification-item .unread-indicator {
+    width: 10px;
+    height: 10px;
+    background-color: #ff5722;
+    border-radius: 50%;
+    margin-right: 15px;
+}
+
+/* Notification Text Section */
+.notification-text {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Notification Title */
+.notification-title {
+    font-weight: bold;
+    margin-bottom: 2px;
+}
+
+/* Notification Time */
+.notification-time {
+    font-size: 12px;
+    color: #777;
+}
+
+/* Mark All as Read Button */
+button.mark-all-btn {
+    font-size: 14px;
+    padding: 10px 15px;
+    background-color: #6c7a5d;
+    color: white;
+    border: none;
+    width: 100%;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button.mark-all-btn:hover {
+    background-color: #556d4f;
+}
+
+
+/* Footer Styling */
+.admin-footer {
+    background-color: #C2C9AD; /* Footer background */
+    text-align: center;
+    padding: 20px 10px;
+    color: #1F1F1F;
+    box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+    position: fixed; /* Fixed footer */
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    height: 50px; /* Fixed height */
+}
+
+/* Layout */
+.admin-layout {
+    display: flex;
+    height: 100%; /* Full height minus header and footer */
+    position: relative;
+    overflow: hidden;
+}
+
+/* Sidebar */
+.admin-sidebar {
+    width: 70px; /* Compact width */
+    background-color: #F9FAEB; /* Sidebar background color */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding-top: 10px;
+    transition: width 0.3s ease; /* Smooth expansion */
+    position: fixed; /* Fixed sidebar */
+    top: 70px; /* Start below the header */
+    left: 0;
+    z-index: 11; /* Ensure it overlays the content */
+    height: calc(100vh - 120px); /* Full height minus header and footer */
+    overflow: hidden;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Remove link styling */
+.admin-sidebar a {
+    text-decoration: none;
+    color: inherit; /* Use the sidebar item color */
+}
+
+
+.admin-sidebar:hover {
+    width: 240px; /* Expand width on hover */
+    box-shadow: 5px 0 10px rgba(0, 0, 0, 0.2); /* Shadow effect */
+}
+
+/* Sidebar Items */
+.sidebar-item {
+    width: 100%;
+    padding: 15px 10px;
+    display: flex;
+    align-items: center;
+    padding-left: 30px;
+    gap: 15px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    color: #1F1F1F;
+}
+
+.sidebar-item.active {
+    background-color: #E5E6D4; /* Highlight active state */
+}
+
+.sidebar-item:hover {
+    background-color: #E5E6D4; /* Slightly darker hover effect */
+    transform: scale(1.05);
+}
+
+/* Sidebar Labels */
+.sidebar-item .sidebar-label {
+    font-size: 14px;
+    opacity: 0; /* Hidden when compact */
+    transition: opacity 0.3s ease, margin-left 0.3s ease;
+}
+
+
+.admin-sidebar:hover .sidebar-label {
+    opacity: 1;
+    margin-left: 10px; /* Add spacing when expanded */
+}
+
+
+
+/* Dimming Effect on Sidebar Hover */
+.admin-sidebar:hover ~ .admin-content {
+    position: relative; /* Ensure .admin-content becomes the reference for the ::before pseudo-element */
+}
+
+.admin-sidebar:hover ~ .admin-content::before {
+    content: '';
+    position: fixed; /* Fixed to span the viewport */
+    top: 70px; /* Match the height of the fixed header */
+    left: 70px; /* Match the width of the sidebar */
+    width: calc(100vw - 70px); /* Cover the rest of the viewport */
+    height: calc(100vh - 70px); /* Cover the viewport below the header */
+    background-color: rgba(0, 0, 0, 0.3); /* Dimming effect */
+    pointer-events: none; /* Allow interaction with the content */
+    z-index: 1; /* Ensure it appears above .admin-content but below sidebar */
+}
+
+
+
+/* Tooltip for Collapsed State */
+.sidebar-item[data-tooltip]::before {
+    content: attr(data-tooltip);
+    position: absolute;
+    left: 90px;
+    background: #1F1F1F;
+    color: white;
+    padding: 5px 10px;
+    font-size: 12px;
+    border-radius: 4px;
+    opacity: 0;
+    white-space: nowrap;
+    transform: translateY(-50%);
+    pointer-events: none;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.sidebar-item:hover[data-tooltip]::before {
+    opacity: 1;
+    transform: translateY(-60%);
+}
+
+
+@media screen and (max-width: 768px) {
+    .admin-sidebar {
+        width: 100%; /* Sidebar takes full width for mobile */
+        position: static; /* Ensure it stacks with content */
+    }
+    .admin-content {
+        margin-left: 0; /* Remove sidebar offset */
+    }
+}
+
+/* Main Content */
+.admin-content {
+    margin-top: 70px; /* Offset for fixed header */
+    margin-left: 70px; /* Offset for fixed sidebar */
+    margin-bottom: 60px;
+    padding: 20px;
+    background-color: #F2EDD3; /* Content background */
+    height: 100%; /* Full height minus header */
+    overflow-y: auto; /* Enable scrolling for content */
+    width: 100%;
+}
+
+/* Scrollbar Customization */
+.admin-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.admin-content::-webkit-scrollbar-thumb {
+    background: #C2C9AD;
+    border-radius: 5px;
+}
+
+.admin-content::-webkit-scrollbar-thumb:hover {
+    background: #6c7a5d;
+}
+
+
+/* Filters Section Styling */
+.filters-section {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; /* Align everything to the left */
+    gap: 10px; /* Reduce spacing between elements */
+    margin-bottom: 20px;
+    padding: 10px 15px;
+    background-color: #E5E6D4; /* Matches the theme */
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.filter-item {
+    display: flex;
+    flex-direction: column;
+    margin: 0; /* Remove extra spacing */
+}
+
+.filter-item label {
+    font-size: 14px;
+    margin-bottom: 5px; /* Keep labels close to inputs */
+    font-weight: bold;
+    color: #333;
+}
+
+/* Beautify Date Inputs with Modern Design */
+.filters-section input[type="date"] {
+    padding: 10px 12px;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    font-size: 14px;
+    color: #333;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    appearance: none; /* Hide default styles for consistency across browsers */
+}
+
+.filters-section input[type="date"]:hover {
+    border-color: #6c7a5d;
+    background-color: #ffffff;
+    box-shadow: 0 1px 4px rgba(108, 122, 93, 0.3);
+}
+
+.filters-section input[type="date"]:focus {
+    border-color: #6c7a5d;
+    background-color: #ffffff;
+    box-shadow: 0 0 6px rgba(108, 122, 93, 0.8);
+    outline: none;
+}
+
+/* Customize Calendar Icon */
+.filters-section input[type="date"]::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    filter: invert(0.5); /* Lighten the icon to match the theme */
+    opacity: 0.8;
+    margin-right: 5px; /* Add slight spacing */
+    transition: opacity 0.3s ease;
+}
+
+.filters-section input[type="date"]::-webkit-calendar-picker-indicator:hover {
+    opacity: 1;
+    transform: scale(1.1); /* Slightly enlarge on hover */
+}
+
+/* Align Date Fields and Labels */
+.filters-section .filter-item {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px; /* Spacing between label and input */
+    margin-right: 15px; /* Spacing between date fields */
+}
+
+.filters-section label {
+    font-size: 14px;
+    font-weight: bold;
+    color: #444; /* Slightly darker for readability */
+    text-transform: uppercase; /* Modern touch */
+    letter-spacing: 0.5px;
+}
+
+/* Button Styling */
+.filter-btn {
+    padding: 10px 18px;
+    font-size: 14px;
+    background-color: #6c7a5d;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    margin-left: 10px;
+    font-weight: bold;
+    text-transform: uppercase;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.filter-btn:hover {
+    background-color: #556d4f;
+    transform: scale(1.05); /* Slight scaling for hover effect */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+
+
+.search-bar {
+    display: flex;
+    align-items: center;
+    margin-left: auto; /* Push search bar to the right */
+    gap: 5px;
+}
+
+.search-bar input {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px 0 0 5px;
+    width: 200px;
+}
+
+.search-bar button {
+    padding: 8px;
+    background-color: #6c7a5d;
+    color: white;
+    border: none;
+    border-radius: 0 5px 5px 0;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.search-bar button:hover {
+    background-color: #556d4f;
+}
+
+/* Table Section */
+.transaction-table-section {
+    margin-bottom: 20px;
+    overflow-x: auto;
+}
+
+.transaction-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.transaction-table th, .transaction-table td {
+    padding: 10px;
+    text-align: center;
+    border: 1px solid #ddd;
+    font-size: 14px;
+}
+
+.transaction-table th {
+    background-color: #C2C9AD;
+    color: #1F1F1F;
+    font-weight: bold;
+}
+
+.transaction-table tbody tr:hover {
+    background-color: #f9f9f9;
+}
+
+.sort-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    color: #333;
+}
+
+/* Pagination */
+.pagination-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.pagination-btn {
+    padding: 8px 16px;
+    margin: 0 5px;
+    background-color: #6c7a5d;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.pagination-btn:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.pagination-btn:hover:not(:disabled) {
+    background-color: #556d4f;
+}
+
+#current-page {
+    font-weight: bold;
+    margin: 0 10px;
+    color: #333;
+}
+
