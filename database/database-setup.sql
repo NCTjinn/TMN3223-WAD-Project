@@ -258,3 +258,197 @@ CREATE INDEX idx_mission_points ON Mission_Templates(points);
 
 -- Voucher indexes
 CREATE INDEX idx_voucher_expiry ON Vouchers(expiry_date);
+
+-- Admin Users
+INSERT INTO Users (username, first_name, last_name, display_name, email, password, role) VALUES
+('admin1', 'John', 'Doe', 'Admin John', 'admin1@pufflab.com', '$2y$10$abc', 'admin'),
+('admin2', 'Jane', 'Smith', 'Admin Jane', 'admin2@pufflab.com', '$2y$10$def', 'admin'),
+('admin3', 'Mike', 'Johnson', 'Admin Mike', 'admin3@pufflab.com', '$2y$10$ghi', 'admin');
+
+-- Member Users
+INSERT INTO Users (username, first_name, last_name, display_name, email, password, role, points) VALUES
+('member1', 'Alice', 'Wong', 'Alice W', 'alice@email.com', '$2y$10$jkl', 'member', 100),
+('member2', 'Bob', 'Tan', 'Bob T', 'bob@email.com', '$2y$10$mno', 'member', 150),
+('member3', 'Charlie', 'Lee', 'Charlie L', 'charlie@email.com', '$2y$10$pqr', 'member', 200),
+('member4', 'Diana', 'Chen', 'Diana C', 'diana@email.com', '$2y$10$stu', 'member', 75),
+('member5', 'Edward', 'Lim', 'Edward L', 'edward@email.com', '$2y$10$vwx', 'member', 300),
+('member6', 'Fiona', 'Ng', 'Fiona N', 'fiona@email.com', '$2y$10$yza', 'member', 250),
+('member7', 'George', 'Tan', 'George T', 'george@email.com', '$2y$10$bcd', 'member', 175),
+('member8', 'Hannah', 'Wu', 'Hannah W', 'hannah@email.com', '$2y$10$efg', 'member', 125),
+('member9', 'Ian', 'Zhang', 'Ian Z', 'ian@email.com', '$2y$10$hij', 'member', 225),
+('member10', 'Julia', 'Liu', 'Julia L', 'julia@email.com', '$2y$10$klm', 'member', 350),
+('member11', 'Kevin', 'Wang', 'Kevin W', 'kevin@email.com', '$2y$10$nop', 'member', 400),
+('member12', 'Linda', 'Goh', 'Linda G', 'linda@email.com', '$2y$10$qrs', 'member', 275),
+('member13', 'Michael', 'Ong', 'Michael O', 'michael@email.com', '$2y$10$tuv', 'member', 150),
+('member14', 'Nancy', 'Chua', 'Nancy C', 'nancy@email.com', '$2y$10$wxy', 'member', 200),
+('member15', 'Oliver', 'Teo', 'Oliver T', 'oliver@email.com', '$2y$10$zab', 'member', 325),
+('member16', 'Patricia', 'Koh', 'Patricia K', 'patricia@email.com', '$2y$10$cde', 'member', 275),
+('member17', 'Quinn', 'Sim', 'Quinn S', 'quinn@email.com', '$2y$10$fgh', 'member', 225),
+('member18', 'Ryan', 'Low', 'Ryan L', 'ryan@email.com', '$2y$10$ijk', 'member', 175),
+('member19', 'Sarah', 'Yeo', 'Sarah Y', 'sarah@email.com', '$2y$10$lmn', 'member', 300),
+('member20', 'Tom', 'Pang', 'Tom P', 'tom@email.com', '$2y$10$opq', 'member', 250);
+
+-- Product Categories
+INSERT INTO Product_Categories (name, description) VALUES
+('Puffs', 'Delicious cream puffs in various flavors'),
+('Cakes', 'Freshly baked cakes for all occasions'),
+('Beverages', 'Refreshing drinks to complement your treats');
+
+-- Products
+INSERT INTO Products (name, category_id, description, price, stock_quantity) VALUES
+('Classic Cream Puff', 1, 'Original cream puff filled with vanilla custard', 3.50, 100),
+('Chocolate Puff', 1, 'Cream puff with rich chocolate filling', 4.00, 80),
+('Matcha Puff', 1, 'Green tea flavored cream puff', 4.00, 80),
+('Chocolate Cake', 2, 'Rich chocolate cake with ganache', 28.00, 20),
+('Vanilla Cheesecake', 2, 'Classic New York style cheesecake', 32.00, 15),
+('Red Velvet Cake', 2, 'Red velvet cake with cream cheese frosting', 30.00, 18),
+('Classic Milk Tea', 3, 'Traditional milk tea with pearls', 5.50, 150),
+('Matcha Latte', 3, 'Green tea latte with milk', 6.00, 120),
+('Coffee', 3, 'Freshly brewed coffee', 4.50, 200);
+
+-- Vouchers
+INSERT INTO Vouchers (voucher_code, discount_percentage, expiry_date) VALUES
+('WELCOME10', 10.00, '2024-12-31'),
+('BDAY20', 20.00, '2024-12-31'),
+('MEMBER15', 15.00, '2024-12-31');
+
+-- Transactions
+INSERT INTO Transactions (user_id, total_amount, payment_status, delivery_address, shipping_method, transaction_date) VALUES
+(4, 45.00, 'successful', '123 Main St, #01-01, Singapore 123456', 'delivery', '2024-01-01 10:00:00'),
+(5, 32.00, 'successful', '456 Orchard Rd, Singapore 234567', 'takeaway', '2024-01-02 11:30:00'),
+(6, 28.00, 'successful', '789 Cecil St, Singapore 345678', 'dine_in', '2024-01-03 12:45:00'),
+(7, 55.50, 'successful', '321 Victoria St, Singapore 456789', 'delivery', '2024-01-04 14:15:00'),
+(8, 42.00, 'successful', '654 Bencoolen St, Singapore 567890', 'takeaway', '2024-01-05 15:30:00'),
+(9, 36.00, 'successful', '987 Beach Rd, Singapore 678901', 'dine_in', '2024-01-06 16:45:00'),
+(10, 48.50, 'successful', '147 Bugis St, Singapore 789012', 'delivery', '2024-01-07 17:30:00'),
+(11, 39.00, 'successful', '258 Somerset Rd, Singapore 890123', 'takeaway', '2024-01-08 18:15:00'),
+(12, 33.50, 'successful', '369 Serangoon Rd, Singapore 901234', 'dine_in', '2024-01-09 19:00:00'),
+(13, 52.00, 'successful', '159 Tampines St, Singapore 012345', 'delivery', '2024-01-10 10:30:00'),
+(14, 44.50, 'successful', '357 Jurong St, Singapore 123450', 'takeaway', '2024-01-11 11:45:00'),
+(15, 38.00, 'successful', '486 Yishun St, Singapore 234501', 'dine_in', '2024-01-12 13:00:00'),
+(16, 47.50, 'successful', '753 Woodlands Dr, Singapore 345012', 'delivery', '2024-01-13 14:30:00'),
+(17, 41.00, 'successful', '951 Clementi Rd, Singapore 450123', 'takeaway', '2024-01-14 15:45:00'),
+(18, 35.50, 'successful', '264 Hougang Ave, Singapore 501234', 'dine_in', '2024-01-15 17:00:00'),
+(19, 50.00, 'successful', '846 Bedok North St, Singapore 012345', 'delivery', '2024-01-16 18:30:00'),
+(20, 43.50, 'successful', '153 Pasir Ris Dr, Singapore 123450', 'takeaway', '2024-01-17 19:45:00'),
+(4, 37.00, 'successful', '725 Ang Mo Kio Ave, Singapore 234501', 'dine_in', '2024-01-18 11:00:00'),
+(5, 49.50, 'successful', '936 Sengkang West Rd, Singapore 345012', 'delivery', '2024-01-19 12:30:00'),
+(6, 40.50, 'successful', '847 Punggol Field, Singapore 450123', 'takeaway', '2024-01-20 13:45:00');
+
+-- Transaction Details
+INSERT INTO Transaction_Details (transaction_id, product_id, quantity, price_per_item, subtotal) VALUES
+(1, 1, 5, 3.50, 17.50),
+(1, 2, 3, 4.00, 12.00),
+(2, 4, 1, 28.00, 28.00),
+(3, 5, 1, 32.00, 32.00),
+(4, 3, 4, 4.00, 16.00),
+(4, 7, 2, 5.50, 11.00),
+(5, 6, 1, 30.00, 30.00),
+(6, 8, 3, 6.00, 18.00);
+
+-- Mission Templates
+INSERT INTO Mission_Templates (name, description, points, requirements) VALUES
+('First Purchase', 'Complete your first order', 50, 'Make 1 purchase'),
+('Review Master', 'Leave 5 product reviews', 100, 'Submit 5 reviews'),
+('Loyal Customer', 'Make 3 purchases in a month', 150, 'Complete 3 orders within 30 days'),
+('Social Butterfly', 'Share 3 products on social media', 75, 'Share products on social platforms'),
+('Birthday Special', 'Order on your birthday', 200, 'Place order on birthday date');
+
+-- Rewards
+INSERT INTO Rewards (user_id, mission_id, mission_name, status, points_earned) VALUES
+(4, 1, 'First Purchase', 'completed', 50),
+(5, 1, 'First Purchase', 'completed', 50),
+(6, 1, 'First Purchase', 'completed', 50),
+(7, 2, 'Review Master', 'pending', 100),
+(8, 3, 'Loyal Customer', 'pending', 150);
+
+-- Orders
+INSERT INTO Orders (transaction_id, tracking_number, status, estimated_delivery) VALUES
+(1, 'TRK001', 'delivered', '2024-01-02'),
+(2, 'TRK002', 'delivered', '2024-01-03'),
+(3, 'TRK003', 'delivered', '2024-01-04'),
+(4, 'TRK004', 'delivered', '2024-01-05'),
+(5, 'TRK005', 'delivered', '2024-01-06'),
+(6, 'TRK006', 'delivered', '2024-01-07'),
+(7, 'TRK007', 'delivered', '2024-01-08'),
+(8, 'TRK008', 'delivered', '2024-01-09'),
+(9, 'TRK009', 'delivered', '2024-01-10'),
+(10, 'TRK010', 'delivered', '2024-01-11'),
+(11, 'TRK011', 'delivered', '2024-01-12'),
+(12, 'TRK012', 'delivered', '2024-01-13'),
+(13, 'TRK013', 'delivered', '2024-01-14'),
+(14, 'TRK014', 'delivered', '2024-01-15'),
+(15, 'TRK015', 'delivered', '2024-01-16'),
+(16, 'TRK016', 'shipped', '2024-01-17'),
+(17, 'TRK017', 'shipped', '2024-01-18'),
+(18, 'TRK018', 'processing', '2024-01-19'),
+(19, 'TRK019', 'processing', '2024-01-20'),
+(20, 'TRK020', 'processing', '2024-01-21');
+
+-- FAQ Categories
+INSERT INTO FAQ_Categories (name) VALUES
+('Orders'), ('Products'), ('Delivery'), ('Returns'), ('Membership');
+
+-- FAQs
+INSERT INTO FAQs (category_id, question, answer) VALUES
+(1, 'How do I track my order?', 'You can track your order using the tracking number provided in your order confirmation email.'),
+(2, 'How long do the products stay fresh?', 'Our cream puffs are best consumed within 24 hours. Cakes can last up to 3 days when refrigerated.'),
+(3, 'What are your delivery areas?', 'We deliver island-wide in Singapore. Additional charges apply for certain postal codes.'),
+(4, 'What is your return policy?', 'Due to the nature of our products, we do not accept returns. Please contact us if you receive damaged items.'),
+(5, 'How do I earn points?', 'Earn points through purchases, completing missions, and leaving reviews.');
+
+-- Addresses
+INSERT INTO Addresses (user_id, address_line_1, city, state, postcode, country, is_default) VALUES
+(4, '123 Main St #01-01', 'Singapore', 'Singapore', '123456', 'Singapore', true),
+(5, '456 Orchard Rd', 'Singapore', 'Singapore', '234567', 'Singapore', true),
+(6, '789 Cecil St', 'Singapore', 'Singapore', '345678', 'Singapore', true);
+
+-- Reviews
+INSERT INTO Reviews (user_id, product_id, rating, comment, created_at) VALUES
+(4, 1, 5, 'Perfect cream puff! Just the right amount of cream.', '2024-01-02'),
+(5, 2, 4, 'Rich chocolate filling, very satisfying.', '2024-01-03'),
+(6, 3, 5, 'Best matcha puff in town!', '2024-01-04'),
+(7, 4, 5, 'Moist and decadent chocolate cake.', '2024-01-05'),
+(8, 5, 4, 'Authentic New York cheesecake taste.', '2024-01-06'),
+(9, 6, 5, 'Beautiful red velvet cake, not too sweet.', '2024-01-07'),
+(10, 7, 4, 'Perfect bubble tea pearls.', '2024-01-08'),
+(11, 8, 5, 'Smooth and rich matcha latte.', '2024-01-09');
+
+-- Community Posts
+INSERT INTO Community_Posts (title, image_url, description) VALUES
+('New Matcha Series Launch!', '/images/matcha-series.jpg', 'Introducing our new Matcha Series featuring premium Uji matcha'),
+('Christmas Collection 2024', '/images/christmas-2024.jpg', 'Pre-order our festive collection now'),
+('Customer Appreciation Day', '/images/customer-day.jpg', 'Join us for double points this weekend');
+
+-- User Favorites
+INSERT INTO User_Favorites (user_id, product_id) VALUES
+(4, 1), (4, 2), (5, 3), (6, 4), (7, 5), (8, 6);
+
+-- Admin Actions Log
+INSERT INTO Admin_Actions_Log (admin_id, action) VALUES
+(1, 'Updated product prices'),
+(2, 'Added new promotion campaign'),
+(3, 'Processed refund for order #TRK001');
+
+-- Sales Summary
+INSERT INTO Sales_Summary (date, total_orders, gross_sales, returns, net_sales, delivery_fee, tax) VALUES
+('2024-01-01', 1, 45.00, 0.00, 45.00, 5.00, 3.15),
+('2024-01-02', 1, 32.00, 0.00, 32.00, 0.00, 2.24),
+('2024-01-03', 1, 28.00, 0.00, 28.00, 0.00, 1.96),
+('2024-01-04', 1, 55.50, 0.00, 55.50, 5.00, 3.89),
+('2024-01-05', 1, 42.00, 0.00, 42.00, 0.00, 2.94),
+('2024-01-06', 1, 36.00, 0.00, 36.00, 0.00, 2.52),
+('2024-01-07', 1, 48.50, 0.00, 48.50, 5.00, 3.40),
+('2024-01-08', 1, 39.00, 0.00, 39.00, 0.00, 2.73),
+('2024-01-09', 1, 33.50, 0.00, 33.50, 0.00, 2.35),
+('2024-01-10', 1, 52.00, 0.00, 52.00, 5.00, 3.64),
+('2024-01-11', 1, 44.50, 0.00, 44.50, 0.00, 3.12),
+('2024-01-12', 1, 38.00, 0.00, 38.00, 0.00, 2.66),
+('2024-01-13', 1, 47.50, 0.00, 47.50, 5.00, 3.33),
+('2024-01-14', 1, 41.00, 0.00, 41.00, 0.00, 2.87),
+('2024-01-15', 1, 35.50, 0.00, 35.50, 0.00, 2.49),
+('2024-01-16', 1, 50.00, 0.00, 50.00, 5.00, 3.50),
+('2024-01-17', 1, 43.50, 0.00, 43.50, 0.00, 3.05),
+('2024-01-18', 1, 37.00, 0.00, 37.00, 0.00, 2.59),
+('2024-01-19', 1, 49.50, 0.00, 49.50, 5.00, 3.47),
+('2024-01-20', 1, 40.50, 0.00, 40.50, 0.00, 2.84);
