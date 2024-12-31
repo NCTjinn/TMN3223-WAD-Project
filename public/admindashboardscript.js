@@ -49,9 +49,21 @@ const API_ENDPOINTS = {
   }
   
   function updateStats(data) {
-    document.getElementById('total-orders').textContent = data.total_orders;
-    document.getElementById('total-revenue').textContent = `$${data.revenue_stats.total_revenue}`;
-    document.getElementById('avg-order').textContent = `$${data.revenue_stats.average_order_value}`;
+    document.getElementById('dineInPercentage').textContent = `${data.orderStats.dineIn}%`;
+    document.getElementById('takeawayPercentage').textContent = `${data.orderStats.takeaway}%`;
+    document.getElementById('deliveryPercentage').textContent = `${data.orderStats.delivery}%`;
+
+    document.getElementById('totalRevenue').textContent = `$${data.revenue_stats.total_revenue}`;
+    document.getElementById('topCategory').textContent = data.topCategory.name;
+    document.getElementById('topCategoryRevenue').textContent = `$${data.topCategory.revenue}`;
+
+    document.getElementById('topProduct').textContent = data.topProducts[0].name;
+    document.getElementById('topProductUnits').textContent = data.topProducts[0].units_sold;
+    document.getElementById('totalCustomers').textContent = data.total_customers;
+
+    document.getElementById('peakSalesDay').textContent = data.salesTrend.peakDay;
+    document.getElementById('totalSalesRevenue').textContent = `$${data.salesTrend.totalRevenue}`;
+    document.getElementById('growthPercentage').textContent = `${data.salesTrend.growth}%`;
   }
   
   async function fetchNotifications() {
@@ -340,13 +352,11 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // Replace setInterval calls with real API calls
-    document.addEventListener('DOMContentLoaded', function() {
-        fetchDashboardData();
-        fetchNotifications();
-        
-        setInterval(fetchDashboardData, 30000); // Update every 30 seconds
-        setInterval(fetchNotifications, 60000); // Update every minute
-    });
+    fetchDashboardData();
+    fetchNotifications();
+    
+    setInterval(fetchDashboardData, 30000); // Update every 30 seconds
+    setInterval(fetchNotifications, 60000); // Update every minute
 
     // Fake Real-Time Data Update (Increment Only Latest Data)
     setInterval(() => {

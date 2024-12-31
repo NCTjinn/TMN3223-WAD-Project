@@ -126,12 +126,12 @@ document.addEventListener('DOMContentLoaded', function () {
     
     // Simulate fetching unread notifications
     function fetchNotifications() {
-        // Replace this with your actual API call
-        fetch('/api/notifications/unread')
+        fetch('/api/admin/notifications/unread')
             .then((response) => response.json())
             .then((data) => {
-                const unreadCount = data.unreadCount || 0; // Default to 0 if no unreadCount is present
+                const unreadCount = data.unreadCount || 0;
                 updateNotificationBadge(unreadCount);
+                renderNotifications(data.notifications);
             })
             .catch(console.error);
     }

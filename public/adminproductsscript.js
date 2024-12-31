@@ -338,49 +338,87 @@ document.addEventListener('DOMContentLoaded', function () {
             description: productForm.productDescription.value,
         };
 
-        if (editIndex !== null) {
-            products[editIndex] = newProduct;
-            showConfirmationMessage('Product updated successfully!');
-        } else {
-            products.push(newProduct);
-            showConfirmationMessage('Product added successfully!');
-        }
+        const method = editIndex !== null ? 'PUT' : 'POST';
+        const url = editIndex !== null ? `/api/products/${newProduct.id}` : '/api/products';
 
-        renderProducts();
-        closeModal();
+        fetch(url, {
+            method: method,
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(newProduct)
+        })
+        .then(response => response.json())
+        .then(() => {
+            fetchProducts();
+            showConfirmationMessage(editIndex !== null ? 'Product updated successfully!' : 'Product added successfully!');
+            closeModal();
+        })
+        .catch(console.error);
     });
 
-
-// When opening modal for editing, ensure the existing image is shown even if no new image is uploaded
-// Handle product actions (Edit/Delete)
-productTableBody.addEventListener('click', (e) => {
-    const index = e.target.getAttribute('data-index');
-
-    if (e.target.classList.contains('edit-btn')) {
-        const product = products[parseInt(index, 10)];
-        editIndex = parseInt(index, 10); // Set the edit index
-
-        openModal('Edit Product', true, product);
-    } else if (e.target.classList.contains('delete-btn')) {
-        if (confirm('Are you sure you want to delete this product?')) {
-            const deletedAt = new Date().toLocaleString();
-            history.push({ product: products.splice(index, 1)[0], deletedAt });
-            renderProducts();
-            showConfirmationMessage('Product deleted successfully!', 'error');
-        }
+    // Fetch products from the backend
+    function fetchProducts() {
+        fetch('/api/admin/products')
+            .then(response => response.json())
+            .then(data => {
+                products.length = 0; // Clear existing products
+                products.push(...data); // Add fetched products
+                renderProducts();
+            })
+            .catch(console.error);
     }
-});
 
+    // Fetch history from the backend
+    function fetchHistory() {
+        fetch('/api/admin/products/history')
+            .then(response => response.json())
+            .then(data => {
+                history.length = 0; // Clear existing history
+                history.push(...data); // Add fetched history
+                renderHistory();
+            })
+            .catch(console.error);
+    }
+
+    // Handle product actions (Edit/Delete)
+    productTableBody.addEventListener('click', (e) => {
+        const index = e.target.getAttribute('data-index');
+
+        if (e.target.classList.contains('edit-btn')) {
+            const product = products[parseInt(index, 10)];
+            editIndex = parseInt(index, 10); // Set the edit index
+
+            openModal('Edit Product', true, product);
+        } else if (e.target.classList.contains('delete-btn')) {
+            if (confirm('Are you sure you want to delete this product?')) {
+                const productId = products[index].id;
+                fetch(`/api/products/${productId}`, {
+                    method: 'DELETE'
+                })
+                .then(() => {
+                    fetchProducts();
+                    showConfirmationMessage('Product deleted successfully!', 'error');
+                })
+                .catch(console.error);
+            }
+        }
+    });
 
     // Handle history actions (Restore)
     historyTableBody.addEventListener('click', (e) => {
         const index = e.target.getAttribute('data-index');
         if (e.target.classList.contains('restore-btn')) {
-            const restoredProduct = history.splice(index, 1)[0].product;
-            products.push(restoredProduct);
-            renderProducts();
-            renderHistory();
-            showConfirmationMessage('Product restored successfully!');
+            const restoredProduct = history[index].product;
+            fetch(`/api/products/restore/${restoredProduct.id}`, {
+                method: 'POST'
+            })
+            .then(() => {
+                fetchProducts();
+                fetchHistory();
+                showConfirmationMessage('Product restored successfully!');
+            })
+            .catch(console.error);
         }
     });
 
@@ -389,6 +427,10 @@ productTableBody.addEventListener('click', (e) => {
     cancelModal.addEventListener('click', closeModal);
     historyLogBtn.addEventListener('click', openHistoryModal);
     closeHistoryModal.addEventListener('click', closeHistoryModalHandler);
+
+    // Initial fetch of products and history
+    fetchProducts();
+    fetchHistory();
 
     // Initial render
     renderProducts();

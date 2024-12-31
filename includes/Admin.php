@@ -32,12 +32,22 @@ class Admin {
                     'orderStats' => $orderStats,
                     'categoryRevenue' => $categoryRevenue,
                     'salesTrend' => $salesTrend,
-                    'topProducts' => $topProducts
+                    'topProducts' => $topProducts,
+                    'total_customers' => $this->getTotalUsers(),
+                    'topCategory' => $this->getTopCategory($categoryRevenue)
                 ]
             ];
         } catch(PDOException $e) {
             return ['status' => 'error', 'message' => $e->getMessage()];
         }
+    }
+
+    private function getTopCategory($categoryRevenue) {
+        $topCategory = array_keys($categoryRevenue, max($categoryRevenue));
+        return [
+            'name' => ucfirst($topCategory[0]),
+            'revenue' => $categoryRevenue[$topCategory[0]]
+        ];
     }
 
     public function getNotifications() {
@@ -338,6 +348,108 @@ class Admin {
             return [
                 'status' => 'success',
                 'data' => $stmt->fetch()
+            ];
+        } catch(PDOException $e) {
+            return ['status' => 'error', 'message' => $e->getMessage()];
+        }
+    }
+
+    public function getProducts() {
+        $query = "SELECT * FROM Products";
+        $stmt = $this->conn->query($query);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getProductHistory() {
+        $query = "SELECT * FROM Product_History ORDER BY deleted_at DESC";
+        $stmt = $this->conn->query($query);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function addProduct($data) {
+        $query = "INSERT INTO Products (name, price, stock, description, image) VALUES (:name, :price, :stock, :description, :image)";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':name', $data['name']);
+        $stmt->bindParam(':price', $data['price']);
+        $stmt->bindParam(':stock', $data['stock']);
+        $stmt->bindParam(':description', $data['description']);
+        $stmt->bindParam(':image', $data['image']);
+        $stmt->execute();
+        return ['status' => 'success'];
+    }
+
+    public function updateProduct($productId, $data) {
+        $query = "UPDATE Products SET name = :name, price = :price, stock = :stock, description = :description, image = :image WHERE id = :id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':name', $data['name']);
+        $stmt->bindParam(':price', $data['price']);
+        $stmt->bindParam(':stock', $data['stock']);
+        $stmt->bindParam(':description', $data['description']);
+        $stmt->bindParam(':image', $data['image']);
+        $stmt->bindParam(':id', $productId);
+        $stmt->execute();
+        return ['status' => 'success'];
+    }
+
+    public function deleteProduct($productId) {
+        $query = "DELETE FROM Products WHERE id = :id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':id', $productId);
+        $stmt->execute();
+        return ['status' => 'success'];
+    }
+
+    public function restoreProduct($productId) {
+        $query = "INSERT INTO Products SELECT * FROM Product_History WHERE id = :id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':id', $productId);
+        $stmt->execute();
+        return ['status' => 'success'];
+    }
+
+    public function getMembers() {
+        $query = "SELECT * FROM Members";
+        $stmt = $this->conn->query($query);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function addMember($data) {
+        $query = "INSERT INTO Members (username, points, totalSpent) VALUES (:username, :points, :totalSpent)";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':username', $data['username']);
+        $stmt->bindParam(':points', $data['points']);
+        $stmt->bindParam(':totalSpent', $data['totalSpent']);
+        $stmt->execute();
+        return ['status' => 'success'];
+    }
+
+    public function updateMember($memberId, $data) {
+        $query = "UPDATE Members SET username = :username, points = :points, totalSpent = :totalSpent WHERE id = :id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':username', $data['username']);
+        $stmt->bindParam(':points', $data['points']);
+        $stmt->bindParam(':totalSpent', $data['totalSpent']);
+        $stmt->bindParam(':id', $memberId);
+        $stmt->execute();
+        return ['status' => 'success'];
+    }
+
+    public function deleteMember($memberId) {
+        $query = "DELETE FROM Members WHERE id = :id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':id', $memberId);
+        $stmt->execute();
+        return ['status' => 'success'];
+    }
+
+    public function getUnreadNotifications() {
+        try {
+            $query = "SELECT * FROM Notifications WHERE status = 'unread'";
+            $stmt = $this->conn->query($query);
+            return [
+                'status' => 'success',
+                'unreadCount' => $stmt->rowCount(),
+                'notifications' => $stmt->fetchAll(PDO::FETCH_ASSOC)
             ];
         } catch(PDOException $e) {
             return ['status' => 'error', 'message' => $e->getMessage()];

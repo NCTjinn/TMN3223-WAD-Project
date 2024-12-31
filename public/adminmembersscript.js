@@ -144,7 +144,7 @@ document.addEventListener('DOMContentLoaded', function () {
     renderNotifications();
 
     // ------------------ Member Management Table ------------------
-    const members = generateDummyData(30);
+    const members = [];
     const rowsPerPage = 10;
     let currentPage = 1;
     let filteredMembers = [...members];
@@ -183,21 +183,17 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Generate dummy data
-    function generateDummyData(count) {
-        const data = [];
-        for (let i = 1; i <= count; i++) {
-            data.push({
-                id: `M${i.toString().padStart(3, '0')}`,
-                username: `user${i}`,
-                creationDate: `2023-${(i % 12 + 1).toString().padStart(2, '0')}-${(i % 28 + 1).toString().padStart(2, '0')}`,
-                points: Math.floor(Math.random() * 1000),
-                totalSpent: Math.floor(Math.random() * 5000),
-                lastTransaction: `T${Math.random().toString(36).substr(2, 5).toUpperCase()}`,
-                isActive: i % 2 === 0,
-            });
-        }
-        return data;
+    // Fetch members from the backend
+    function fetchMembers() {
+        fetch('/api/admin/members')
+            .then(response => response.json())
+            .then(data => {
+                members.length = 0; // Clear existing members
+                members.push(...data); // Add fetched members
+                applyFilters();
+                renderTable();
+            })
+            .catch(console.error);
     }
 
     // Render table
@@ -281,20 +277,24 @@ document.addEventListener('DOMContentLoaded', function () {
         const confirmed = confirm("Are you sure you want to add this member?");
         if (confirmed) {
             const newMember = {
-                id: `M${(members.length + 1).toString().padStart(3, '0')}`,
                 username: addUsernameInput.value,
-                creationDate: new Date().toISOString().split("T")[0],
                 points: parseInt(addPointsInput.value, 10),
-                totalSpent: parseFloat(addSpentInput.value),
-                lastTransaction: `T${Math.random().toString(36).substr(2, 5).toUpperCase()}`,
-                isActive: true,
+                totalSpent: parseFloat(addSpentInput.value)
             };
 
-            addToHistory('add', newMember);
-            members.push(newMember);
-            applyFilters();
-            renderTable();
-            closeModal(addMemberModal);
+            fetch('/api/members', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(newMember)
+            })
+            .then(response => response.json())
+            .then(() => {
+                fetchMembers();
+                closeModal(addMemberModal);
+            })
+            .catch(console.error);
         }
     });
 
@@ -314,44 +314,41 @@ document.addEventListener('DOMContentLoaded', function () {
         if (selectedMemberIndex !== null) {
             const confirmed = confirm("Are you sure you want to update this member?");
             if (confirmed) {
-                const originalMember = { ...filteredMembers[selectedMemberIndex] };
                 const updatedMember = {
-                    ...originalMember,
                     username: updateUsernameInput.value,
                     points: parseInt(updatePointsInput.value, 10),
-                    totalSpent: parseFloat(updateSpentInput.value),
+                    totalSpent: parseFloat(updateSpentInput.value)
                 };
 
-                addToHistory('update', {
-                    before: originalMember,
-                    after: updatedMember
-                });
+                const memberId = filteredMembers[selectedMemberIndex].id;
 
-                filteredMembers[selectedMemberIndex] = updatedMember;
-                const originalIndex = members.findIndex(m => m.id === updatedMember.id);
-                if (originalIndex !== -1) {
-                    members[originalIndex] = updatedMember;
-                }
-
-                applyFilters();
-                renderTable();
-                closeModal(updateMemberModal);
+                fetch(`/api/members/${memberId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(updatedMember)
+                })
+                .then(response => response.json())
+                .then(() => {
+                    fetchMembers();
+                    closeModal(updateMemberModal);
+                })
+                .catch(console.error);
             }
         }
     });
 
     // Delete member
     function deleteMember(index) {
-        const deletedMember = { ...filteredMembers[index] };
-        addToHistory('delete', deletedMember);
-        
-        const originalIndex = members.findIndex(m => m.id === deletedMember.id);
-        if (originalIndex !== -1) {
-            members.splice(originalIndex, 1);
-        }
-        
-        applyFilters();
-        renderTable();
+        const memberId = filteredMembers[index].id;
+        fetch(`/api/members/${memberId}`, {
+            method: 'DELETE'
+        })
+        .then(() => {
+            fetchMembers();
+        })
+        .catch(console.error);
     }
 
     // History Log Modal
@@ -473,7 +470,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // Initial render
-    renderTable();
+    fetchMembers();
 
     // Cancel Button Functionality
     const cancelAddMemberBtn = document.getElementById("cancelAddMemberBtn");

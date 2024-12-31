@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="admindashboardstyle.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="admindashboardscript.js" defer></script>
 </head>
 <body>
     <!-- Header Section -->
@@ -69,9 +70,9 @@
                     <h3>Sales Performance</h3>
                     <canvas id="pieChart"></canvas>
                     <div class="pie-chart-summary">
-                        <div><strong>Dine-In:</strong> 50%</div>
-                        <div><strong>Takeaway:</strong> 30%</div>
-                        <div><strong>Delivery:</strong> 20%</div>
+                        <div><strong>Dine-In:</strong> <span id="dineInPercentage">50%</span></div>
+                        <div><strong>Takeaway:</strong> <span id="takeawayPercentage">30%</span></div>
+                        <div><strong>Delivery:</strong> <span id="deliveryPercentage">20%</span></div>
                     </div>
                 </div>
         
@@ -80,8 +81,8 @@
                     <h3>Revenue by Category</h3>
                     <canvas id="barChart"></canvas>
                     <div class="bar-chart-summary">
-                        <p><strong>Total Revenue:</strong> $2,600</p>
-                        <p><i class="fas fa-crown"></i> <strong>Top Category:</strong> Puffs ($1,200)</p>
+                        <p><strong>Total Revenue:</strong> <span id="totalRevenue">$2,600</span></p>
+                        <p><i class="fas fa-crown"></i> <strong>Top Category:</strong> <span id="topCategory">Puffs</span> (<span id="topCategoryRevenue">$1,200</span>)</p>
                     </div>
                 </div>
         
@@ -90,8 +91,8 @@
                     <h3>Best-Selling Products</h3>
                     <canvas id="productChart"></canvas>
                     <div class="product-summary">
-                        <p><i class="fas fa-star"></i> <strong>Top Product:</strong> Durian Puff (850 sold)</p>
-                        <p><i class="fas fa-user"></i> <strong>Total Customers:</strong> 1,200</p>
+                        <p><i class="fas fa-star"></i> <strong>Top Product:</strong> <span id="topProduct">Durian Puff</span> (<span id="topProductUnits">850</span> sold)</p>
+                        <p><i class="fas fa-user"></i> <strong>Total Customers:</strong> <span id="totalCustomers">1,200</span></p>
                     </div>
                 </div>
         
@@ -106,9 +107,9 @@
                     </div>
                     <canvas id="lineChart"></canvas>
                     <div class="chart-summary">
-                        <p><strong>Peak Sales Day:</strong> Saturday</p>
-                        <p><strong>Total Revenue:</strong> $15,500</p>
-                        <p><strong>Growth:</strong> +10% compared to last period</p>
+                        <p><strong>Peak Sales Day:</strong> <span id="peakSalesDay">Saturday</span></p>
+                        <p><strong>Total Revenue:</strong> <span id="totalSalesRevenue">$15,500</span></p>
+                        <p><strong>Growth:</strong> <span id="growthPercentage">+10%</span> compared to last period</p>
                     </div>
                 </div>
             </div>
@@ -120,7 +121,5 @@
     <footer class="admin-footer">
         Copyright &copy; 2024 PuffLab
     </footer>
-
-    <script src="admindashboardscript.js"></script>
 </body>
 </html>

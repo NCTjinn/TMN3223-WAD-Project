@@ -64,6 +64,26 @@ try {
                         $response = $admin->getNotifications();
                         http_response_code(200);
                         break;
+
+                    case 'notifications/unread':
+                        $response = $admin->getUnreadNotifications();
+                        http_response_code(200); // OK
+                        break;
+
+                    case 'products':
+                        $response = $admin->getProducts();
+                        http_response_code(200); // OK
+                        break;
+
+                    case 'products/history':
+                        $response = $admin->getProductHistory();
+                        http_response_code(200); // OK
+                        break;
+
+                    case 'members':
+                        $response = $admin->getMembers();
+                        http_response_code(200); // OK
+                        break;
                         
                     default:
                         http_response_code(404); // Not Found
@@ -71,7 +91,90 @@ try {
                         exit;
                 }
                 
-                echo json_encode(['status' => 'success', 'data' => $response]);
+                echo json_encode($response);
+                break;
+
+            case 'POST':
+                $action = $request[0] ?? null;
+
+                switch ($action) {
+                    case 'products':
+                        $data = json_decode(file_get_contents('php://input'), true);
+                        $response = $admin->addProduct($data);
+                        http_response_code(201); // Created
+                        break;
+
+                    case 'products/restore':
+                        $productId = $request[1] ?? null;
+                        $response = $admin->restoreProduct($productId);
+                        http_response_code(200); // OK
+                        break;
+
+                    case 'members':
+                        $data = json_decode(file_get_contents('php://input'), true);
+                        $response = $admin->addMember($data);
+                        http_response_code(201); // Created
+                        break;
+
+                    default:
+                        http_response_code(404); // Not Found
+                        echo json_encode(['error' => 'Invalid admin endpoint']);
+                        exit;
+                }
+
+                echo json_encode($response);
+                break;
+
+            case 'PUT':
+                $action = $request[0] ?? null;
+
+                switch ($action) {
+                    case 'products':
+                        $productId = $request[1] ?? null;
+                        $data = json_decode(file_get_contents('php://input'), true);
+                        $response = $admin->updateProduct($productId, $data);
+                        http_response_code(200); // OK
+                        break;
+
+                    case 'members':
+                        $memberId = $request[1] ?? null;
+                        $data = json_decode(file_get_contents('php://input'), true);
+                        $response = $admin->updateMember($memberId, $data);
+                        http_response_code(200); // OK
+                        break;
+
+                    default:
+                        http_response_code(404); // Not Found
+                        echo json_encode(['error' => 'Invalid admin endpoint']);
+                        exit;
+                }
+
+                echo json_encode($response);
+                break;
+
+            case 'DELETE':
+                $action = $request[0] ?? null;
+
+                switch ($action) {
+                    case 'products':
+                        $productId = $request[1] ?? null;
+                        $response = $admin->deleteProduct($productId);
+                        http_response_code(200); // OK
+                        break;
+
+                    case 'members':
+                        $memberId = $request[1] ?? null;
+                        $response = $admin->deleteMember($memberId);
+                        http_response_code(200); // OK
+                        break;
+
+                    default:
+                        http_response_code(404); // Not Found
+                        echo json_encode(['error' => 'Invalid admin endpoint']);
+                        exit;
+                }
+
+                echo json_encode($response);
                 break;
                 
             default:
