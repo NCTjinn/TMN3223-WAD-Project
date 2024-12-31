@@ -215,3 +215,58 @@ grid-template-columns: 1fr;
 grid-column: 1;
 }
 }
+
+/* search result box */
+.search-box {
+    position: relative;
+}
+
+.search-results {
+    position: absolute;
+    top: calc(100% + 5px);
+    right: 50px;
+    width: 200px;
+    background-color: #F6EABE ;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    display: none;
+    z-index: 1000;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.search-result-item {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+}
+
+.search-result-item:hover {
+    background-color: #F6EABE ;
+}
+
+.search-result-item:last-child {
+    border-bottom: none;
+}
+
+.item-name {
+    font-size: 14px;
+    color: #333;
+}
+
+.item-price {
+    font-size: 14px;
+    color: #666;
+    font-weight: 500;
+}
+
+.no-results {
+    padding: 10px;
+    text-align: center;
+    color: #666;
+    font-size: 14px;
+}
