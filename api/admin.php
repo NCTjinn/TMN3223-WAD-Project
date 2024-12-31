@@ -59,6 +59,11 @@ try {
                         $response = $admin->getAdminLogs((int)$limit, (int)$offset);
                         http_response_code(200); // OK
                         break;
+
+                    case 'notifications':
+                        $response = $admin->getNotifications();
+                        http_response_code(200);
+                        break;
                         
                     default:
                         http_response_code(404); // Not Found

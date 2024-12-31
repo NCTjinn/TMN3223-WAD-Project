@@ -10,21 +10,100 @@ class Admin {
         $this->conn = $database->getConnection();
     }
 
+    private function getRecentNotifications() {
+        // Implement the logic to get recent notifications
+        $query = "SELECT * FROM Notifications ORDER BY created_at DESC LIMIT 10";
+        $stmt = $this->conn->query($query);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     public function getDashboardStats() {
         try {
-            $stats = [
-                'total_users' => $this->getTotalUsers(),
-                'total_orders' => $this->getTotalOrders(),
-                'revenue_stats' => $this->getRevenueStats(),
-                'top_products' => $this->getTopProducts(),
-                'recent_orders' => $this->getRecentOrders(),
-                'inventory_alerts' => $this->getLowStockProducts()
+            $orderStats = $this->getOrderStats();
+            $categoryRevenue = $this->getCategoryRevenue();
+            $salesTrend = $this->getSalesTrend();
+            $topProducts = $this->getTopProducts(5);
+            
+            return [
+                'status' => 'success',
+                'data' => [
+                    'total_orders' => $this->getTotalOrders(),
+                    'revenue_stats' => $this->getRevenueStats(),
+                    'orderStats' => $orderStats,
+                    'categoryRevenue' => $categoryRevenue,
+                    'salesTrend' => $salesTrend,
+                    'topProducts' => $topProducts
+                ]
             ];
-
-            return ['status' => 'success', 'data' => $stats];
         } catch(PDOException $e) {
             return ['status' => 'error', 'message' => $e->getMessage()];
         }
+    }
+
+    public function getNotifications() {
+        // Implement notification logic based on your requirements
+        return [
+            'status' => 'success',
+            'unreadCount' => $this->getUnreadNotificationCount(),
+            'notifications' => $this->getRecentNotifications()
+        ];
+    }
+
+    private function getUnreadNotificationCount() {
+        // Implement the logic to get the count of unread notifications
+        $query = "SELECT COUNT(*) as unread_count FROM Notifications WHERE status = 'unread'";
+        $stmt = $this->conn->query($query);
+        return $stmt->fetch(PDO::FETCH_ASSOC)['unread_count'];
+    }
+    
+    private function getOrderStats() {
+        $query = "SELECT 
+            SUM(CASE WHEN shipping_method = 'dine_in' THEN 1 ELSE 0 END) as dineIn,
+            SUM(CASE WHEN shipping_method = 'takeaway' THEN 1 ELSE 0 END) as takeaway,
+            SUM(CASE WHEN shipping_method = 'delivery' THEN 1 ELSE 0 END) as delivery
+            FROM Transactions 
+            WHERE transaction_date >= DATE_SUB(CURRENT_DATE, INTERVAL 7 DAY)";
+        
+        $stmt = $this->conn->query($query);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+    
+    private function getCategoryRevenue() {
+        $query = "SELECT 
+            pc.name,
+            SUM(td.subtotal) as revenue
+            FROM Transaction_Details td
+            JOIN Products p ON td.product_id = p.product_id
+            JOIN Product_Categories pc ON p.category_id = pc.category_id
+            GROUP BY pc.category_id";
+        
+        $stmt = $this->conn->query($query);
+        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        $revenue = [];
+        foreach ($results as $row) {
+            $revenue[strtolower($row['name'])] = floatval($row['revenue']);
+        }
+        
+        return $revenue;
+    }
+    
+    private function getSalesTrend() {
+        $query = "SELECT 
+            DATE_FORMAT(transaction_date, '%H:00') as hour,
+            SUM(total_amount) as amount
+            FROM Transactions
+            WHERE DATE(transaction_date) = CURRENT_DATE
+            GROUP BY HOUR(transaction_date)
+            ORDER BY HOUR(transaction_date)";
+        
+        $stmt = $this->conn->query($query);
+        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        return [
+            'labels' => array_column($results, 'hour'),
+            'values' => array_column($results, 'amount')
+        ];
     }
 
     public function logAdminAction($adminId, $action) {

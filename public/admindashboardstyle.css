@@ -1,0 +1,605 @@
+/* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Header Styling */
+.admin-header {
+    background-color: #C2C9AD; /* Light greenish tone */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: fixed; /* Fixed header */
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000; /* Ensure it stays above other elements */
+    height: 70px; /* Fixed height */
+}
+
+/* Adjust Main Content Background */
+body {
+    background-color: #F2EDD3; /* Matches the content background */
+}
+
+/* Logo Section */
+.admin-header .logo img {
+    height: 40px;
+    width: auto;
+}
+
+/* Utility Icons Section */
+.admin-header .utilities {
+    display: flex;
+    align-items: center;
+    gap: 25px; /* Add space between icons */
+}
+
+/* Icon Styles - Notification & Profile */
+.admin-header .utilities .icon,
+.admin-header .user-dropdown i {
+    font-size: 32px; /* Same size for both icons */
+    color: #1F1F1F; /* Consistent color */
+    cursor: pointer;
+    transition: transform 0.3s, color 0.3s;
+}
+
+.admin-header .utilities .icon:hover,
+.admin-header .user-dropdown i:hover {
+    color: #6c7a5d; /* Hover effect */
+    transform: scale(1.1);
+}
+
+/* User Dropdown */
+.admin-header .user-dropdown {
+    position: relative;
+}
+
+.admin-header .user-dropdown i {
+    font-size: 36px; /* Adjust icon size */
+    color: #1F1F1F; /* Match theme color */
+    cursor: pointer;
+    transition: transform 0.3s, color 0.3s;
+}
+
+.admin-header .user-dropdown i:hover {
+    color: #6c7a5d; /* Hover effect matching the theme */
+    transform: scale(1.1);
+}
+
+/* Fade-in Animation for Dropdown */
+.dropdown-menu {
+    display: none; /* Hidden by default */
+    position: absolute;
+    top: calc(100% + 10px); /* Slightly below the trigger */
+    right: 0;
+    width: 300px;
+    background-color: #fff;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    z-index: 10;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.dropdown-menu.active {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Badge Styles */
+.badge {
+    position: absolute;
+    top: 5px; /* Adjust for perfect alignment */
+    right: 5px; /* Adjust for perfect alignment */
+    background-color: #ff5722; /* Bright color for notifications */
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    visibility: hidden; /* Hidden by default */
+}
+
+/* Badge Parent Container for Positioning */
+.notification-icon {
+    position: relative;
+}
+
+
+/* Active State for Profile Icon */
+.user-dropdown i.active {
+    color: #6c7a5d; /* Active color */
+    transform: scale(1.1); /* Slight enlargement for active state */
+}
+
+/* Dropdown Header */
+.dropdown-header {
+    background-color: #C2C9AD;
+    padding: 10px 15px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #1F1F1F;
+    text-align: center;
+    border-bottom: 1px solid #aab79f;
+}
+
+
+/* Dropdown Items */
+.dropdown-menu a,
+.notification-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    text-decoration: none;
+    color: #1F1F1F;
+    font-size: 14px;
+    border-bottom: 1px solid #f0f0f0;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.notification-item:last-child,
+.dropdown-menu a:last-child {
+    border-bottom: none;
+}
+
+.dropdown-menu a:hover,
+.notification-item:hover {
+    background-color: #f5f5f5;
+    transform: scale(1.02);
+}
+
+/* Unread Indicator */
+.notification-item .unread-indicator {
+    width: 10px;
+    height: 10px;
+    background-color: #ff5722;
+    border-radius: 50%;
+    margin-right: 15px;
+}
+
+/* Notification Text Section */
+.notification-text {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Notification Title */
+.notification-title {
+    font-weight: bold;
+    margin-bottom: 2px;
+}
+
+/* Notification Time */
+.notification-time {
+    font-size: 12px;
+    color: #777;
+}
+
+/* Mark All as Read Button */
+button.mark-all-btn {
+    font-size: 14px;
+    padding: 10px 15px;
+    background-color: #6c7a5d;
+    color: white;
+    border: none;
+    width: 100%;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button.mark-all-btn:hover {
+    background-color: #556d4f;
+}
+
+
+/* Footer Styling */
+.admin-footer {
+    background-color: #C2C9AD; /* Footer background */
+    text-align: center;
+    padding: 20px 10px;
+    color: #1F1F1F;
+    box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+    position: fixed; /* Fixed footer */
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    height: 50px; /* Fixed height */
+}
+
+/* Layout */
+.admin-layout {
+    display: flex;
+    height: 100%; /* Full height minus header and footer */
+    position: relative;
+    overflow: hidden;
+}
+
+/* Sidebar */
+.admin-sidebar {
+    width: 70px; /* Compact width */
+    background-color: #F9FAEB; /* Sidebar background color */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding-top: 10px;
+    transition: width 0.3s ease; /* Smooth expansion */
+    position: fixed; /* Fixed sidebar */
+    top: 70px; /* Start below the header */
+    left: 0;
+    z-index: 11; /* Ensure it overlays the content */
+    height: calc(100vh - 120px); /* Full height minus header and footer */
+    overflow: hidden;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Remove link styling */
+.admin-sidebar a {
+    text-decoration: none;
+    color: inherit; /* Use the sidebar item color */
+}
+
+
+.admin-sidebar:hover {
+    width: 240px; /* Expand width on hover */
+    box-shadow: 5px 0 10px rgba(0, 0, 0, 0.2); /* Shadow effect */
+}
+
+/* Sidebar Items */
+.sidebar-item {
+    width: 100%;
+    padding: 15px 10px;
+    display: flex;
+    align-items: center;
+    padding-left: 30px;
+    gap: 15px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    color: #1F1F1F;
+}
+
+.sidebar-item.active {
+    background-color: #E5E6D4; /* Highlight active state */
+}
+
+.sidebar-item:hover {
+    background-color: #E5E6D4; /* Slightly darker hover effect */
+    transform: scale(1.05);
+}
+
+/* Sidebar Labels */
+.sidebar-item .sidebar-label {
+    font-size: 14px;
+    opacity: 0; /* Hidden when compact */
+    transition: opacity 0.3s ease, margin-left 0.3s ease;
+}
+
+
+.admin-sidebar:hover .sidebar-label {
+    opacity: 1;
+    margin-left: 10px; /* Add spacing when expanded */
+}
+
+
+
+/* Dimming Effect on Sidebar Hover */
+.admin-sidebar:hover ~ .admin-content {
+    position: relative; /* Ensure .admin-content becomes the reference for the ::before pseudo-element */
+}
+
+.admin-sidebar:hover ~ .admin-content::before {
+    content: '';
+    position: fixed; /* Fixed to ensure it spans the visible viewport and scrollable area */
+    top: 70px; /* Match the header height */
+    left: 70px; /* Match the sidebar width */
+    width: calc(100vw - 70px); /* Take up the remaining width after the sidebar */
+    height: calc(100vh - 70px); /* Take up the remaining height after the header */
+    background-color: rgba(0, 0, 0, 0.3); /* Stronger overlay for dimming */
+    pointer-events: none; /* Ensure interaction with content remains possible */
+    z-index: 10; /* Ensure it sits above the content */
+}
+
+
+/* Tooltip for Collapsed State */
+.sidebar-item[data-tooltip]::before {
+    content: attr(data-tooltip);
+    position: absolute;
+    left: 90px;
+    background: #1F1F1F;
+    color: white;
+    padding: 5px 10px;
+    font-size: 12px;
+    border-radius: 4px;
+    opacity: 0;
+    white-space: nowrap;
+    transform: translateY(-50%);
+    pointer-events: none;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.sidebar-item:hover[data-tooltip]::before {
+    opacity: 1;
+    transform: translateY(-60%);
+}
+
+
+@media screen and (max-width: 768px) {
+    .admin-sidebar {
+        width: 100%; /* Sidebar takes full width for mobile */
+        position: static; /* Ensure it stacks with content */
+    }
+    .admin-content {
+        margin-left: 0; /* Remove sidebar offset */
+    }
+}
+
+/* Main Content */
+.admin-content {
+    margin-top: 70px; /* Offset for fixed header */
+    margin-left: 70px; /* Offset for fixed sidebar */
+    margin-bottom: 60px;
+    padding: 20px;
+    background-color: #F2EDD3; /* Content background */
+    height: 100%; /* Full height minus header */
+    overflow-y: auto; /* Enable scrolling for content */
+    width: 100%;
+}
+
+/* Scrollbar Customization */
+.admin-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.admin-content::-webkit-scrollbar-thumb {
+    background: #C2C9AD;
+    border-radius: 5px;
+}
+
+.admin-content::-webkit-scrollbar-thumb:hover {
+    background: #6c7a5d;
+}
+
+.dashboard-content.loading {
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+/* Dashboard Grid */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* Three equal columns */
+    grid-gap: 20px;
+    margin: 20px auto;
+    max-width: 1400px; /* Center content */
+}
+
+/* General Card Styling */
+.dashboard-item {
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.dashboard-item h3 {
+    font-size: 18px;
+    margin-bottom: 15px;
+}
+
+/* Remove Hover Effect */
+.dashboard-item {
+    transform: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Adjust card heights dynamically */
+.dashboard-item.pie-chart,
+.dashboard-item.bar-chart,
+.dashboard-item.product-performance {
+    height: auto; /* Resize based on content */
+    min-height: 300px;
+}
+
+.dashboard-item.line-chart {
+    grid-column: span 3; /* Full width */
+    min-height: 400px; /* Larger for visibility */
+    padding: 25px;
+}
+
+/* Chart Canvas */
+canvas {
+    max-height: 200px;
+    max-width: 100%;
+}
+
+/* Pie Chart Summary */
+.pie-chart-summary div {
+    font-size: 14px;
+    margin: 5px 0;
+    color: #6c7a5d;
+}
+
+/* Bar Chart Summary */
+.bar-chart-summary p {
+    font-size: 14px;
+    color: #6c7a5d;
+    margin: 5px 0;
+}
+
+/* Product Chart Summary */
+.product-summary p {
+    font-size: 14px;
+    color: #6c7a5d;
+    margin: 5px 0;
+}
+
+/* Line Chart Buttons */
+.sales-options {
+    margin: 15px 0;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.sales-btn {
+    background-color: #f0f0f0;
+    color: #6c7a5d;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 12px;
+    padding: 6px 12px;
+    cursor: pointer;
+}
+
+.sales-btn:hover {
+    background-color: #ff5722;
+    color: #fff;
+}
+
+.sales-btn.active {
+    background-color: #ff5722;
+    color: #fff;
+}
+
+/* Line Chart Summary */
+.chart-summary p {
+    font-size: 14px;
+    margin: 5px 0;
+    color: #6c7a5d;
+}
+
+/* Last Updated */
+.last-updated {
+    font-size: 14px;
+    color: #6c7a5d;
+    margin-bottom: 20px;
+    text-align: right; /* Align to the right */
+}
+
+/* Line Chart Details */
+.dashboard-item.line-chart {
+    position: relative; /* For real-time metrics positioning */
+}
+
+.line-chart .chart-details {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    color: #6c7a5d;
+    margin-top: 15px;
+}
+
+.line-chart .chart-details div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.line-chart .chart-details div span {
+    font-weight: bold;
+    color: #1F1F1F;
+}
+
+/* General mobile adjustments */
+@media screen and (max-width: 768px) {
+    /* Sidebar adjustments */
+    .admin-sidebar {
+        width: 100%; /* Sidebar takes full width for mobile */
+        height: auto; /* Adjust height for stacking */
+        position: static; /* Ensure it stacks with content */
+        box-shadow: none; /* Remove shadow for cleaner look */
+    }
+
+    .sidebar-item {
+        justify-content: center; /* Center icons in mobile */
+        padding: 10px;
+        text-align: center;
+    }
+
+    .sidebar-item .sidebar-label {
+        display: none; /* Hide text labels to save space */
+    }
+
+    /* Admin content adjustments */
+    .admin-content {
+        margin-left: 0; /* Remove sidebar offset */
+        margin-top: 70px; /* Offset for fixed header */
+        padding: 15px;
+    }
+
+    /* Grid layout for dashboard */
+    .dashboard-grid {
+        grid-template-columns: 1fr; /* Single-column layout */
+        grid-gap: 15px; /* Adjust gap between cards */
+    }
+
+    /* Adjust card heights */
+    .dashboard-item {
+        min-height: 250px; /* Set a minimum height for cards */
+    }
+
+    /* Line chart adjustments */
+    .dashboard-item.line-chart {
+        min-height: 300px; /* Ensure visibility for chart details */
+    }
+
+    /* Chart canvas adjustments */
+    canvas {
+        max-height: 150px;
+        width: 100%; /* Ensure charts adjust to card width */
+    }
+}
+
+/* For even smaller devices like phones */
+@media screen and (max-width: 480px) {
+    /* Adjust font sizes */
+    body {
+        font-size: 14px; /* Slightly smaller font for readability */
+    }
+
+    h1 {
+        font-size: 20px; /* Adjust main header font size */
+    }
+
+    .dashboard-item h3 {
+        font-size: 16px; /* Smaller card title */
+    }
+
+    /* Adjust chart labels for readability */
+    canvas {
+        max-height: 120px;
+    }
+
+    /* Sales buttons in Card 4 */
+    .sales-options {
+        flex-direction: column; /* Stack buttons vertically */
+        gap: 5px; /* Reduce gap between buttons */
+    }
+
+    .sales-btn {
+        padding: 8px 10px; /* Adjust button padding */
+        font-size: 12px; /* Smaller font size */
+    }
+}
+
+

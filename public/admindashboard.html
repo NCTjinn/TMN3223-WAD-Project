@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="admindashboardstyle.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <!-- Header Section -->
+    <header class="admin-header">
+        <div class="logo">
+            <img src="logo.png" alt="PuffLab Logo">
+        </div>
+        <div class="utilities">
+            <div class="icon notification-icon">
+                <i class="fas fa-bell"></i>
+                <span id="notification-badge" class="badge">3</span>
+            </div>
+            <div class="user-dropdown">
+                <i class="fas fa-user-circle" id="profile-icon"></i>
+                <div class="dropdown-menu" id="dropdown-menu">
+                    <a href="adminprofile.html">Profile</a>
+                    <a href="publichome.html">Logout</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Layout -->
+    <div class="admin-layout">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar">
+            <a href="admindashboard.html" class="sidebar-item active" data-tooltip="Admin Dashboard">
+                <i class="fas fa-tachometer-alt"></i>
+                <span class="sidebar-label">Dashboard</span>
+            </a>
+            <a href="adminmembers.html" class="sidebar-item" data-tooltip="Member Management">
+                <i class="fas fa-users"></i>
+                <span class="sidebar-label">Members</span>
+            </a>
+            <a href="adminproducts.html" class="sidebar-item" data-tooltip="Product Management">
+                <i class="fas fa-boxes"></i>
+                <span class="sidebar-label">Products</span>
+            </a>
+            <a href="admintransactions.html" class="sidebar-item" data-tooltip="Transaction Records">
+                <i class="fas fa-file-invoice-dollar"></i>
+                <span class="sidebar-label">Transactions</span>
+            </a>
+            <a href="adminfaqs.html" class="sidebar-item" data-tooltip="FAQ Management">
+                <i class="fas fa-question-circle"></i>
+                <span class="sidebar-label">FAQs</span>
+            </a>
+            <a href="adminsummary.html" class="sidebar-item" data-tooltip="Transaction Summary">
+                <i class="fas fa-chart-line"></i>
+                <span class="sidebar-label">Summary</span>
+            </a>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="admin-content">
+            <h1>Admin Dashboard</h1>
+            <p class="last-updated">Last updated: <span id="lastUpdated">4 mins ago</span></p>
+            <div class="dashboard-grid">
+                <!-- Card 1: Pie Chart -->
+                <div class="dashboard-item pie-chart">
+                    <h3>Sales Performance</h3>
+                    <canvas id="pieChart"></canvas>
+                    <div class="pie-chart-summary">
+                        <div><strong>Dine-In:</strong> 50%</div>
+                        <div><strong>Takeaway:</strong> 30%</div>
+                        <div><strong>Delivery:</strong> 20%</div>
+                    </div>
+                </div>
+        
+                <!-- Card 2: Bar Chart -->
+                <div class="dashboard-item bar-chart">
+                    <h3>Revenue by Category</h3>
+                    <canvas id="barChart"></canvas>
+                    <div class="bar-chart-summary">
+                        <p><strong>Total Revenue:</strong> $2,600</p>
+                        <p><i class="fas fa-crown"></i> <strong>Top Category:</strong> Puffs ($1,200)</p>
+                    </div>
+                </div>
+        
+                <!-- Card 3: Product Performance -->
+                <div class="dashboard-item product-performance">
+                    <h3>Best-Selling Products</h3>
+                    <canvas id="productChart"></canvas>
+                    <div class="product-summary">
+                        <p><i class="fas fa-star"></i> <strong>Top Product:</strong> Durian Puff (850 sold)</p>
+                        <p><i class="fas fa-user"></i> <strong>Total Customers:</strong> 1,200</p>
+                    </div>
+                </div>
+        
+                <!-- Card 4: Line Chart -->
+                <div class="dashboard-item line-chart">
+                    <h3>Sales Trends</h3>
+                    <p class="line-chart-subtitle">Analyze sales across daily, weekly, and monthly periods</p>
+                    <div class="sales-options">
+                        <button class="sales-btn active" data-period="daily">Daily</button>
+                        <button class="sales-btn" data-period="weekly">Weekly</button>
+                        <button class="sales-btn" data-period="monthly">Monthly</button>
+                    </div>
+                    <canvas id="lineChart"></canvas>
+                    <div class="chart-summary">
+                        <p><strong>Peak Sales Day:</strong> Saturday</p>
+                        <p><strong>Total Revenue:</strong> $15,500</p>
+                        <p><strong>Growth:</strong> +10% compared to last period</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+    </div>
+
+    <!-- Footer Section -->
+    <footer class="admin-footer">
+        Copyright &copy; 2024 PuffLab
+    </footer>
+
+    <script src="admindashboardscript.js"></script>
+</body>
+</html>
