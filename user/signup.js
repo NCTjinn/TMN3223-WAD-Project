@@ -9,5 +9,5 @@ document.querySelector(".signup-form").addEventListener("submit", function (even
     }
 
     // Redirect to home.html if the checkbox is ticked
-    window.location.href = "home.html";
+    window.location.href = "successful.html";
 });
