@@ -292,11 +292,10 @@ class Admin {
                  FROM Products p
                  LEFT JOIN Transaction_Details td ON p.product_id = td.product_id
                  LEFT JOIN Transactions t ON td.transaction_id = t.transaction_id
-                 WHERE t.transaction_date >= DATE_SUB(CURRENT_DATE, INTERVAL 30 DAY)
                  GROUP BY p.product_id
                  ORDER BY units_sold DESC
                  LIMIT :limit";
-
+    
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
         $stmt->execute();

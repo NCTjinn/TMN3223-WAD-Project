@@ -297,33 +297,17 @@ function updateCharts(data) {
 function updateStats(data) {
     console.log('Updating stats with data:', data); // Debugging log
 
-    // Log the orderStats data to ensure it is as expected
-    console.log('Order Stats:', data.orderStats);
-
     // Ensure that orderStats contains the expected values
     const dineInOrders = parseInt(data.orderStats.dineIn) || 0;
     const takeawayOrders = parseInt(data.orderStats.takeaway) || 0;
     const deliveryOrders = parseInt(data.orderStats.delivery) || 0;
 
-    // Log the individual order counts
-    console.log('Dine-In Orders:', dineInOrders);
-    console.log('Takeaway Orders:', takeawayOrders);
-    console.log('Delivery Orders:', deliveryOrders);
-
     const totalOrders = dineInOrders + takeawayOrders + deliveryOrders;
-
-    // Log the totalOrders to ensure it is calculated correctly
-    console.log('Total Orders:', totalOrders);
 
     // Ensure totalOrders is not zero to avoid division by zero
     const dineInPercentage = totalOrders ? ((dineInOrders / totalOrders) * 100).toFixed(2) : 0;
     const takeawayPercentage = totalOrders ? ((takeawayOrders / totalOrders) * 100).toFixed(2) : 0;
     const deliveryPercentage = totalOrders ? ((deliveryOrders / totalOrders) * 100).toFixed(2) : 0;
-
-    // Log the calculated percentages to ensure they are correct
-    console.log('Dine-In Percentage:', dineInPercentage);
-    console.log('Takeaway Percentage:', takeawayPercentage);
-    console.log('Delivery Percentage:', deliveryPercentage);
 
     const statsMap = {
         'dineInPercentage': `${dineInPercentage}%`,
@@ -348,7 +332,6 @@ function updateStats(data) {
     Object.entries(statsMap).forEach(([id, value]) => {
         const element = document.getElementById(id);
         if (element) {
-            console.log(`Updating element with id: ${id}, value: ${value}`); // Debug log
             element.textContent = value;
             // Add fade-in animation for updated values
             element.classList.add('value-updated');
