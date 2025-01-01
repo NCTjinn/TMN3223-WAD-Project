@@ -214,50 +214,6 @@ class Admin {
         return $result['revenue'] ?? 0;
     }    
 
-    public function logAdminAction($adminId, $action) {
-        try {
-            $query = "INSERT INTO Admin_Actions_Log (admin_id, action) 
-                     VALUES (:admin_id, :action)";
-
-            $stmt = $this->conn->prepare($query);
-            $stmt->bindParam(":admin_id", $adminId);
-            $stmt->bindParam(":action", $action);
-
-            return $stmt->execute();
-        } catch(PDOException $e) {
-            return ['status' => 'error', 'message' => $e->getMessage()];
-        }
-    }
-
-    public function getAdminLogs($startDate = null, $endDate = null, $limit = 100) {
-        try {
-            $query = "SELECT l.*, u.username 
-                     FROM Admin_Actions_Log l 
-                     JOIN Users u ON l.admin_id = u.user_id 
-                     WHERE 1=1";
-
-            if($startDate) {
-                $query .= " AND l.timestamp >= :start_date";
-            }
-            if($endDate) {
-                $query .= " AND l.timestamp <= :end_date";
-            }
-
-            $query .= " ORDER BY l.timestamp DESC LIMIT :limit";
-
-            $stmt = $this->conn->prepare($query);
-            
-            if($startDate) $stmt->bindParam(":start_date", $startDate);
-            if($endDate) $stmt->bindParam(":end_date", $endDate);
-            $stmt->bindParam(":limit", $limit, PDO::PARAM_INT);
-
-            $stmt->execute();
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch(PDOException $e) {
-            return ['status' => 'error', 'message' => $e->getMessage()];
-        }
-    }
-
     public function updateSalesSummary() {
         try {
             $today = date('Y-m-d');
@@ -347,43 +303,6 @@ class Admin {
     
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    private function getRecentOrders($limit = 10) {
-        $query = "SELECT 
-                    o.order_id,
-                    o.tracking_number,
-                    o.status,
-                    t.transaction_date,
-                    t.total_amount,
-                    u.username,
-                    u.email
-                 FROM Orders o
-                 JOIN Transactions t ON o.transaction_id = t.transaction_id
-                 JOIN Users u ON t.user_id = u.user_id
-                 ORDER BY t.transaction_date DESC
-                 LIMIT :limit";
-
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    private function getLowStockProducts($threshold = 10) {
-        $query = "SELECT 
-                    product_id,
-                    name,
-                    stock_quantity,
-                    price
-                 FROM Products
-                 WHERE stock_quantity <= :threshold
-                 ORDER BY stock_quantity ASC";
-
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(':threshold', $threshold, PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -580,6 +499,42 @@ class Admin {
         $stmt->bindParam(':id', $memberId);
         $stmt->execute();
         return ['status' => 'success'];
+    }
+
+    public function getTransactions($startDate = null, $endDate = null, $limit = 100) {
+        try {
+            $query = "SELECT 
+                        transaction_id, 
+                        user_id, 
+                        transaction_date, 
+                        total_amount, 
+                        delivery_fee, 
+                        tax_amount, 
+                        payment_status, 
+                        shipping_method
+                      FROM Transactions
+                      WHERE 1=1";
+            
+            if ($startDate) {
+                $query .= " AND transaction_date >= :start_date";
+            }
+            if ($endDate) {
+                $query .= " AND transaction_date <= :end_date";
+            }
+    
+            $query .= " ORDER BY transaction_date DESC LIMIT :limit";
+    
+            $stmt = $this->conn->prepare($query);
+    
+            if ($startDate) $stmt->bindParam(":start_date", $startDate);
+            if ($endDate) $stmt->bindParam(":end_date", $endDate);
+            $stmt->bindParam(":limit", $limit, PDO::PARAM_INT);
+    
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            return ['status' => 'error', 'message' => $e->getMessage()];
+        }
     }
 
     public function getUnreadNotifications() {

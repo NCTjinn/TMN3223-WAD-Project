@@ -1,7 +1,15 @@
 <?php
-// Redirect to publichome.html
-header("Location: publichome.html");
-exit();
+// Conditional redirection based on authentication
+function isAuthenticated() {
+    // Implement your authentication check logic here
+    // For now, we'll return false to simulate unauthenticated users
+    return false;
+}
+
+if (!isAuthenticated()) {
+    header("Location: publichome.html");
+    exit();
+}
 
 // api/index.php - Main API endpoint handler
 header('Content-Type: application/json');
@@ -190,9 +198,6 @@ try {
                             break;
                         case 'engagement':
                             $response = $admin->getCustomerEngagement();
-                            break;
-                        case 'logs':
-                            $response = $admin->getAdminLogs();
                             break;
                     }
                     break;

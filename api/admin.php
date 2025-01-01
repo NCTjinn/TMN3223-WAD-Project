@@ -6,6 +6,9 @@
 //   - GET: /users - Get user analytics
 //   - GET: /engagement - Get customer engagement
 //   - GET: /logs - Get admin logs
+//   - GET: /notifications - Get notifications
+//   - GET: /products - Get products
+//   - GET: /transactions - Get transactions
 
 try {
     $requestUri = $_SERVER['REQUEST_URI'];
@@ -75,6 +78,13 @@ try {
                     $response = isset($parts[3]) && $parts[3] === 'history'
                         ? $admin->getProductHistory()
                         : $admin->getProducts();
+                    break;
+
+                case 'transactions':
+                    $startDate = $_GET['start_date'] ?? null;
+                    $endDate = $_GET['end_date'] ?? null;
+                    $limit = $_GET['limit'] ?? 100;
+                    $response = $admin->getTransactions($startDate, $endDate, $limit);
                     break;
                     
                 default:

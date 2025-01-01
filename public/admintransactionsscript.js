@@ -1,280 +1,333 @@
-document.addEventListener('DOMContentLoaded', function () {
-    const profileIcon = document.getElementById('profile-icon');
-    const profileDropdown = document.getElementById('dropdown-menu');
-    const notificationIcon = document.querySelector('.fa-bell');
-    const notificationDropdown = document.createElement('div');
+// Constants and Configuration
+const baseUrl = window.location.hostname === 'localhost' 
+    ? 'http://localhost/TMN3223-WAD-Project' 
+    : 'https://your-production-domain.com';
 
-    // Dynamically create notification dropdown
-    notificationDropdown.className = 'dropdown-menu';
-    notificationDropdown.id = 'notification-dropdown';
+const API_CONFIG = {
+    // Base URL - change this based on your environment
+    baseUrl: baseUrl,
+    
+    // API endpoints
+    endpoints: {
+        notifications: `${baseUrl}/api/admin/notifications`,
+        dashboardStats: `${baseUrl}/api/admin/dashboard`,
+        inventory: `${baseUrl}/api/admin/inventory`,
+        users: `${baseUrl}/api/admin/users`,
+        engagement: `${baseUrl}/api/admin/engagement`,
+        unreadNotifications: `${baseUrl}/api/admin/notifications/unread`,
+        products: `${baseUrl}/api/admin/products`,
+        transactions: `${baseUrl}/api/admin/transactions`
+    },
+    
+    // Request timeout in milliseconds
+    timeout: 5000
+};
 
-    // Notifications data
-    const notifications = [
-        { message: "New user registered", isRead: false },
-        { message: "System backup completed", isRead: true },
-        { message: "New comment on blog post", isRead: false },
-    ];
+// Global state
+const dashboardState = {
+    notifications: []
+};
 
-    // Render notifications
-    function renderNotifications() {
-        notificationDropdown.innerHTML = `
-            <div class="dropdown-header">Notifications</div>
-            <button class="mark-all-btn">Mark All as Read</button>
-        `;
+// Enhanced fetch function with timeout and better error handling
+async function fetchWithAuth(endpoint, options = {}) {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), API_CONFIG.timeout);
 
-        notifications.forEach((notification, index) => {
-            const unreadClass = notification.isRead
-                ? ''
-                : `<span class="unread-indicator"></span>`;
-            notificationDropdown.innerHTML += `
-                <div class="notification-item" data-index="${index}">
-                    ${unreadClass}
-                    <div class="notification-text">
-                        <span class="notification-title">${notification.message}</span>
-                        <span class="notification-time">5 mins ago</span>
-                    </div>
-                </div>
-            `;
-        });
+    try {
+        const defaultOptions = {
+            method: 'GET',
+            signal: controller.signal,
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        };
 
-        const markAllBtn = notificationDropdown.querySelector('.mark-all-btn');
-        markAllBtn.addEventListener('click', () => {
-            notifications.forEach((n) => (n.isRead = true));
-            renderNotifications();
-        });
+        const url = endpoint.startsWith('http') ? endpoint : `${API_CONFIG.baseUrl}${endpoint}`;
+        console.log(`Fetching from: ${url}`); // Debug log
 
-        const notificationItems = notificationDropdown.querySelectorAll('.notification-item');
-        notificationItems.forEach((item) => {
-            item.addEventListener('click', (e) => {
-                const index = e.currentTarget.getAttribute('data-index');
-                notifications[index].isRead = true;
-                renderNotifications();
-            });
-        });
+        const response = await fetch(url, { ...defaultOptions, ...options });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error(`Error response text: ${errorText}`); // Log the error response text
+            // Handle different HTTP error codes
+            switch (response.status) {
+                case 404:
+                    throw new Error(`API endpoint not found: ${endpoint}`);
+                case 401:
+                    throw new Error('Authentication required');
+                case 403:
+                    throw new Error('Access forbidden');
+                case 500:
+                    throw new Error('Internal server error');
+                default:
+                    throw new Error(`HTTP error! status: ${response.status}`);
+            }
+        }
+
+        const data = await response.json();
+        console.log('Fetched data:', data); // Debug log
+        return data;
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        throw error;
+    } finally {
+        clearTimeout(timeoutId);
     }
+}
 
-    // Append notification dropdown to the body
-    document.body.appendChild(notificationDropdown);
-
-    // Position notification dropdown
-    function positionNotificationDropdown() {
-        const rect = notificationIcon.getBoundingClientRect();
-        let dropdownTop = rect.bottom + window.scrollY + 10; // Add spacing
-        let dropdownLeft = rect.left;
-
-        if (dropdownTop + 300 > window.innerHeight + window.scrollY) {
-            dropdownTop = rect.top + window.scrollY - 300 - 10;
-        }
-        if (dropdownLeft + 300 > window.innerWidth) {
-            dropdownLeft = window.innerWidth - 310;
-        }
-
-        notificationDropdown.style.position = 'absolute';
-        notificationDropdown.style.top = `${dropdownTop}px`;
-        notificationDropdown.style.left = `${dropdownLeft}px`;
-    }
-
-    // Toggle notification dropdown
-    notificationIcon.addEventListener('click', function (e) {
-        e.stopPropagation();
-        const isActive = notificationDropdown.classList.contains('active');
-        closeAllDropdowns();
-        if (!isActive) {
-            positionNotificationDropdown();
-            notificationDropdown.classList.add('active');
-        }
-    });
-
-    // Toggle profile dropdown
-    profileIcon.addEventListener('click', function (e) {
-        e.stopPropagation();
-        const isActive = profileDropdown.classList.contains('active');
-        closeAllDropdowns();
-        if (!isActive) {
-            profileDropdown.classList.add('active');
-        }
-    });
-
-    // Close all dropdowns when clicking outside
-    document.addEventListener('click', function (e) {
-        if (
-            !e.target.closest('.user-dropdown') &&
-            !e.target.closest('.icon') &&
-            !e.target.closest('#notification-dropdown')
-        ) {
-            closeAllDropdowns();
-        }
-    });
-
-    // Helper function to close all dropdowns
-    function closeAllDropdowns() {
-        notificationDropdown.classList.remove('active');
-        profileDropdown.classList.remove('active');
-    }
-
-    // Update notification badge
-    function updateNotificationBadge(count) {
-        const badge = document.getElementById('notification-badge');
-        
-        if (count > 0) {
-            badge.textContent = count; // Update badge number
-            badge.style.visibility = 'visible'; // Show the badge
+// API Handlers
+async function fetchNotifications() {
+    try {
+        const data = await fetchWithAuth(API_CONFIG.endpoints.notifications);
+        console.log('Notifications data:', data); // Debug log
+        if (data.status === 'success') {
+            dashboardState.notifications = data.notifications;
+            updateNotificationBadge(data.unreadCount);
+            updateNotificationPanel();
         } else {
-            badge.style.visibility = 'hidden'; // Hide the badge
+            throw new Error(data.error || 'Failed to load notifications');
         }
+    } catch (error) {
+        console.error('Error fetching notifications:', error);
+        showErrorMessage(error.message);
     }
-    
-    // Simulate fetching unread notifications
-    function fetchNotifications() {
-        fetch('/api/admin/notifications/unread')
-            .then((response) => response.json())
-            .then((data) => {
-                const unreadCount = data.unreadCount || 0;
-                updateNotificationBadge(unreadCount);
-                renderNotifications(data.notifications);
-            })
-            .catch(console.error);
+}
+
+let currentPage = 1;
+const itemsPerPage = 10;
+let filteredTransactions = [];
+
+async function fetchTransactions() {
+    try {
+        const startDate = document.getElementById('date-start').value;
+        const endDate = document.getElementById('date-end').value;
+        const searchTerm = document.getElementById('search-input').value.toLowerCase();
+        const url = new URL(API_CONFIG.endpoints.transactions, window.location.origin);
+        
+        if (startDate) url.searchParams.append('start_date', startDate);
+        if (endDate) url.searchParams.append('end_date', endDate);
+        url.searchParams.append('limit', '1000');
+
+        const data = await fetchWithAuth(url.toString());
+        if (data.status === 'success') {
+            // Filter transactions based on search term
+            filteredTransactions = data.data.filter(transaction => 
+                Object.values(transaction).some(value => 
+                    value.toString().toLowerCase().includes(searchTerm)
+                )
+            );
+            currentPage = 1;
+            renderTable();
+        }
+    } catch (error) {
+        console.error('Error fetching transactions:', error);
     }
+}
+
+function renderTable() {
+    const tableBody = document.getElementById('transaction-table-body');
+    tableBody.innerHTML = '';
+
+    const start = (currentPage - 1) * itemsPerPage;
+    const end = start + itemsPerPage;
+    const paginatedTransactions = filteredTransactions.slice(start, end);
+
+    paginatedTransactions.forEach(transaction => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${transaction.transactionId}</td>
+            <td>${transaction.userId}</td>
+            <td>${transaction.dateTime}</td>
+            <td>${formatCurrency(transaction.totalAmount)}</td>
+            <td>${formatCurrency(transaction.deliveryFee)}</td>
+            <td>${formatCurrency(transaction.taxAmount)}</td>
+            <td>${transaction.paymentStatus}</td>
+            <td>${transaction.shippingMethod}</td>
+        `;
+        tableBody.appendChild(row);
+    });
+
+    document.getElementById('current-page').textContent = `Page ${currentPage}`;
+    document.getElementById('prev-page').disabled = currentPage === 1;
+    document.getElementById('next-page').disabled = end >= filteredTransactions.length;
+}
+
+// Notification Management
+function updateNotificationBadge(count) {
+    console.log(`Updating notification badge with count: ${count}`); // Debug log
+    const badge = document.getElementById('notification-badge');
+    if (badge) {
+        badge.textContent = count;
+        badge.style.visibility = count > 0 ? 'visible' : 'hidden';
+    } else {
+        console.warn('Notification badge element not found'); // Debug log
+    }
+}
+
+function updateNotificationPanel() {
+    const container = document.getElementById('notifications-list');
+    if (!container) return;
+
+    container.innerHTML = dashboardState.notifications
+        .map(notification => `
+            <div class="notification-item ${notification.status}" data-id="${notification.id}">
+                <div class="notification-content">
+                    <span class="notification-title">${notification.title}</span>
+                    <span class="notification-message">${notification.message}</span>
+                    <span class="notification-time">${formatTimeAgo(notification.timestamp)}</span>
+                </div>
+                <button class="mark-read-btn" data-id="${notification.id}">
+                    <i class="fas fa-check"></i>
+                </button>
+            </div>
+        `)
+        .join('');
+
+    attachNotificationHandlers();
+}
+
+// Event Handlers
+function attachEventListeners() {
+    // Notification Panel Toggle
+    const notificationIcon = document.querySelector('.notification-icon');
+    const notificationPanel = document.getElementById('notification-panel');
     
-    // Call the function periodically or on page load
-    fetchNotifications();
-    setInterval(fetchNotifications, 60000); // Check every 60 seconds
+    if (notificationIcon && notificationPanel) {
+        notificationIcon.addEventListener('click', () => {
+            notificationPanel.classList.toggle('active');
+        });
+    }
 
-    // Initial render of notifications
-    renderNotifications();
-
-    //main content 
-    const applyFiltersBtn = document.getElementById('apply-filters');
-    const searchInput = document.getElementById('search-input');
-    const searchBtn = document.getElementById('search-btn');
-    const prevPageBtn = document.getElementById('prev-page');
-    const nextPageBtn = document.getElementById('next-page');
-    const currentPageSpan = document.getElementById('current-page');
-    const transactionTableBody = document.getElementById('transaction-table-body');
-    const dateStart = document.getElementById('date-start');
-    const dateEnd = document.getElementById('date-end');
-
-    let currentPage = 1;
-    const rowsPerPage = 10;
-    let filteredTransactions = []; // Filtered transactions will be stored here.
-
-    // 30 Sample Transaction Records
-    const transactions = [
-        { date: "2024-12-01 09:00", orders: 15, grossSales: "$500.00", returns: "$20.00", netSales: "$480.00", delivery: "$30.00", tax: "$40.00", totalPaid: "$550.00" },
-        { date: "2024-12-02 10:30", orders: 20, grossSales: "$750.00", returns: "$30.00", netSales: "$720.00", delivery: "$50.00", tax: "$60.00", totalPaid: "$830.00" },
-        { date: "2024-12-03 11:45", orders: 25, grossSales: "$1,200.00", returns: "$50.00", netSales: "$1,150.00", delivery: "$100.00", tax: "$90.00", totalPaid: "$1,340.00" },
-        { date: "2024-12-04 12:00", orders: 18, grossSales: "$900.00", returns: "$40.00", netSales: "$860.00", delivery: "$70.00", tax: "$80.00", totalPaid: "$1,010.00" },
-        { date: "2024-12-05 14:00", orders: 30, grossSales: "$1,500.00", returns: "$0.00", netSales: "$1,500.00", delivery: "$120.00", tax: "$110.00", totalPaid: "$1,730.00" },
-        { date: "2024-12-01 09:00", orders: 15, grossSales: "$500.00", returns: "$20.00", netSales: "$480.00", delivery: "$30.00", tax: "$40.00", totalPaid: "$550.00" },
-        { date: "2024-12-02 10:30", orders: 20, grossSales: "$750.00", returns: "$30.00", netSales: "$720.00", delivery: "$50.00", tax: "$60.00", totalPaid: "$830.00" },
-        { date: "2024-12-03 11:45", orders: 25, grossSales: "$1,200.00", returns: "$50.00", netSales: "$1,150.00", delivery: "$100.00", tax: "$90.00", totalPaid: "$1,340.00" },
-        { date: "2024-12-04 12:00", orders: 18, grossSales: "$900.00", returns: "$40.00", netSales: "$860.00", delivery: "$70.00", tax: "$80.00", totalPaid: "$1,010.00" },
-        { date: "2024-12-05 14:00", orders: 30, grossSales: "$1,500.00", returns: "$0.00", netSales: "$1,500.00", delivery: "$120.00", tax: "$110.00", totalPaid: "$1,730.00" },
-        { date: "2024-12-06 15:20", orders: 12, grossSales: "$400.00", returns: "$10.00", netSales: "$390.00", delivery: "$25.00", tax: "$30.00", totalPaid: "$445.00" },
-        { date: "2024-12-07 09:30", orders: 22, grossSales: "$1,100.00", returns: "$20.00", netSales: "$1,080.00", delivery: "$90.00", tax: "$100.00", totalPaid: "$1,270.00" },
-        { date: "2024-12-08 16:10", orders: 28, grossSales: "$1,800.00", returns: "$100.00", netSales: "$1,700.00", delivery: "$150.00", tax: "$200.00", totalPaid: "$2,050.00" },
-        { date: "2024-12-09 13:00", orders: 19, grossSales: "$950.00", returns: "$30.00", netSales: "$920.00", delivery: "$60.00", tax: "$70.00", totalPaid: "$1,050.00" },
-        { date: "2024-12-10 11:15", orders: 35, grossSales: "$2,200.00", returns: "$50.00", netSales: "$2,150.00", delivery: "$200.00", tax: "$250.00", totalPaid: "$2,600.00" },
-        { date: "2024-12-11 09:45", orders: 24, grossSales: "$1,200.00", returns: "$20.00", netSales: "$1,180.00", delivery: "$85.00", tax: "$90.00", totalPaid: "$1,355.00" },
-        { date: "2024-12-12 10:30", orders: 17, grossSales: "$850.00", returns: "$10.00", netSales: "$840.00", delivery: "$40.00", tax: "$50.00", totalPaid: "$930.00" },
-        { date: "2024-12-13 12:50", orders: 40, grossSales: "$2,800.00", returns: "$100.00", netSales: "$2,700.00", delivery: "$300.00", tax: "$350.00", totalPaid: "$3,350.00" },
-        { date: "2024-12-14 15:45", orders: 10, grossSales: "$300.00", returns: "$0.00", netSales: "$300.00", delivery: "$20.00", tax: "$30.00", totalPaid: "$350.00" },
-        { date: "2024-12-15 08:15", orders: 27, grossSales: "$1,500.00", returns: "$70.00", netSales: "$1,430.00", delivery: "$120.00", tax: "$150.00", totalPaid: "$1,700.00" },
-        { date: "2024-12-16 09:50", orders: 13, grossSales: "$400.00", returns: "$20.00", netSales: "$380.00", delivery: "$25.00", tax: "$30.00", totalPaid: "$435.00" },
-        { date: "2024-12-17 13:20", orders: 33, grossSales: "$2,100.00", returns: "$80.00", netSales: "$2,020.00", delivery: "$150.00", tax: "$200.00", totalPaid: "$2,370.00" },
-        { date: "2024-12-18 14:10", orders: 21, grossSales: "$1,000.00", returns: "$50.00", netSales: "$950.00", delivery: "$90.00", tax: "$100.00", totalPaid: "$1,140.00" },
-        { date: "2024-12-19 16:00", orders: 29, grossSales: "$1,700.00", returns: "$100.00", netSales: "$1,600.00", delivery: "$200.00", tax: "$250.00", totalPaid: "$2,050.00" },
-        { date: "2024-12-20 14:00", orders: 11, grossSales: "$350.00", returns: "$0.00", netSales: "$350.00", delivery: "$15.00", tax: "$25.00", totalPaid: "$390.00" },
-        { date: "2024-12-21 10:30", orders: 16, grossSales: "$650.00", returns: "$30.00", netSales: "$620.00", delivery: "$50.00", tax: "$60.00", totalPaid: "$730.00" },
-        { date: "2024-12-22 08:20", orders: 23, grossSales: "$1,200.00", returns: "$40.00", netSales: "$1,160.00", delivery: "$85.00", tax: "$90.00", totalPaid: "$1,335.00" },
-        { date: "2024-12-23 12:40", orders: 34, grossSales: "$2,400.00", returns: "$100.00", netSales: "$2,300.00", delivery: "$250.00", tax: "$300.00", totalPaid: "$2,850.00" },
-        { date: "2024-12-24 15:00", orders: 19, grossSales: "$950.00", returns: "$20.00", netSales: "$930.00", delivery: "$60.00", tax: "$70.00", totalPaid: "$1,060.00" },
-        { date: "2024-12-25 10:10", orders: 28, grossSales: "$1,800.00", returns: "$50.00", netSales: "$1,750.00", delivery: "$150.00", tax: "$200.00", totalPaid: "$2,100.00" },
-        { date: "2024-12-26 13:30", orders: 15, grossSales: "$550.00", returns: "$10.00", netSales: "$540.00", delivery: "$35.00", tax: "$40.00", totalPaid: "$615.00" },
-        { date: "2024-12-27 09:40", orders: 20, grossSales: "$800.00", returns: "$20.00", netSales: "$780.00", delivery: "$50.00", tax: "$60.00", totalPaid: "$890.00" },
-        { date: "2024-12-28 11:15", orders: 14, grossSales: "$400.00", returns: "$0.00", netSales: "$400.00", delivery: "$25.00", tax: "$30.00", totalPaid: "$455.00" },
-        { date: "2024-12-29 14:25", orders: 32, grossSales: "$2,000.00", returns: "$70.00", netSales: "$1,930.00", delivery: "$150.00", tax: "$200.00", totalPaid: "$2,280.00" },
-        { date: "2024-12-30 16:40", orders: 18, grossSales: "$900.00", returns: "$30.00", netSales: "$870.00", delivery: "$60.00", tax: "$70.00", totalPaid: "$1,000.00" },
-        { date: "2024-12-31 09:00", orders: 19, grossSales: "$1,050.00", returns: "$0.00", netSales: "$1,050.00", delivery: "$80.00", tax: "$90.00", totalPaid: "$1,220.00" }
-    ];
+    // User Dropdown Toggle
+    const profileIcon = document.getElementById('profile-icon');
+    const dropdownMenu = document.getElementById('dropdown-menu');
     
-    // Filter and Render Table
-    function applyFilters() {
-        const startDate = new Date(dateStart.value);
-        const endDate = new Date(dateEnd.value);
-        const searchTerm = searchInput.value.toLowerCase();
-
-        filteredTransactions = transactions.filter(transaction => {
-            const transactionDate = new Date(transaction.date);
-
-            // Check if the transaction matches the date range and search term
-            const matchesDateRange = (!isNaN(startDate) ? transactionDate >= startDate : true) &&
-                                     (!isNaN(endDate) ? transactionDate <= endDate : true);
-
-            const matchesSearch = Object.values(transaction)
-                .some(value => value.toString().toLowerCase().includes(searchTerm));
-
-            return matchesDateRange && matchesSearch;
+    if (profileIcon && dropdownMenu) {
+        profileIcon.addEventListener('click', (e) => {
+            e.stopPropagation();
+            dropdownMenu.classList.toggle('active');
         });
 
-        currentPage = 1; // Reset to the first page after filtering.
-        renderTable();
-    }
-
-    // Render Transaction Table
-    function renderTable() {
-        transactionTableBody.innerHTML = '';
-        const start = (currentPage - 1) * rowsPerPage;
-        const end = start + rowsPerPage;
-        const pageData = filteredTransactions.slice(start, end);
-
-        pageData.forEach(transaction => {
-            const row = `<tr>
-                <td>${transaction.date}</td>
-                <td>${transaction.orders}</td>
-                <td>${transaction.grossSales}</td>
-                <td>${transaction.returns}</td>
-                <td>${transaction.netSales}</td>
-                <td>${transaction.delivery}</td>
-                <td>${transaction.tax}</td>
-                <td>${transaction.totalPaid}</td>
-            </tr>`;
-            transactionTableBody.insertAdjacentHTML('beforeend', row);
+        // Close dropdown when clicking outside
+        document.addEventListener('click', () => {
+            dropdownMenu.classList.remove('active');
         });
-
-        updatePagination();
     }
 
-    // Update Pagination
-    function updatePagination() {
-        const totalPages = Math.ceil(filteredTransactions.length / rowsPerPage);
-
-        currentPageSpan.textContent = `Page ${currentPage} of ${totalPages || 1}`;
-        prevPageBtn.disabled = currentPage === 1;
-        nextPageBtn.disabled = currentPage >= totalPages;
+    // Clear All Notifications
+    const clearBtn = document.getElementById('clear-notifications');
+    if (clearBtn) {
+        clearBtn.addEventListener('click', async () => {
+            try {
+                await fetchWithAuth(`${API_CONFIG.endpoints.notifications}/clear`, { method: 'POST' });
+                dashboardState.notifications = [];
+                updateNotificationPanel();
+                updateNotificationBadge(0);
+            } catch (error) {
+                console.error('Error clearing notifications:', error);
+            }
+        });
     }
 
-    // Pagination Handlers
-    prevPageBtn.addEventListener('click', () => {
+    // Apply Filters
+    document.getElementById('apply-filters').addEventListener('click', fetchTransactions);
+
+    // Search
+    document.getElementById('search-btn').addEventListener('click', fetchTransactions);
+
+    // Pagination
+    document.getElementById('prev-page').addEventListener('click', () => {
         if (currentPage > 1) {
             currentPage--;
             renderTable();
         }
     });
 
-    nextPageBtn.addEventListener('click', () => {
-        const totalPages = Math.ceil(filteredTransactions.length / rowsPerPage);
-        if (currentPage < totalPages) {
+    document.getElementById('next-page').addEventListener('click', () => {
+        if ((currentPage * itemsPerPage) < filteredTransactions.length) {
             currentPage++;
             renderTable();
         }
     });
+}
 
-    // Filter Handlers
-    applyFiltersBtn.addEventListener('click', applyFilters);
-    searchBtn.addEventListener('click', applyFilters);
+function attachNotificationHandlers() {
+    document.querySelectorAll('.mark-read-btn').forEach(button => {
+        button.addEventListener('click', async (e) => {
+            e.stopPropagation();
+            const notificationId = button.dataset.id;
+            try {
+                await fetchWithAuth(`${API_CONFIG.endpoints.notifications}/${notificationId}/read`, { method: 'POST' });
+                const notification = dashboardState.notifications.find(n => n.id === notificationId);
+                if (notification) {
+                    notification.status = 'read';
+                    updateNotificationPanel();
+                    updateNotificationBadge(dashboardState.notifications.filter(n => n.status === 'unread').length);
+                }
+            } catch (error) {
+                console.error('Error marking notification as read:', error);
+            }
+        });
+    });
+}
 
-    // Initial Setup
-    filteredTransactions = [...transactions]; // Start with all transactions.
-    renderTable(); // Initial render.
+// Utility Functions
+function formatCurrency(value) {
+    return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD'
+    }).format(value);
+}
+
+function formatNumber(value) {
+    return new Intl.NumberFormat('en-US').format(value);
+}
+
+function formatPercentage(value) {
+    return `${value >= 0 ? '+' : ''}${value.toFixed(1)}%`;
+}
+
+function formatTimeAgo(timestamp) {
+    const date = new Date(timestamp);
+    const now = new Date();
+    const seconds = Math.floor((now - date) / 1000);
+    
+    const intervals = {
+        year: 31536000,
+        month: 2592000,
+        week: 604800,
+        day: 86400,
+        hour: 3600,
+        minute: 60
+    };
+
+    for (const [unit, secondsInUnit] of Object.entries(intervals)) {
+        const interval = Math.floor(seconds / secondsInUnit);
+        if (interval >= 1) {
+            return `${interval} ${unit}${interval === 1 ? '' : 's'} ago`;
+        }
+    }
+    return 'Just now';
+}
+
+function showErrorMessage(message) {
+    // Implement a function to show error messages to the user
+    alert(message);
+}
+
+// Initialize Dashboard
+document.addEventListener('DOMContentLoaded', () => {
+    attachEventListeners();
+    fetchTransactions();
+    fetchNotifications();
+    
+    // Set up polling intervals
+    const intervals = [
+        { fn: fetchTransactions, ms: 30000 },  // 30 seconds
+        { fn: fetchNotifications, ms: 60000 }    // 1 minute
+    ];
+    
+    intervals.forEach(({fn, ms}) => setInterval(fn, ms));
 });

@@ -15,7 +15,8 @@ const API_CONFIG = {
         users: `${baseUrl}/api/admin/users`,
         engagement: `${baseUrl}/api/admin/engagement`,
         unreadNotifications: `${baseUrl}/api/admin/notifications/unread`,
-        products: `${baseUrl}/api/admin/products`
+        products: `${baseUrl}/api/admin/products`,
+        transactions: `${baseUrl}/api/admin/transactions`
     },
     
     // Request timeout in milliseconds
@@ -132,17 +133,6 @@ async function fetchNotifications() {
     } catch (error) {
         console.error('Error fetching notifications:', error);
         showErrorMessage(error.message);
-    }
-}
-
-async function fetchProductIds() {
-    try {
-        const data = await fetchWithAuth(API_CONFIG.endpoints.products);
-        if (data.status === 'success') {
-            updateProductIdsList(data.data);
-        }
-    } catch (error) {
-        console.error('Error fetching product IDs:', error);
     }
 }
 
@@ -618,7 +608,6 @@ document.addEventListener('DOMContentLoaded', () => {
     attachEventListeners();
     fetchDashboardData();
     fetchNotifications();
-    fetchProductIds();
     
     // Set up polling intervals
     const intervals = [
