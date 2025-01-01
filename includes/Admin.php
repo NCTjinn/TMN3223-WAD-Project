@@ -124,20 +124,43 @@ class Admin {
         return $revenue;
     }
     
-    private function getSalesTrend() {
-        $query = "SELECT 
-            DATE_FORMAT(transaction_date, '%H:00') as hour,
-            SUM(total_amount) as amount
-            FROM Transactions
-            WHERE DATE(transaction_date) = CURRENT_DATE
-            GROUP BY HOUR(transaction_date)
-            ORDER BY HOUR(transaction_date)";
-        
+        private function getSalesTrend($period = 'daily') {
+        switch ($period) {
+            case 'weekly':
+                $query = "SELECT 
+                    DATE_FORMAT(transaction_date, '%Y-%m-%d') as date,
+                    SUM(total_amount) as amount
+                    FROM Transactions
+                    WHERE transaction_date >= DATE_SUB(CURRENT_DATE, INTERVAL 7 DAY)
+                    GROUP BY DATE(transaction_date)
+                    ORDER BY DATE(transaction_date)";
+                break;
+            case 'monthly':
+                $query = "SELECT 
+                    DATE_FORMAT(transaction_date, '%Y-%m-%d') as date,
+                    SUM(total_amount) as amount
+                    FROM Transactions
+                    WHERE transaction_date >= DATE_SUB(CURRENT_DATE, INTERVAL 1 MONTH)
+                    GROUP BY DATE(transaction_date)
+                    ORDER BY DATE(transaction_date)";
+                break;
+            case 'daily':
+            default:
+                $query = "SELECT 
+                    DATE_FORMAT(transaction_date, '%H:00') as hour,
+                    SUM(total_amount) as amount
+                    FROM Transactions
+                    WHERE DATE(transaction_date) = CURRENT_DATE
+                    GROUP BY HOUR(transaction_date)
+                    ORDER BY HOUR(transaction_date)";
+                break;
+        }
+    
         $stmt = $this->conn->query($query);
         $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        
+    
         return [
-            'labels' => array_column($results, 'hour'),
+            'labels' => array_column($results, $period === 'daily' ? 'hour' : 'date'),
             'values' => array_column($results, 'amount')
         ];
     }
