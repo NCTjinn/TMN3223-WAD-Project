@@ -13,6 +13,14 @@ try {
     
     // Parse the API endpoint
     $parts = explode('/', trim($requestUri, '/'));
+    error_log('Parsed parts: ' . print_r($parts, true)); // Log the parsed parts
+
+    // Adjust for base directory
+    $baseDir = 'TMN3223-WAD-Project';
+    if ($parts[0] === $baseDir) {
+        array_shift($parts);
+    }
+
     if (count($parts) < 3 || $parts[0] !== 'api' || $parts[1] !== 'admin') {
         throw new Exception('Invalid API endpoint');
     }
@@ -31,6 +39,9 @@ try {
     //     echo json_encode(['error' => 'Unauthorized access. Admin privileges required.']);
     //     exit;
     // }
+
+    // Include or autoload the Admin class
+    require_once '../includes/Admin.php'; // Adjust the path as needed
 
     $endpoint = $parts[2];
     $admin = new Admin();
@@ -70,18 +81,16 @@ try {
                     throw new Exception('Invalid endpoint');
             }
             break;
-            
-        // Handle other HTTP methods similarly
+        
         default:
-            throw new Exception('Method not allowed');
+            throw new Exception('Invalid request method');
     }
-    
-    // Send response
-    header('Content-Type: application/json');
+
+    // Send the response
     echo json_encode($response);
-    
+
 } catch (Exception $e) {
-    http_response_code(500);
+    error_log($e->getMessage()); // Log the error message
+    http_response_code(500); // Internal Server Error
     echo json_encode(['error' => $e->getMessage()]);
 }
-?>

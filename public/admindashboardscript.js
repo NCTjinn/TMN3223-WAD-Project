@@ -1,19 +1,21 @@
 // Constants and Configuration
+const baseUrl = window.location.hostname === 'localhost' 
+    ? 'http://localhost/TMN3223-WAD-Project' 
+    : 'https://your-production-domain.com';
+
 const API_CONFIG = {
     // Base URL - change this based on your environment
-    baseUrl: window.location.hostname === 'localhost' 
-        ? 'http://localhost' 
-        : 'https://your-production-domain.com',
+    baseUrl: baseUrl,
     
     // API endpoints
     endpoints: {
-        notifications: '/api/admin/notifications',
-        dashboardStats: '/api/admin/dashboard',
-        inventory: '/api/admin/inventory',
-        users: '/api/admin/users',
-        engagement: '/api/admin/engagement',
-        unreadNotifications: '/api/admin/notifications/unread',
-        products: '/api/admin/products'
+        notifications: `${baseUrl}/api/admin/notifications`,
+        dashboardStats: `${baseUrl}/api/admin/dashboard`,
+        inventory: `${baseUrl}/api/admin/inventory`,
+        users: `${baseUrl}/api/admin/users`,
+        engagement: `${baseUrl}/api/admin/engagement`,
+        unreadNotifications: `${baseUrl}/api/admin/notifications/unread`,
+        products: `${baseUrl}/api/admin/products`
     },
     
     // Request timeout in milliseconds
@@ -53,7 +55,7 @@ async function fetchWithAuth(endpoint, options = {}) {
 
     try {
         const defaultOptions = {
-            credentials: 'include',
+            method: 'GET',
             signal: controller.signal,
             headers: {
                 'Content-Type': 'application/json',
@@ -61,7 +63,7 @@ async function fetchWithAuth(endpoint, options = {}) {
             }
         };
 
-        const url = `${API_CONFIG.baseUrl}${endpoint}`;
+        const url = endpoint.startsWith('http') ? endpoint : `${API_CONFIG.baseUrl}${endpoint}`;
         console.log(`Fetching from: ${url}`); // Debug log
 
         const response = await fetch(url, { ...defaultOptions, ...options });
@@ -82,18 +84,11 @@ async function fetchWithAuth(endpoint, options = {}) {
             }
         }
 
-        const contentType = response.headers.get('content-type');
-        if (!contentType || !contentType.includes('application/json')) {
-            throw new Error('Invalid response format');
-        }
-
         const data = await response.json();
+        console.log('Fetched data:', data); // Debug log
         return data;
-
     } catch (error) {
-        if (error.name === 'AbortError') {
-            throw new Error(`Request timeout after ${API_CONFIG.timeout}ms`);
-        }
+        console.error('Error fetching data:', error);
         throw error;
     } finally {
         clearTimeout(timeoutId);
@@ -105,6 +100,7 @@ async function fetchDashboardData() {
     showLoadingState();
     try {
         const data = await fetchWithAuth(API_CONFIG.endpoints.dashboardStats);
+        console.log('Dashboard data:', data); // Debug log
         if (data.status === 'success') {
             updateDashboard(data.data);
             updateLastUpdated();
@@ -113,9 +109,8 @@ async function fetchDashboardData() {
             throw new Error(data.error || 'Failed to load dashboard data');
         }
     } catch (error) {
-        const errorMessage = error.message || 'Failed to load dashboard data. Please try again later.';
-        showErrorMessage(errorMessage);
         console.error('Error fetching dashboard data:', error);
+        showErrorMessage(error.message);
     } finally {
         hideLoadingState();
     }
@@ -124,13 +119,17 @@ async function fetchDashboardData() {
 async function fetchNotifications() {
     try {
         const data = await fetchWithAuth(API_CONFIG.endpoints.notifications);
+        console.log('Notifications data:', data); // Debug log
         if (data.status === 'success') {
             dashboardState.notifications = data.notifications;
             updateNotificationBadge(data.unreadCount);
             updateNotificationPanel();
+        } else {
+            throw new Error(data.error || 'Failed to load notifications');
         }
     } catch (error) {
         console.error('Error fetching notifications:', error);
+        showErrorMessage(error.message);
     }
 }
 
@@ -244,41 +243,92 @@ function updateDashboard(data) {
 
 function updateCharts(data) {
     const { chartInstances } = dashboardState;
-    
+
+    // Check if data structure is correct
+    if (!data.orderStats || !data.categoryRevenue || !data.topProducts || !data.salesTrend) {
+        console.error('Data structure is incorrect:', data);
+        return;
+    }
+
     // Update Pie Chart
-    chartInstances.pie.data.datasets[0].data = [
-        data.orderStats.dineIn,
-        data.orderStats.takeaway,
-        data.orderStats.delivery
-    ];
-    chartInstances.pie.update();
+    if (chartInstances.pie) {
+        console.log('Updating Pie Chart with data:', data.orderStats); // Debug log
+        chartInstances.pie.data.datasets[0].data = [
+            data.orderStats.dineIn || 0,
+            data.orderStats.takeaway || 0,
+            data.orderStats.delivery || 0
+        ];
+        chartInstances.pie.update();
+    }
 
     // Update Bar Chart
-    chartInstances.bar.data.datasets[0].data = [
-        data.categoryRevenue.puffs,
-        data.categoryRevenue.cakes,
-        data.categoryRevenue.beverages
-    ];
-    chartInstances.bar.update();
+    if (chartInstances.bar) {
+        console.log('Updating Bar Chart with data:', data.categoryRevenue); // Debug log
+        chartInstances.bar.data.datasets[0].data = [
+            data.categoryRevenue.puffs || 0,
+            data.categoryRevenue.cakes || 0,
+            data.categoryRevenue.beverages || 0
+        ];
+        chartInstances.bar.update();
+    }
 
     // Update Product Chart
-    chartInstances.product.data.labels = data.topProducts.map(p => p.name);
-    chartInstances.product.data.datasets[0].data = data.topProducts.map(p => p.units_sold);
-    chartInstances.product.update();
+    if (chartInstances.product) {
+        console.log('Updating Product Chart with data:', data.topProducts); // Debug log
+        chartInstances.product.data.labels = data.topProducts.map(p => p.name);
+        chartInstances.product.data.datasets[0].data = data.topProducts.map(p => p.units_sold || 0);
+        chartInstances.product.update();
+    }
 
     // Update Line Chart based on selected period
-    const trendData = data.salesTrend[dashboardState.currentPeriod];
-    chartInstances.line.data.labels = trendData.labels;
-    chartInstances.line.data.datasets[0].data = trendData.values;
-    chartInstances.line.update();
+    if (chartInstances.line) {
+        const trendData = data.salesTrend[dashboardState.currentPeriod];
+        console.log('Updating Line Chart with trend data:', trendData); // Debug log
+        if (trendData && trendData.labels && trendData.values) {
+            chartInstances.line.data.labels = trendData.labels;
+            chartInstances.line.data.datasets[0].data = trendData.values;
+            chartInstances.line.update();
+        } else {
+            console.error('Sales trend data is missing or incomplete:', trendData);
+        }
+    }
 }
 
 function updateStats(data) {
     console.log('Updating stats with data:', data); // Debugging log
+
+    // Log the orderStats data to ensure it is as expected
+    console.log('Order Stats:', data.orderStats);
+
+    // Ensure that orderStats contains the expected values
+    const dineInOrders = parseInt(data.orderStats.dineIn) || 0;
+    const takeawayOrders = parseInt(data.orderStats.takeaway) || 0;
+    const deliveryOrders = parseInt(data.orderStats.delivery) || 0;
+
+    // Log the individual order counts
+    console.log('Dine-In Orders:', dineInOrders);
+    console.log('Takeaway Orders:', takeawayOrders);
+    console.log('Delivery Orders:', deliveryOrders);
+
+    const totalOrders = dineInOrders + takeawayOrders + deliveryOrders;
+
+    // Log the totalOrders to ensure it is calculated correctly
+    console.log('Total Orders:', totalOrders);
+
+    // Ensure totalOrders is not zero to avoid division by zero
+    const dineInPercentage = totalOrders ? ((dineInOrders / totalOrders) * 100).toFixed(2) : 0;
+    const takeawayPercentage = totalOrders ? ((takeawayOrders / totalOrders) * 100).toFixed(2) : 0;
+    const deliveryPercentage = totalOrders ? ((deliveryOrders / totalOrders) * 100).toFixed(2) : 0;
+
+    // Log the calculated percentages to ensure they are correct
+    console.log('Dine-In Percentage:', dineInPercentage);
+    console.log('Takeaway Percentage:', takeawayPercentage);
+    console.log('Delivery Percentage:', deliveryPercentage);
+
     const statsMap = {
-        'dineInPercentage': `${data.orderStats.dineIn}%`,
-        'takeawayPercentage': `${data.orderStats.takeaway}%`,
-        'deliveryPercentage': `${data.orderStats.delivery}%`,
+        'dineInPercentage': `${dineInPercentage}%`,
+        'takeawayPercentage': `${takeawayPercentage}%`,
+        'deliveryPercentage': `${deliveryPercentage}%`,
         'totalRevenue': formatCurrency(data.revenue_stats.total_revenue),
         'weeklyRevenue': formatCurrency(data.revenue_stats.weekly_revenue),
         'monthlyRevenue': formatCurrency(data.revenue_stats.monthly_revenue),
@@ -298,20 +348,26 @@ function updateStats(data) {
     Object.entries(statsMap).forEach(([id, value]) => {
         const element = document.getElementById(id);
         if (element) {
+            console.log(`Updating element with id: ${id}, value: ${value}`); // Debug log
             element.textContent = value;
             // Add fade-in animation for updated values
             element.classList.add('value-updated');
             setTimeout(() => element.classList.remove('value-updated'), 500);
+        } else {
+            console.warn(`Element with id: ${id} not found`); // Debug log
         }
     });
 }
 
 // Notification Management
 function updateNotificationBadge(count) {
+    console.log(`Updating notification badge with count: ${count}`); // Debug log
     const badge = document.getElementById('notification-badge');
     if (badge) {
         badge.textContent = count;
         badge.style.visibility = count > 0 ? 'visible' : 'hidden';
+    } else {
+        console.warn('Notification badge element not found'); // Debug log
     }
 }
 

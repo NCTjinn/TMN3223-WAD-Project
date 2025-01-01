@@ -89,14 +89,19 @@ class Admin {
     
     private function getOrderStats() {
         $query = "SELECT 
-            SUM(CASE WHEN shipping_method = 'dine_in' THEN 1 ELSE 0 END) as dineIn,
-            SUM(CASE WHEN shipping_method = 'takeaway' THEN 1 ELSE 0 END) as takeaway,
-            SUM(CASE WHEN shipping_method = 'delivery' THEN 1 ELSE 0 END) as delivery
-            FROM Transactions 
-            WHERE transaction_date >= DATE_SUB(CURRENT_DATE, INTERVAL 7 DAY)";
+                    SUM(CASE WHEN shipping_method = 'dine_in' THEN 1 ELSE 0 END) as dineIn,
+                    SUM(CASE WHEN shipping_method = 'takeaway' THEN 1 ELSE 0 END) as takeaway,
+                    SUM(CASE WHEN shipping_method = 'delivery' THEN 1 ELSE 0 END) as delivery
+                  FROM Transactions";
         
         $stmt = $this->conn->query($query);
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        return [
+            'dineIn' => $result['dineIn'] ?? 0,
+            'takeaway' => $result['takeaway'] ?? 0,
+            'delivery' => $result['delivery'] ?? 0
+        ];
     }
     
     private function getCategoryRevenue() {

@@ -1,4 +1,8 @@
 <?php
+// Redirect to publichome.html
+header("Location: publichome.html");
+exit();
+
 // api/index.php - Main API endpoint handler
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');

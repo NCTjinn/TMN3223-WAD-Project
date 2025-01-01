@@ -1,6 +1,30 @@
+-- Drop the database if it exists
+DROP DATABASE IF EXISTS PuffLab;
+
 -- Database creation and selection
 CREATE DATABASE IF NOT EXISTS PuffLab;
 USE PuffLab;
+
+-- Drop tables if they exist
+DROP TABLE IF EXISTS Users;
+DROP TABLE IF EXISTS Product_Categories;
+DROP TABLE IF EXISTS notifications;
+DROP TABLE IF EXISTS Products;
+DROP TABLE IF EXISTS Cart;
+DROP TABLE IF EXISTS Vouchers;
+DROP TABLE IF EXISTS Transactions;
+DROP TABLE IF EXISTS Transaction_Details;
+DROP TABLE IF EXISTS Mission_Templates;
+DROP TABLE IF EXISTS Rewards;
+DROP TABLE IF EXISTS Orders;
+DROP TABLE IF EXISTS FAQ_Categories;
+DROP TABLE IF EXISTS FAQs;
+DROP TABLE IF EXISTS Addresses;
+DROP TABLE IF EXISTS Reviews;
+DROP TABLE IF EXISTS Community_Posts;
+DROP TABLE IF EXISTS User_Favorites;
+DROP TABLE IF EXISTS Admin_Actions_Log;
+DROP TABLE IF EXISTS Sales_Summary;
 
 -- Users table for storing user information
 CREATE TABLE Users (
@@ -24,6 +48,16 @@ CREATE TABLE Product_Categories (
     description TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- Notifications table for user alerts
+CREATE TABLE Notifications (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    message TEXT NOT NULL,
+    is_read BOOLEAN DEFAULT FALSE,
+    status ENUM('unread', 'read') DEFAULT 'unread',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Products table for inventory management

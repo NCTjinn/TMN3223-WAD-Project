@@ -2,7 +2,8 @@
 RewriteEngine On
 
 # Set the base directory if your app is in a subdirectory
-# RewriteBase /your-subdirectory/
+# Uncomment and set the correct subdirectory if needed
+# RewriteBase /TMN3223-WAD-Project/
 
 # Redirect all API requests to admin.php
 RewriteCond %{REQUEST_FILENAME} !-f
@@ -10,7 +11,9 @@ RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^api/admin/(.*)$ api/admin.php [QSA,L]
 
 # Redirect all API requests to auth.php
-RewriteRule ^api/auth/(.*)$ api/auth.php [L,QSA]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^api/auth/(.*)$ api/auth.php [QSA,L]
 
 # Set JSON content type for API responses
 <IfModule mod_headers.c>
