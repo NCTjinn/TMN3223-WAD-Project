@@ -123,7 +123,6 @@ class Admin {
         
         return $revenue;
     }
-    
         private function getSalesTrend($period = 'daily') {
         switch ($period) {
             case 'weekly':
@@ -158,6 +157,14 @@ class Admin {
     
         $stmt = $this->conn->query($query);
         $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+        // Ensure results are not empty and have the expected structure
+        if (empty($results)) {
+            return [
+                'labels' => [],
+                'values' => []
+            ];
+        }
     
         return [
             'labels' => array_column($results, $period === 'daily' ? 'hour' : 'date'),

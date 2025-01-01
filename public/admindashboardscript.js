@@ -193,18 +193,41 @@ function initializeBarChart() {
 function initializeProductChart() {
     const ctx = document.getElementById('productChart').getContext('2d');
     return new Chart(ctx, {
-        type: 'bar', // Change from 'horizontalBar' to 'bar'
+        type: 'bar', // Vertical bar chart
         data: {
-            labels: [],
+            labels: [], // Labels will be empty initially
             datasets: [{
                 label: 'Units Sold',
-                data: [],
-                backgroundColor: CHART_COLORS.accent
+                data: [], // Data will be empty initially
+                backgroundColor: CHART_COLORS.secondary
             }]
         },
         options: {
             ...CHART_OPTIONS,
-            indexAxis: 'y' // Set the indexAxis to 'y' for horizontal bar chart
+            plugins: {
+                legend: {
+                    display: false // Hide the legend
+                },
+                tooltip: {
+                    callbacks: {
+                        title: (tooltipItems) => {
+                            return tooltipItems[0].label; // Show the product name in the tooltip
+                        },
+                        label: (tooltipItem) => {
+                            return `Units Sold: ${tooltipItem.raw}`; // Show the units sold in the tooltip
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    display: false // Show the x-axis labels
+                },
+                y: {
+                    display: false, // Hide the y-axis labels
+                    beginAtZero: true // Ensure the y-axis starts at zero
+                }
+            }
         }
     });
 }
@@ -275,8 +298,9 @@ function updateCharts(data) {
     // Update Product Chart
     if (chartInstances.product) {
         console.log('Updating Product Chart with data:', data.topProducts); // Debug log
-        chartInstances.product.data.labels = data.topProducts.map(p => p.name);
-        chartInstances.product.data.datasets[0].data = data.topProducts.map(p => p.units_sold || 0);
+        const topProducts = data.topProducts.slice(0, 5); // Get only the top 5 products
+        chartInstances.product.data.labels = topProducts.map(p => p.name);
+        chartInstances.product.data.datasets[0].data = topProducts.map(p => p.units_sold || 0);
         chartInstances.product.update();
     }
 
@@ -290,6 +314,10 @@ function updateCharts(data) {
             chartInstances.line.update();
         } else {
             console.error('Sales trend data is missing or incomplete:', trendData);
+            // Fallback to empty data if trendData is missing or incomplete
+            chartInstances.line.data.labels = [];
+            chartInstances.line.data.datasets[0].data = [];
+            chartInstances.line.update();
         }
     }
 }
