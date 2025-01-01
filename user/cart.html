@@ -60,56 +60,69 @@
     <!-- Cart Page -->
     <div class="container">
         <div class="cart-header">
-            <h1>Cart</h1>
-            <a href="menu.html" class="continue-browsing">Continue browsing</a>
+        <h1>Cart</h1>
+        <u><a href="menu.html" class="continue-browsing ">Continue browsing</a></u>
+    </div>
+
+    <div class="cart-table">
+        <div class="cart-table-header">
+            <span>Product</span>
+            <span>Price</span>
+            <span>Quantity</span>
+            <span>Subtotal</span>
         </div>
-    
-        <div class="cart-table">
-            <div class="cart-table-header">
-                <span>Product</span>
-                <span>Price</span>
-                <span>Quantity</span>
-                <span>Subtotal</span>
-            </div>
-    
-            <div class="cart-item">
-                <div class="product-info">
-                    <div class="product-image"></div>
-                    <div>
-                        <h3>Product Name</h3>
-                        <p>Product Description</p>
-                    </div>
-                </div>
-                <span>RM XX.XX</span>
-                <input type="number" min="1" value="1">
-                <span>RM XX.XX</span>
-            </div>
-    
-            <div class="cart-total">
-                <span>Total: RM XX.XX</span>
-            </div>
+
+        <div id="cartItems">
+            <!-- Cart items will be populated by JavaScript -->
         </div>
-    
-        <div class="delivery-section">
-            <h2>Estimate Delivery Fee</h2>
-            <input type="text" class="address-input" placeholder="Enter your address">
-    
-            <div class="delivery-options">
-                <div class="delivery-option">
-                    <h3>Pick Up</h3>
-                    <input type="date" class="time-input">
-                    <input type="time" class="time-input">
-                </div>
-                <div class="delivery-option">
-                    <h3>Delivery</h3>
-                    <input type="date" class="time-input">
-                    <input type="time" class="time-input">
-                </div>
-            </div>
-    
-            <a href="checkout.html" class="checkout-button">Check Out</a>
+
+        <div class="cart-total">
+            Total: <span id="cartTotal">RM 0.00</span>
         </div>
     </div>
+
+    <div class="delivery-section">
+        <h2>Estimate Delivery Fee</h2>
+        <div class="address-input-container">
+            <i class="fas fa-map-marker-alt"></i>
+            <input type="text" id="addressInput" class="address-input" placeholder="Enter your address">
+        </div>
+        <div id="deliveryFeeEstimate" class="delivery-fee-estimate"></div>
+
+        <div class="delivery-options">
+            <div class="option-card" data-option="pickup">
+                <i class="fas fa-store"></i>
+                <h3>Pick Up</h3>
+                <div class="time-inputs hidden">
+                    <input type="date" class="date-input">
+                    <select class="time-input">
+                        <option value="">Select time</option>
+                        <option value="now">Now</option>
+                        <option value="9:00">9:00 AM</option>
+                        <option value="10:00">10:00 AM</option>
+                        <option value="11:00">11:00 AM</option>
+                    </select>
+                </div>
+            </div>
+            <div class="option-card" data-option="delivery">
+                <i class="fas fa-truck"></i>
+                <h3>Delivery</h3>
+                <div class="time-inputs hidden">
+                    <input type="date" class="date-input">
+                    <select class="time-input">
+                        <option value="">Select time</option>
+                        <option value="now">Now</option>
+                        <option value="9:00">9:00 AM</option>
+                        <option value="10:00">10:00 AM</option>
+                        <option value="11:00">11:00 AM</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <button id="checkoutButton" class="checkout-button">Check Out</button>
+    </div>
+</div>
     <script src="checkout-js.js"></script>
     <footer class="footer">
         <div class="footer-left">
