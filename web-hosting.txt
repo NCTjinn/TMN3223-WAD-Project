@@ -3,3 +3,9 @@ https://www.infinityfree.com/
 puff-lab.free.nf
 username: if0_37979402
 password: tmn3223ncnhcds
+
+MySQL Username if0_37979402 
+MySQL Password tmn3223ncnhcds 
+MySQL Database Name if0_37979402_pufflab 
+MySQL Hostname sql112.infinityfree.com 
+MySQL Port (optional) 3306
