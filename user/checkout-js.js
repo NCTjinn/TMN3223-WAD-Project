@@ -27,7 +27,8 @@ const cart = {
                 </div>
                 <span>RM ${item.price.toFixed(2)}</span>
                 <input type="number" value="${item.quantity}" min="1" 
-                    onchange="cart.updateQuantity(${item.id}, this.value)">
+                    onchange="cart.updateQuantity(${item.id}, this.value)"
+                    style="width: 70px; text-align: center;">
                 <span>RM ${(item.price * item.quantity).toFixed(2)}</span>
             </div>
         `).join('');
