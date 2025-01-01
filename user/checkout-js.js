@@ -151,3 +151,67 @@ function initializeTrackingPage() {
         `).join('');
     }
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize cart display
+    cart.updateCartDisplay();
+
+    // Handle delivery fee estimation
+    const addressInput = document.getElementById('addressInput');
+    const deliveryFeeEstimate = document.getElementById('deliveryFeeEstimate');
+    
+    addressInput.addEventListener('input', function() {
+        const fee = calculateDeliveryFee(this.value);
+        if (fee > 0) {
+            deliveryFeeEstimate.textContent = `Estimated delivery fee: RM ${fee.toFixed(2)}`;
+        } else {
+            deliveryFeeEstimate.textContent = '';
+        }
+    });
+
+    // Handle delivery options
+    const optionCards = document.querySelectorAll('.option-card');
+    let selectedOption = null;
+
+    optionCards.forEach(card => {
+        card.addEventListener('click', function() {
+            // Remove selection from other cards
+            optionCards.forEach(c => {
+                c.classList.remove('selected');
+                c.querySelector('.time-inputs').classList.add('hidden');
+            });
+
+            // Select this card
+            this.classList.add('selected');
+            this.querySelector('.time-inputs').classList.remove('hidden');
+            selectedOption = this.dataset.option;
+        });
+    });
+
+    // Handle checkout
+    const checkoutButton = document.getElementById('checkoutButton');
+    checkoutButton.addEventListener('click', function() {
+        if (!selectedOption) {
+            alert('Please select a delivery option');
+            return;
+        }
+
+        const selectedCard = document.querySelector(`.option-card[data-option="${selectedOption}"]`);
+        const dateInput = selectedCard.querySelector('.date-input').value;
+        const timeInput = selectedCard.querySelector('.time-input').value;
+
+        if (!dateInput || !timeInput) {
+            alert('Please select date and time');
+            return;
+        }
+
+        // Check if user is logged in (implement your own logic)
+        const isLoggedIn = false; // Replace with actual check
+        window.location.href = isLoggedIn ? 'checkout.html' : 'login.html';
+    });
+});
+
+function calculateDeliveryFee(address) {
+    // Simple distance-based calculation (replace with actual logic)
+    return address.length > 0 ? 5.00 : 0;
+}
