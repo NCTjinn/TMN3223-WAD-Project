@@ -1,389 +1,516 @@
-const API_ENDPOINTS = {
-    notifications: '/api/admin/notifications',
-    dashboardStats: '/api/admin/dashboard',
-    inventory: '/api/admin/inventory',
-    users: '/api/admin/users',
-    engagement: '/api/admin/engagement'
-  };
-  
-  async function fetchDashboardData() {
+// Constants and Configuration
+const API_CONFIG = {
+    // Base URL - change this based on your environment
+    baseUrl: window.location.hostname === 'localhost' 
+        ? 'http://localhost' 
+        : 'https://your-production-domain.com',
+    
+    // API endpoints
+    endpoints: {
+        notifications: '/api/admin/notifications',
+        dashboardStats: '/api/admin/dashboard',
+        inventory: '/api/admin/inventory',
+        users: '/api/admin/users',
+        engagement: '/api/admin/engagement',
+        unreadNotifications: '/api/admin/notifications/unread',
+        products: '/api/admin/products'
+    },
+    
+    // Request timeout in milliseconds
+    timeout: 5000
+};
+
+const CHART_COLORS = {
+    primary: '#6c7a5d',
+    secondary: '#C2C9AD',
+    accent: '#ff5722',
+    background: '#F2EDD3',
+    text: '#1F1F1F'
+};
+
+const CHART_OPTIONS = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+        legend: {
+            position: 'bottom'
+        }
+    }
+};
+
+// State Management
+let dashboardState = {
+    currentPeriod: 'daily',
+    notifications: [],
+    lastUpdate: new Date(),
+    chartInstances: {}
+};
+
+// Enhanced fetch function with timeout and better error handling
+async function fetchWithAuth(endpoint, options = {}) {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), API_CONFIG.timeout);
+
     try {
-      const response = await fetch(API_ENDPOINTS.dashboardStats);
-      const data = await response.json();
-      
-      if (data.status === 'success') {
-        updateCharts(data.data);
-        updateStats(data.data);
-      }
+        const defaultOptions = {
+            credentials: 'include',
+            signal: controller.signal,
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        };
+
+        const url = `${API_CONFIG.baseUrl}${endpoint}`;
+        console.log(`Fetching from: ${url}`); // Debug log
+
+        const response = await fetch(url, { ...defaultOptions, ...options });
+
+        if (!response.ok) {
+            // Handle different HTTP error codes
+            switch (response.status) {
+                case 404:
+                    throw new Error(`API endpoint not found: ${endpoint}`);
+                case 401:
+                    throw new Error('Authentication required');
+                case 403:
+                    throw new Error('Access forbidden');
+                case 500:
+                    throw new Error('Internal server error');
+                default:
+                    throw new Error(`HTTP error! status: ${response.status}`);
+            }
+        }
+
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            throw new Error('Invalid response format');
+        }
+
+        const data = await response.json();
+        return data;
+
     } catch (error) {
-      console.error('Error fetching dashboard data:', error);
+        if (error.name === 'AbortError') {
+            throw new Error(`Request timeout after ${API_CONFIG.timeout}ms`);
+        }
+        throw error;
+    } finally {
+        clearTimeout(timeoutId);
     }
-  }
-  
-  function updateCharts(data) {
-    // Update Pie Chart
-    pieChart.data.datasets[0].data = [
-      data.orderStats.dineIn,
-      data.orderStats.takeaway,
-      data.orderStats.delivery
-    ];
-    pieChart.update();
-  
-    // Update Bar Chart
-    barChart.data.datasets[0].data = [
-      data.categoryRevenue.puffs,
-      data.categoryRevenue.cakes,
-      data.categoryRevenue.beverages
-    ];
-    barChart.update();
-  
-    // Update Product Chart
-    productChart.data.datasets[0].data = data.topProducts.map(product => product.units_sold);
-    productChart.data.labels = data.topProducts.map(product => product.name);
-    productChart.update();
-  
-    // Update Line Chart
-    lineChart.data.datasets[0].data = data.salesTrend.values;
-    lineChart.data.labels = data.salesTrend.labels;
-    lineChart.update();
-  }
-  
-  function updateStats(data) {
-    document.getElementById('dineInPercentage').textContent = `${data.orderStats.dineIn}%`;
-    document.getElementById('takeawayPercentage').textContent = `${data.orderStats.takeaway}%`;
-    document.getElementById('deliveryPercentage').textContent = `${data.orderStats.delivery}%`;
+}
 
-    document.getElementById('totalRevenue').textContent = `$${data.revenue_stats.total_revenue}`;
-    document.getElementById('topCategory').textContent = data.topCategory.name;
-    document.getElementById('topCategoryRevenue').textContent = `$${data.topCategory.revenue}`;
-
-    document.getElementById('topProduct').textContent = data.topProducts[0].name;
-    document.getElementById('topProductUnits').textContent = data.topProducts[0].units_sold;
-    document.getElementById('totalCustomers').textContent = data.total_customers;
-
-    document.getElementById('peakSalesDay').textContent = data.salesTrend.peakDay;
-    document.getElementById('totalSalesRevenue').textContent = `$${data.salesTrend.totalRevenue}`;
-    document.getElementById('growthPercentage').textContent = `${data.salesTrend.growth}%`;
-  }
-  
-  async function fetchNotifications() {
+// API Handlers
+async function fetchDashboardData() {
+    showLoadingState();
     try {
-      const response = await fetch(API_ENDPOINTS.notifications);
-      const data = await response.json();
-      
-      if (data.status === 'success') {
-        updateNotificationBadge(data.unreadCount);
-        notifications = data.notifications;
-        renderNotifications();
-      }
-    } catch (error) {
-      console.error('Error fetching notifications:', error);
-    }
-  }
-
-document.addEventListener('DOMContentLoaded', function () {
-    const profileIcon = document.getElementById('profile-icon');
-    const profileDropdown = document.getElementById('dropdown-menu');
-    const notificationIcon = document.querySelector('.fa-bell');
-    const notificationDropdown = document.createElement('div');
-
-    // Dynamically create notification dropdown
-    notificationDropdown.className = 'dropdown-menu';
-    notificationDropdown.id = 'notification-dropdown';
-
-    // Notifications data
-    const notifications = [
-        { message: "New user registered", isRead: false },
-        { message: "System backup completed", isRead: true },
-        { message: "New comment on blog post", isRead: false },
-    ];
-
-    // Render notifications
-    function renderNotifications() {
-        notificationDropdown.innerHTML = `
-            <div class="dropdown-header">Notifications</div>
-            <button class="mark-all-btn">Mark All as Read</button>
-        `;
-
-        notifications.forEach((notification, index) => {
-            const unreadClass = notification.isRead
-                ? ''
-                : `<span class="unread-indicator"></span>`;
-            notificationDropdown.innerHTML += `
-                <div class="notification-item" data-index="${index}">
-                    ${unreadClass}
-                    <div class="notification-text">
-                        <span class="notification-title">${notification.message}</span>
-                        <span class="notification-time">5 mins ago</span>
-                    </div>
-                </div>
-            `;
-        });
-
-        const markAllBtn = notificationDropdown.querySelector('.mark-all-btn');
-        markAllBtn.addEventListener('click', () => {
-            notifications.forEach((n) => (n.isRead = true));
-            renderNotifications();
-        });
-
-        const notificationItems = notificationDropdown.querySelectorAll('.notification-item');
-        notificationItems.forEach((item) => {
-            item.addEventListener('click', (e) => {
-                const index = e.currentTarget.getAttribute('data-index');
-                notifications[index].isRead = true;
-                renderNotifications();
-            });
-        });
-    }
-
-    // Append notification dropdown to the body
-    document.body.appendChild(notificationDropdown);
-
-    // Position notification dropdown
-    function positionNotificationDropdown() {
-        const rect = notificationIcon.getBoundingClientRect();
-        let dropdownTop = rect.bottom + window.scrollY + 10; // Add spacing
-        let dropdownLeft = rect.left;
-
-        if (dropdownTop + 300 > window.innerHeight + window.scrollY) {
-            dropdownTop = rect.top + window.scrollY - 300 - 10;
-        }
-        if (dropdownLeft + 300 > window.innerWidth) {
-            dropdownLeft = window.innerWidth - 310;
-        }
-
-        notificationDropdown.style.position = 'absolute';
-        notificationDropdown.style.top = `${dropdownTop}px`;
-        notificationDropdown.style.left = `${dropdownLeft}px`;
-    }
-
-    // Toggle notification dropdown
-    notificationIcon.addEventListener('click', function (e) {
-        e.stopPropagation();
-        const isActive = notificationDropdown.classList.contains('active');
-        closeAllDropdowns();
-        if (!isActive) {
-            positionNotificationDropdown();
-            notificationDropdown.classList.add('active');
-        }
-    });
-
-    // Toggle profile dropdown
-    profileIcon.addEventListener('click', function (e) {
-        e.stopPropagation();
-        const isActive = profileDropdown.classList.contains('active');
-        closeAllDropdowns();
-        if (!isActive) {
-            profileDropdown.classList.add('active');
-        }
-    });
-
-    // Close all dropdowns when clicking outside
-    document.addEventListener('click', function (e) {
-        if (
-            !e.target.closest('.user-dropdown') &&
-            !e.target.closest('.icon') &&
-            !e.target.closest('#notification-dropdown')
-        ) {
-            closeAllDropdowns();
-        }
-    });
-
-    // Helper function to close all dropdowns
-    function closeAllDropdowns() {
-        notificationDropdown.classList.remove('active');
-        profileDropdown.classList.remove('active');
-    }
-
-    // Update notification badge
-    function updateNotificationBadge(count) {
-        const badge = document.getElementById('notification-badge');
-        
-        if (count > 0) {
-            badge.textContent = count; // Update badge number
-            badge.style.visibility = 'visible'; // Show the badge
+        const data = await fetchWithAuth(API_CONFIG.endpoints.dashboardStats);
+        if (data.status === 'success') {
+            updateDashboard(data.data);
+            updateLastUpdated();
+            hideErrorMessage();
         } else {
-            badge.style.visibility = 'hidden'; // Hide the badge
+            throw new Error(data.error || 'Failed to load dashboard data');
         }
+    } catch (error) {
+        const errorMessage = error.message || 'Failed to load dashboard data. Please try again later.';
+        showErrorMessage(errorMessage);
+        console.error('Error fetching dashboard data:', error);
+    } finally {
+        hideLoadingState();
     }
+}
+
+async function fetchNotifications() {
+    try {
+        const data = await fetchWithAuth(API_CONFIG.endpoints.notifications);
+        if (data.status === 'success') {
+            dashboardState.notifications = data.notifications;
+            updateNotificationBadge(data.unreadCount);
+            updateNotificationPanel();
+        }
+    } catch (error) {
+        console.error('Error fetching notifications:', error);
+    }
+}
+
+async function fetchProductIds() {
+    try {
+        const data = await fetchWithAuth(API_CONFIG.endpoints.products);
+        if (data.status === 'success') {
+            updateProductIdsList(data.data);
+        }
+    } catch (error) {
+        console.error('Error fetching product IDs:', error);
+    }
+}
+
+// Chart Initialization and Updates
+function initializeCharts() {
+    const charts = {
+        pie: initializePieChart(),
+        bar: initializeBarChart(),
+        product: initializeProductChart(),
+        line: initializeLineChart()
+    };
     
-    // Simulate fetching unread notifications
-    function fetchNotifications() {
-        // Replace this with your actual API call
-        fetch('/api/notifications/unread')
-            .then((response) => response.json())
-            .then((data) => {
-                const unreadCount = data.unreadCount || 0; // Default to 0 if no unreadCount is present
-                updateNotificationBadge(unreadCount);
-            })
-            .catch(console.error);
-    }
-    
-    // Call the function periodically or on page load
-    fetchNotifications();
-    setInterval(fetchNotifications, 60000); // Check every 60 seconds
+    dashboardState.chartInstances = charts;
+}
 
-    // Initial render of notifications
-    renderNotifications();
-
-    // Update "Last Updated" timestamp
-    function updateLastUpdated() {
-        const lastUpdatedElement = document.getElementById('lastUpdated');
-        const now = new Date();
-        const formattedTime = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        lastUpdatedElement.textContent = `${formattedTime}`;
-    }
-
-    updateLastUpdated(); // Call initially
-    setInterval(updateLastUpdated, 300000); // Update every 5 minutes
-
-    // Pie Chart
-    const ctxPie = document.getElementById('pieChart').getContext('2d');
-    const pieChart = new Chart(ctxPie, {
-        type: 'doughnut',
+function initializePieChart() {
+    const ctx = document.getElementById('pieChart').getContext('2d');
+    return new Chart(ctx, {
+        type: 'pie',
         data: {
             labels: ['Dine-In', 'Takeaway', 'Delivery'],
             datasets: [{
-                data: [50, 30, 20],
-                backgroundColor: ['#6c7a5d', '#ff5722', '#c2c9ad']
+                data: [0, 0, 0],
+                backgroundColor: Object.values(CHART_COLORS).slice(0, 3)
             }]
         },
         options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    position: 'top'
-                }
-            }
+            ...CHART_OPTIONS,
+            cutout: '50%'
         }
     });
+}
 
-    // Bar Chart
-    const ctxBar = document.getElementById('barChart').getContext('2d');
-    const barChart = new Chart(ctxBar, {
+function initializeBarChart() {
+    const ctx = document.getElementById('barChart').getContext('2d');
+    return new Chart(ctx, {
         type: 'bar',
         data: {
             labels: ['Puffs', 'Cakes', 'Beverages'],
             datasets: [{
-                label: 'Revenue ($)',
-                data: [1200, 800, 600],
-                backgroundColor: ['rgba(255,87,34,0.8)', 'rgba(194,201,173,0.8)', 'rgba(108,122,93,0.8)']
+                label: 'Revenue',
+                data: [0, 0, 0],
+                backgroundColor: CHART_COLORS.primary
             }]
         },
-        options: {
-            responsive: true
-        }
+        options: CHART_OPTIONS
     });
+}
 
-    // Product Performance Chart
-    const ctxProduct = document.getElementById('productChart').getContext('2d');
-    const productChart = new Chart(ctxProduct, {
-        type: 'bar',
+function initializeProductChart() {
+    const ctx = document.getElementById('productChart').getContext('2d');
+    return new Chart(ctx, {
+        type: 'bar', // Change from 'horizontalBar' to 'bar'
         data: {
-            labels: ['Durian Puff', 'Chocolate Cake', 'Milk Tea'],
+            labels: [],
             datasets: [{
                 label: 'Units Sold',
-                data: [850, 600, 400],
-                backgroundColor: ['#ff5722', '#c2c9ad', '#6c7a5d']
+                data: [],
+                backgroundColor: CHART_COLORS.accent
             }]
         },
         options: {
-            indexAxis: 'y', /* Horizontal bar chart */
-            responsive: true
+            ...CHART_OPTIONS,
+            indexAxis: 'y' // Set the indexAxis to 'y' for horizontal bar chart
         }
     });
+}
 
-    // Line Chart with Filled Area
-    const ctxLine = document.getElementById('lineChart').getContext('2d');
-    const gradient = ctxLine.createLinearGradient(0, 0, 0, 400);
-    gradient.addColorStop(0, 'rgba(108, 122, 93, 0.4)');
-    gradient.addColorStop(1, 'rgba(108, 122, 93, 0)');
-
-    const lineChart = new Chart(ctxLine, {
+function initializeLineChart() {
+    const ctx = document.getElementById('lineChart').getContext('2d');
+    return new Chart(ctx, {
         type: 'line',
         data: {
-            labels: ['8am', '10am', '12pm', '2pm', '4pm', '6pm', '8pm'],
+            labels: [],
             datasets: [{
-                label: 'Daily Sales',
-                data: [100, 215, 150, 308, 257, 420, 334],
-                borderColor: '#6c7a5d',
-                backgroundColor: gradient,
-                fill: true,
-                tension: 0.4 // Adds curvature
+                label: 'Sales',
+                data: [],
+                borderColor: CHART_COLORS.primary,
+                tension: 0.4
             }]
         },
         options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    display: false
+            ...CHART_OPTIONS,
+            scales: {
+                y: {
+                    beginAtZero: true
                 }
             }
         }
     });
+}
 
-    // Sales Buttons
-    const salesButtons = document.querySelectorAll('.sales-btn');
-    salesButtons.forEach(button => {
+// UI Updates
+function updateDashboard(data) {
+    console.log('Updating dashboard with data:', data); // Debugging log
+    updateCharts(data);
+    updateStats(data);
+    updateLastUpdated();
+}
+
+function updateCharts(data) {
+    const { chartInstances } = dashboardState;
+    
+    // Update Pie Chart
+    chartInstances.pie.data.datasets[0].data = [
+        data.orderStats.dineIn,
+        data.orderStats.takeaway,
+        data.orderStats.delivery
+    ];
+    chartInstances.pie.update();
+
+    // Update Bar Chart
+    chartInstances.bar.data.datasets[0].data = [
+        data.categoryRevenue.puffs,
+        data.categoryRevenue.cakes,
+        data.categoryRevenue.beverages
+    ];
+    chartInstances.bar.update();
+
+    // Update Product Chart
+    chartInstances.product.data.labels = data.topProducts.map(p => p.name);
+    chartInstances.product.data.datasets[0].data = data.topProducts.map(p => p.units_sold);
+    chartInstances.product.update();
+
+    // Update Line Chart based on selected period
+    const trendData = data.salesTrend[dashboardState.currentPeriod];
+    chartInstances.line.data.labels = trendData.labels;
+    chartInstances.line.data.datasets[0].data = trendData.values;
+    chartInstances.line.update();
+}
+
+function updateStats(data) {
+    console.log('Updating stats with data:', data); // Debugging log
+    const statsMap = {
+        'dineInPercentage': `${data.orderStats.dineIn}%`,
+        'takeawayPercentage': `${data.orderStats.takeaway}%`,
+        'deliveryPercentage': `${data.orderStats.delivery}%`,
+        'totalRevenue': formatCurrency(data.revenue_stats.total_revenue),
+        'weeklyRevenue': formatCurrency(data.revenue_stats.weekly_revenue),
+        'monthlyRevenue': formatCurrency(data.revenue_stats.monthly_revenue),
+        'topCategory': data.topCategory.name,
+        'topCategoryRevenue': formatCurrency(data.topCategory.revenue),
+        'topProduct': data.topProducts[0]?.name || 'N/A',
+        'topProductUnits': formatNumber(data.topProducts[0]?.units_sold || 0),
+        'topProductRevenue': formatCurrency(data.topProducts[0]?.revenue || 0),
+        'totalCustomers': formatNumber(data.total_customers),
+        'averageOrderValue': formatCurrency(data.average_order_value),
+        'totalOrders': formatNumber(data.total_orders),
+        'periodRevenue': formatCurrency(data.period_stats?.revenue || 0),
+        'avgDailyOrders': formatNumber(data.period_stats?.avg_daily_orders || 0),
+        'growthRate': formatPercentage(data.period_stats?.growth_rate || 0)
+    };
+
+    Object.entries(statsMap).forEach(([id, value]) => {
+        const element = document.getElementById(id);
+        if (element) {
+            element.textContent = value;
+            // Add fade-in animation for updated values
+            element.classList.add('value-updated');
+            setTimeout(() => element.classList.remove('value-updated'), 500);
+        }
+    });
+}
+
+// Notification Management
+function updateNotificationBadge(count) {
+    const badge = document.getElementById('notification-badge');
+    if (badge) {
+        badge.textContent = count;
+        badge.style.visibility = count > 0 ? 'visible' : 'hidden';
+    }
+}
+
+function updateNotificationPanel() {
+    const container = document.getElementById('notifications-list');
+    if (!container) return;
+
+    container.innerHTML = dashboardState.notifications
+        .map(notification => `
+            <div class="notification-item ${notification.status}" data-id="${notification.id}">
+                <div class="notification-content">
+                    <span class="notification-title">${notification.title}</span>
+                    <span class="notification-message">${notification.message}</span>
+                    <span class="notification-time">${formatTimeAgo(notification.timestamp)}</span>
+                </div>
+                <button class="mark-read-btn" data-id="${notification.id}">
+                    <i class="fas fa-check"></i>
+                </button>
+            </div>
+        `)
+        .join('');
+
+    attachNotificationHandlers();
+}
+
+// Event Handlers
+function attachEventListeners() {
+    // Period Selection Buttons
+    document.querySelectorAll('.sales-btn').forEach(button => {
         button.addEventListener('click', () => {
-            salesButtons.forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.sales-btn').forEach(btn => btn.classList.remove('active'));
             button.classList.add('active');
-            const period = button.getAttribute('data-period');
-
-            const data = {
-                daily: {
-                    labels: ['8am', '10am', '12pm', '2pm', '4pm', '6pm', '8pm'],
-                    data: [100, 215, 150, 308, 257, 420, 334]
-                },
-                weekly: {
-                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-                    data: [520, 550, 710, 850, 930, 1050, 1120]
-                },
-                monthly: {
-                    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
-                    data: [3000, 3200, 3100, 3300]
-                }
-            };
-
-            lineChart.data.labels = data[period].labels;
-            lineChart.data.datasets[0].data = data[period].data;
-            lineChart.update();
+            dashboardState.currentPeriod = button.dataset.period;
+            fetchDashboardData();
         });
     });
 
-    // Replace setInterval calls with real API calls
-    fetchDashboardData();
-    fetchNotifications();
+    // Notification Panel Toggle
+    const notificationIcon = document.querySelector('.notification-icon');
+    const notificationPanel = document.getElementById('notification-panel');
     
-    setInterval(fetchDashboardData, 30000); // Update every 30 seconds
-    setInterval(fetchNotifications, 60000); // Update every minute
+    if (notificationIcon && notificationPanel) {
+        notificationIcon.addEventListener('click', () => {
+            notificationPanel.classList.toggle('active');
+        });
+    }
 
-    // Fake Real-Time Data Update (Increment Only Latest Data)
-    setInterval(() => {
-        // Increment Pie Chart logically
-        pieChart.data.datasets[0].data = pieChart.data.datasets[0].data.map((value) => value + Math.random() * 2);
-        pieChart.update();
+    // User Dropdown Toggle
+    const profileIcon = document.getElementById('profile-icon');
+    const dropdownMenu = document.getElementById('dropdown-menu');
+    
+    if (profileIcon && dropdownMenu) {
+        profileIcon.addEventListener('click', (e) => {
+            e.stopPropagation();
+            dropdownMenu.classList.toggle('active');
+        });
 
-        // Increment Bar Chart logically
-        barChart.data.datasets[0].data = barChart.data.datasets[0].data.map((value) => value + Math.random() * 5);
-        barChart.update();
+        // Close dropdown when clicking outside
+        document.addEventListener('click', () => {
+            dropdownMenu.classList.remove('active');
+        });
+    }
 
-        // Increment Product Chart logically
-        productChart.data.datasets[0].data[0] += Math.random() * 2; // Only increment "Durian Puff" for realism
-        productChart.update();
+    // Clear All Notifications
+    const clearBtn = document.getElementById('clear-notifications');
+    if (clearBtn) {
+        clearBtn.addEventListener('click', async () => {
+            try {
+                await fetchWithAuth(`${API_CONFIG.endpoints.notifications}/clear`, { method: 'POST' });
+                dashboardState.notifications = [];
+                updateNotificationPanel();
+                updateNotificationBadge(0);
+            } catch (error) {
+                console.error('Error clearing notifications:', error);
+            }
+        });
+    }
+}
 
-        // Increment only latest point in Line Chart
-        const lastIndex = lineChart.data.datasets[0].data.length - 1;
-        lineChart.data.datasets[0].data[lastIndex] += Math.random() * 20;
-        lineChart.update();
-    }, 10000); // Update every 10 seconds
-});
+function attachNotificationHandlers() {
+    document.querySelectorAll('.mark-read-btn').forEach(button => {
+        button.addEventListener('click', async (e) => {
+            e.stopPropagation();
+            const notificationId = button.dataset.id;
+            try {
+                await fetchWithAuth(`${API_CONFIG.endpoints.notifications}/${notificationId}/read`, { method: 'POST' });
+                const notification = dashboardState.notifications.find(n => n.id === notificationId);
+                if (notification) {
+                    notification.status = 'read';
+                    updateNotificationPanel();
+                    updateNotificationBadge(dashboardState.notifications.filter(n => n.status === 'unread').length);
+                }
+            } catch (error) {
+                console.error('Error marking notification as read:', error);
+            }
+        });
+    });
+}
 
-// Add to admindashboardscript.js
+// Utility Functions
+function formatCurrency(value) {
+    return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD'
+    }).format(value);
+}
+
+function formatNumber(value) {
+    return new Intl.NumberFormat('en-US').format(value);
+}
+
+function formatPercentage(value) {
+    return `${value >= 0 ? '+' : ''}${value.toFixed(1)}%`;
+}
+
+function formatTimeAgo(timestamp) {
+    const date = new Date(timestamp);
+    const now = new Date();
+    const seconds = Math.floor((now - date) / 1000);
+    
+    const intervals = {
+        year: 31536000,
+        month: 2592000,
+        week: 604800,
+        day: 86400,
+        hour: 3600,
+        minute: 60
+    };
+
+    for (const [unit, secondsInUnit] of Object.entries(intervals)) {
+        const interval = Math.floor(seconds / secondsInUnit);
+        if (interval >= 1) {
+            return `${interval} ${unit}${interval === 1 ? '' : 's'} ago`;
+        }
+    }
+    return 'Just now';
+}
+
+function updateLastUpdated() {
+    const element = document.getElementById('lastUpdated');
+    if (element) {
+        dashboardState.lastUpdate = new Date();
+        element.textContent = dashboardState.lastUpdate.toLocaleTimeString();
+    }
+}
+
+function updateProductIdsList(products) {
+    const productIdsList = document.getElementById('productIdsList');
+    if (!productIdsList) return;
+
+    productIdsList.innerHTML = products.map(product => `<li>${product.product_id}</li>`).join('');
+}
+
+// Loading State Management
 function showLoadingState() {
-    document.querySelector('.dashboard-content').classList.add('loading');
+    const overlay = document.getElementById('loading-overlay');
+    if (overlay) {
+        overlay.classList.add('active');
+    }
 }
 
 function hideLoadingState() {
-    document.querySelector('.dashboard-content').classList.remove('loading');
+    const overlay = document.getElementById('loading-overlay');
+    if (overlay) {
+        overlay.classList.remove('active');
+    }
 }
+
+// Error Handling
+function showErrorMessage(message) {
+    const errorElement = document.getElementById('error-message');
+    if (errorElement) {
+        errorElement.textContent = message;
+        errorElement.classList.add('active');
+    }
+}
+
+function hideErrorMessage() {
+    const errorElement = document.getElementById('error-message');
+    if (errorElement) {
+        errorElement.classList.remove('active');
+    }
+}
+
+// Initialize Dashboard
+document.addEventListener('DOMContentLoaded', () => {
+    initializeCharts();
+    attachEventListeners();
+    fetchDashboardData();
+    fetchNotifications();
+    fetchProductIds();
+    
+    // Set up polling intervals
+    const intervals = [
+        { fn: fetchDashboardData, ms: 30000 },  // 30 seconds
+        { fn: fetchNotifications, ms: 60000 }    // 1 minute
+    ];
+    
+    intervals.forEach(({fn, ms}) => {
+        setInterval(fn, ms);
+    });
+});

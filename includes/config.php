@@ -1,4 +1,6 @@
 <?php
+session_start();
+
 // config.php - Database connection and core configuration
 class Database {
     private $host = "localhost";
@@ -28,3 +30,8 @@ define('SECRET_KEY', 'your_secret_key_here'); // Used for JWT tokens
 define('UPLOAD_PATH', '../uploads/');         // Path for file uploads
 define('ALLOWED_IMAGE_TYPES', ['image/jpeg', 'image/png', 'image/gif']);
 define('MAX_FILE_SIZE', 5 * 1024 * 1024);    // 5MB max file size
+
+// Database Configuration
+$database = new Database();
+$conn = $database->getConnection();
+?>

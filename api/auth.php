@@ -44,3 +44,4 @@ try {
     http_response_code(500); // Internal Server Error
     echo json_encode(['error' => $e->getMessage()]);
 }
+?>

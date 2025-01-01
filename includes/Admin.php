@@ -6,8 +6,8 @@ class Admin {
     private $conn;
 
     public function __construct() {
-        $database = new Database();
-        $this->conn = $database->getConnection();
+        global $conn;
+        $this->conn = $conn;
     }
 
     private function getRecentNotifications() {
@@ -23,23 +23,44 @@ class Admin {
             $categoryRevenue = $this->getCategoryRevenue();
             $salesTrend = $this->getSalesTrend();
             $topProducts = $this->getTopProducts(5);
+            $shippingMethodStats = $this->getShippingMethodStats();
             
+            $data = [
+                'total_orders' => $this->getTotalOrders(),
+                'revenue_stats' => $this->getRevenueStats(),
+                'orderStats' => $orderStats,
+                'categoryRevenue' => $categoryRevenue,
+                'salesTrend' => $salesTrend,
+                'topProducts' => $topProducts,
+                'total_customers' => $this->getTotalUsers(),
+                'topCategory' => $this->getTopCategory($categoryRevenue),
+                'shippingMethodStats' => $shippingMethodStats,
+                'average_order_value' => $this->getAverageOrderValue()
+            ];
+
+            // Debugging log
+            error_log('Dashboard stats data: ' . print_r($data, true));
+
             return [
                 'status' => 'success',
-                'data' => [
-                    'total_orders' => $this->getTotalOrders(),
-                    'revenue_stats' => $this->getRevenueStats(),
-                    'orderStats' => $orderStats,
-                    'categoryRevenue' => $categoryRevenue,
-                    'salesTrend' => $salesTrend,
-                    'topProducts' => $topProducts,
-                    'total_customers' => $this->getTotalUsers(),
-                    'topCategory' => $this->getTopCategory($categoryRevenue)
-                ]
+                'data' => $data
             ];
         } catch(PDOException $e) {
             return ['status' => 'error', 'message' => $e->getMessage()];
         }
+    }
+
+    private function getShippingMethodStats() {
+        $query = "SELECT 
+            shipping_method,
+            COUNT(*) as count,
+            SUM(total_amount) as total_revenue
+            FROM Transactions
+            WHERE transaction_date >= DATE_SUB(CURRENT_DATE, INTERVAL 30 DAY)
+            GROUP BY shipping_method";
+        
+        $stmt = $this->conn->query($query);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     private function getTopCategory($categoryRevenue) {
@@ -154,7 +175,7 @@ class Admin {
             $stmt->bindParam(":limit", $limit, PDO::PARAM_INT);
 
             $stmt->execute();
-            return $stmt->fetchAll();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch(PDOException $e) {
             return ['status' => 'error', 'message' => $e->getMessage()];
         }
@@ -196,13 +217,19 @@ class Admin {
     private function getTotalUsers() {
         $query = "SELECT COUNT(*) as total FROM Users";
         $stmt = $this->conn->query($query);
-        return $stmt->fetch()['total'];
+        return $stmt->fetch(PDO::FETCH_ASSOC)['total'];
     }
 
     private function getTotalOrders() {
         $query = "SELECT COUNT(*) as total FROM Orders";
         $stmt = $this->conn->query($query);
-        return $stmt->fetch()['total'];
+        return $stmt->fetch(PDO::FETCH_ASSOC)['total'];
+    }
+
+    private function getAverageOrderValue() {
+        $query = "SELECT AVG(total_amount) as average_order_value FROM Transactions WHERE payment_status = 'successful'";
+        $stmt = $this->conn->query($query);
+        return $stmt->fetch(PDO::FETCH_ASSOC)['average_order_value'];
     }
 
     private function getRevenueStats() {
@@ -222,7 +249,7 @@ class Admin {
                  WHERE payment_status = 'successful'";
         
         $stmt = $this->conn->query($query);
-        return $stmt->fetch();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
     private function getTopProducts($limit = 5) {
@@ -245,7 +272,7 @@ class Admin {
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
         $stmt->execute();
-        return $stmt->fetchAll();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     private function getRecentOrders($limit = 10) {
@@ -266,7 +293,7 @@ class Admin {
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
         $stmt->execute();
-        return $stmt->fetchAll();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     private function getLowStockProducts($threshold = 10) {
@@ -282,16 +309,19 @@ class Admin {
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':threshold', $threshold, PDO::PARAM_INT);
         $stmt->execute();
-        return $stmt->fetchAll();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function getInventoryReport() {
         try {
+            // Updated to include all necessary fields from schema
             $query = "SELECT 
                         p.*,
                         pc.name as category_name,
+                        pc.description as category_description,
                         COUNT(td.product_id) as total_sales,
-                        COALESCE(SUM(td.quantity), 0) as units_sold
+                        COALESCE(SUM(td.quantity), 0) as units_sold,
+                        COALESCE(SUM(td.subtotal), 0) as total_revenue
                      FROM Products p
                      LEFT JOIN Product_Categories pc ON p.category_id = pc.category_id
                      LEFT JOIN Transaction_Details td ON p.product_id = td.product_id
@@ -301,7 +331,7 @@ class Admin {
             $stmt = $this->conn->query($query);
             return [
                 'status' => 'success',
-                'data' => $stmt->fetchAll()
+                'data' => $stmt->fetchAll(PDO::FETCH_ASSOC)
             ];
         } catch(PDOException $e) {
             return ['status' => 'error', 'message' => $e->getMessage()];
@@ -310,19 +340,38 @@ class Admin {
 
     public function getUserAnalytics() {
         try {
+            // Updated to match schema's user roles and include more metrics
             $query = "SELECT 
                         COUNT(*) as total_users,
                         SUM(CASE WHEN created_at >= DATE_SUB(CURRENT_DATE, INTERVAL 30 DAY)
                             THEN 1 ELSE 0 END) as new_users_month,
                         AVG(points) as average_points,
-                        COUNT(CASE WHEN role = 'member' THEN 1 END) as total_members,
-                        COUNT(CASE WHEN role = 'admin' THEN 1 END) as total_admins
+                        COUNT(CASE WHEN role = 'public' THEN 1 END) as public_users,
+                        COUNT(CASE WHEN role = 'member' THEN 1 END) as members,
+                        COUNT(CASE WHEN role = 'admin' THEN 1 END) as admins,
+                        MAX(points) as highest_points,
+                        MIN(points) as lowest_points
                      FROM Users";
 
             $stmt = $this->conn->query($query);
+            
+            // Add engagement metrics
+            $engagementQuery = "SELECT 
+                                COUNT(DISTINCT r.user_id) as reviewing_users,
+                                COUNT(DISTINCT uf.user_id) as users_with_favorites,
+                                AVG(r.rating) as average_rating
+                              FROM Users u
+                              LEFT JOIN Reviews r ON u.user_id = r.user_id
+                              LEFT JOIN User_Favorites uf ON u.user_id = uf.user_id";
+            
+            $engagementStmt = $this->conn->query($engagementQuery);
+            
             return [
                 'status' => 'success',
-                'data' => $stmt->fetch()
+                'data' => array_merge(
+                    $stmt->fetch(PDO::FETCH_ASSOC),
+                    $engagementStmt->fetch(PDO::FETCH_ASSOC)
+                )
             ];
         } catch(PDOException $e) {
             return ['status' => 'error', 'message' => $e->getMessage()];
@@ -331,23 +380,38 @@ class Admin {
 
     public function getCustomerEngagement($days = 30) {
         try {
+            // Updated to include more engagement metrics from schema
             $query = "SELECT 
                         COUNT(DISTINCT t.user_id) as purchasing_users,
                         COUNT(DISTINCT r.user_id) as reviewing_users,
                         COUNT(DISTINCT uf.user_id) as users_with_favorites,
-                        AVG(r.rating) as average_rating
+                        AVG(r.rating) as average_rating,
+                        COUNT(DISTINCT m.user_id) as users_with_missions,
+                        SUM(CASE WHEN m.status = 'completed' THEN 1 ELSE 0 END) as completed_missions
                      FROM Users u
                      LEFT JOIN Transactions t ON u.user_id = t.user_id 
                         AND t.transaction_date >= DATE_SUB(CURRENT_DATE, INTERVAL :days DAY)
                      LEFT JOIN Reviews r ON u.user_id = r.user_id
-                     LEFT JOIN User_Favorites uf ON u.user_id = uf.user_id";
+                     LEFT JOIN User_Favorites uf ON u.user_id = uf.user_id
+                     LEFT JOIN Rewards m ON u.user_id = m.user_id";
 
             $stmt = $this->conn->prepare($query);
             $stmt->bindParam(':days', $days, PDO::PARAM_INT);
             $stmt->execute();
+            
+            // Add missions statistics
+            $missionsQuery = "SELECT 
+                              COUNT(*) as total_missions,
+                              AVG(points) as average_mission_points
+                            FROM Mission_Templates";
+            $missionStmt = $this->conn->query($missionsQuery);
+            
             return [
                 'status' => 'success',
-                'data' => $stmt->fetch()
+                'data' => array_merge(
+                    $stmt->fetch(PDO::FETCH_ASSOC),
+                    $missionStmt->fetch(PDO::FETCH_ASSOC)
+                )
             ];
         } catch(PDOException $e) {
             return ['status' => 'error', 'message' => $e->getMessage()];

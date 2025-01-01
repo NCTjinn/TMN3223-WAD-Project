@@ -13,17 +13,21 @@
     <!-- Header Section -->
     <header class="admin-header">
         <div class="logo">
-            <img src="logo.png" alt="PuffLab Logo">
+            <img src="../images/logo.png" alt="PuffLab Logo"> <!-- Ensure the path to the logo is correct -->
         </div>
         <div class="utilities">
             <div class="icon notification-icon">
                 <i class="fas fa-bell"></i>
-                <span id="notification-badge" class="badge">3</span>
+                <span id="notification-badge" class="badge">0</span>
             </div>
             <div class="user-dropdown">
                 <i class="fas fa-user-circle" id="profile-icon"></i>
                 <div class="dropdown-menu" id="dropdown-menu">
+                    <div class="dropdown-header">
+                        <span>User Menu</span>
+                    </div>
                     <a href="adminprofile.html">Profile</a>
+                    <a href="settings.html">Settings</a>
                     <a href="publichome.html">Logout</a>
                 </div>
             </div>
@@ -34,7 +38,7 @@
     <div class="admin-layout">
         <!-- Sidebar -->
         <aside class="admin-sidebar">
-            <a href="admindashboard.html" class="sidebar-item active" data-tooltip="Admin Dashboard">
+            <a href="admindashboard.html" class="sidebar-item" data-tooltip="Admin Dashboard">
                 <i class="fas fa-tachometer-alt"></i>
                 <span class="sidebar-label">Dashboard</span>
             </a>
@@ -46,7 +50,7 @@
                 <i class="fas fa-boxes"></i>
                 <span class="sidebar-label">Products</span>
             </a>
-            <a href="admintransactions.html" class="sidebar-item" data-tooltip="Transaction Records">
+            <a href="admintransactions.html" class="sidebar-item active" data-tooltip="Transaction Records">
                 <i class="fas fa-file-invoice-dollar"></i>
                 <span class="sidebar-label">Transactions</span>
             </a>
@@ -62,44 +66,103 @@
 
         <!-- Main Content -->
         <main class="admin-content">
-            <h1>Admin Dashboard</h1>
-            <p class="last-updated">Last updated: <span id="lastUpdated">4 mins ago</span></p>
+            <div class="dashboard-header">
+                <h1>Admin Dashboard</h1>
+                <p class="last-updated">Last updated: <span id="lastUpdated"></span></p>
+                <div id="error-message" class="error-message"></div>
+            </div>
+            
             <div class="dashboard-grid">
-                <!-- Card 1: Pie Chart -->
+                <!-- Card 1: Order Statistics -->
                 <div class="dashboard-item pie-chart">
-                    <h3>Sales Performance</h3>
+                    <h3>Order Distribution</h3>
                     <canvas id="pieChart"></canvas>
                     <div class="pie-chart-summary">
-                        <div><strong>Dine-In:</strong> <span id="dineInPercentage">50%</span></div>
-                        <div><strong>Takeaway:</strong> <span id="takeawayPercentage">30%</span></div>
-                        <div><strong>Delivery:</strong> <span id="deliveryPercentage">20%</span></div>
+                        <div class="stat-row">
+                            <span class="stat-label">Dine-In:</span>
+                            <span id="dineInPercentage" class="stat-value"></span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Takeaway:</span>
+                            <span id="takeawayPercentage" class="stat-value"></span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Delivery:</span>
+                            <span id="deliveryPercentage" class="stat-value"></span>
+                        </div>
                     </div>
                 </div>
         
-                <!-- Card 2: Bar Chart -->
+                <!-- Card 2: Revenue Statistics -->
                 <div class="dashboard-item bar-chart">
-                    <h3>Revenue by Category</h3>
+                    <h3>Category Performance</h3>
                     <canvas id="barChart"></canvas>
                     <div class="bar-chart-summary">
-                        <p><strong>Total Revenue:</strong> <span id="totalRevenue">$2,600</span></p>
-                        <p><i class="fas fa-crown"></i> <strong>Top Category:</strong> <span id="topCategory">Puffs</span> (<span id="topCategoryRevenue">$1,200</span>)</p>
+                        <div class="revenue-stats">
+                            <div class="stat-row">
+                                <span class="stat-label">Total Revenue:</span>
+                                <span id="totalRevenue" class="stat-value"></span>
+                            </div>
+                            <div class="stat-row">
+                                <span class="stat-label">Weekly Revenue:</span>
+                                <span id="weeklyRevenue" class="stat-value"></span>
+                            </div>
+                            <div class="stat-row">
+                                <span class="stat-label">Monthly Revenue:</span>
+                                <span id="monthlyRevenue" class="stat-value"></span>
+                            </div>
+                        </div>
+                        <div class="category-stats">
+                            <div class="stat-row">
+                                <i class="fas fa-crown"></i>
+                                <span class="stat-label">Top Category:</span>
+                                <span id="topCategory" class="stat-value"></span>
+                            </div>
+                            <div class="stat-row">
+                                <span class="stat-label">Category Revenue:</span>
+                                <span id="topCategoryRevenue" class="stat-value"></span>
+                            </div>
+                        </div>
                     </div>
                 </div>
         
-                <!-- Card 3: Product Performance -->
+                <!-- Card 3: Product Analytics -->
                 <div class="dashboard-item product-performance">
-                    <h3>Best-Selling Products</h3>
+                    <h3>Product Analytics</h3>
                     <canvas id="productChart"></canvas>
                     <div class="product-summary">
-                        <p><i class="fas fa-star"></i> <strong>Top Product:</strong> <span id="topProduct">Durian Puff</span> (<span id="topProductUnits">850</span> sold)</p>
-                        <p><i class="fas fa-user"></i> <strong>Total Customers:</strong> <span id="totalCustomers">1,200</span></p>
+                        <div class="top-products">
+                            <div class="stat-row">
+                                <i class="fas fa-star"></i>
+                                <span class="stat-label">Best Seller:</span>
+                                <span id="topProduct" class="stat-value"></span>
+                            </div>
+                            <div class="stat-row">
+                                <span class="stat-label">Units Sold:</span>
+                                <span id="topProductUnits" class="stat-value"></span>
+                            </div>
+                            <div class="stat-row">
+                                <span class="stat-label">Revenue:</span>
+                                <span id="topProductRevenue" class="stat-value"></span>
+                            </div>
+                        </div>
+                        <div class="customer-stats">
+                            <div class="stat-row">
+                                <i class="fas fa-users"></i>
+                                <span class="stat-label">Total Customers:</span>
+                                <span id="totalCustomers" class="stat-value"></span>
+                            </div>
+                            <div class="stat-row">
+                                <span class="stat-label">Average Order Value:</span>
+                                <span id="averageOrderValue" class="stat-value"></span>
+                            </div>
+                        </div>
                     </div>
                 </div>
         
-                <!-- Card 4: Line Chart -->
+                <!-- Card 4: Sales Trends -->
                 <div class="dashboard-item line-chart">
                     <h3>Sales Trends</h3>
-                    <p class="line-chart-subtitle">Analyze sales across daily, weekly, and monthly periods</p>
                     <div class="sales-options">
                         <button class="sales-btn active" data-period="daily">Daily</button>
                         <button class="sales-btn" data-period="weekly">Weekly</button>
@@ -107,19 +170,69 @@
                     </div>
                     <canvas id="lineChart"></canvas>
                     <div class="chart-summary">
-                        <p><strong>Peak Sales Day:</strong> <span id="peakSalesDay">Saturday</span></p>
-                        <p><strong>Total Revenue:</strong> <span id="totalSalesRevenue">$15,500</span></p>
-                        <p><strong>Growth:</strong> <span id="growthPercentage">+10%</span> compared to last period</p>
+                        <div class="trend-stats">
+                            <div class="stat-row">
+                                <span class="stat-label">Period Revenue:</span>
+                                <span id="periodRevenue" class="stat-value"></span>
+                            </div>
+                            <div class="stat-row">
+                                <span class="stat-label">Avg. Daily Orders:</span>
+                                <span id="avgDailyOrders" class="stat-value"></span>
+                            </div>
+                            <div class="stat-row">
+                                <span class="stat-label">Growth Rate:</span>
+                                <span id="growthRate" class="stat-value"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 5: Order Summary -->
+                <div class="dashboard-item order-summary">
+                    <h3>Order Summary</h3>
+                    <div class="order-summary-stats">
+                        <div class="stat-row">
+                            <span class="stat-label">Total Orders:</span>
+                            <span id="totalOrders" class="stat-value"></span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Average Order Value:</span>
+                            <span id="averageOrderValue" class="stat-value"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 6: Product IDs -->
+                <div class="dashboard-item product-ids">
+                    <h3>Product IDs</h3>
+                    <div class="product-ids-list">
+                        <ul id="productIdsList"></ul>
                     </div>
                 </div>
             </div>
         </main>
-        
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="spinner"></div>
+        <p>Loading dashboard data...</p>
+    </div>
+
+    <!-- Notification Panel -->
+    <div id="notification-panel" class="notification-panel">
+        <div class="notification-header">
+            <h3>Notifications</h3>
+            <button id="clear-notifications" class="clear-btn">Clear All</button>
+        </div>
+        <div id="notifications-list" class="notifications-list">
+            <!-- Notifications will be dynamically inserted here -->
+        </div>
     </div>
 
     <!-- Footer Section -->
     <footer class="admin-footer">
-        Copyright &copy; 2024 PuffLab
+        <p>Copyright &copy; 2024 PuffLab</p>
     </footer>
 </body>
 </html>
