@@ -1,0 +1,45 @@
+:root {
+    --sage-green: #C2C9AD;
+    --cream-light: #F9FAEB;
+    --cream-medium: #F6EABE;
+    --cream-dark: #F2EDD3;
+    --charcoal: #1F1F1F;
+}
+
+body {
+    font-family: system-ui, -apple-system, sans-serif;
+    line-height: 1.6;
+    background: var(--cream-dark);
+    margin: 0;
+    padding: 0;
+    color: var(--charcoal);
+}
+
+.container {
+    max-width: 1000px;
+    margin: 20px auto;
+    background: var(--cream-dark);
+    padding: 20px;
+    border-radius: 8px;
+}
+
+h1 {
+    text-align: center;
+    color: var(--charcoal);
+    margin-top: 40px;
+}
+
+h2 {
+    color: var(--charcoal);
+    margin-top: 20px;
+    font-size: medium;
+}
+
+p {
+    margin: 10px 0;
+}
+
+ul {
+    list-style: disc;
+    margin-left: 20px;
+}
