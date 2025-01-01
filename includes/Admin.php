@@ -21,7 +21,9 @@ class Admin {
         try {
             $orderStats = $this->getOrderStats();
             $categoryRevenue = $this->getCategoryRevenue();
-            $salesTrend = $this->getSalesTrend();
+            $salesTrendDaily = $this->getSalesTrend('daily');
+            $salesTrendWeekly = $this->getSalesTrend('weekly');
+            $salesTrendMonthly = $this->getSalesTrend('monthly');
             $topProducts = $this->getTopProducts(5);
             $shippingMethodStats = $this->getShippingMethodStats();
             
@@ -30,17 +32,26 @@ class Admin {
                 'revenue_stats' => $this->getRevenueStats(),
                 'orderStats' => $orderStats,
                 'categoryRevenue' => $categoryRevenue,
-                'salesTrend' => $salesTrend,
+                'salesTrend' => [
+                    'daily' => $salesTrendDaily,
+                    'weekly' => $salesTrendWeekly,
+                    'monthly' => $salesTrendMonthly
+                ],
                 'topProducts' => $topProducts,
                 'total_customers' => $this->getTotalUsers(),
                 'topCategory' => $this->getTopCategory($categoryRevenue),
                 'shippingMethodStats' => $shippingMethodStats,
-                'average_order_value' => $this->getAverageOrderValue()
+                'average_order_value' => $this->getAverageOrderValue(),
+                'periodRevenue' => [
+                    'daily' => $this->getPeriodRevenue('daily'),
+                    'weekly' => $this->getPeriodRevenue('weekly'),
+                    'monthly' => $this->getPeriodRevenue('monthly')
+                ]
             ];
-
+    
             // Debugging log
             error_log('Dashboard stats data: ' . print_r($data, true));
-
+    
             return [
                 'status' => 'success',
                 'data' => $data
@@ -123,7 +134,7 @@ class Admin {
         
         return $revenue;
     }
-        private function getSalesTrend($period = 'daily') {
+    private function getSalesTrend($period = 'daily') {
         switch ($period) {
             case 'weekly':
                 $query = "SELECT 
@@ -155,8 +166,14 @@ class Admin {
                 break;
         }
     
+        // Log the query for debugging
+        error_log('Executing query: ' . $query);
+    
         $stmt = $this->conn->query($query);
         $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+        // Log the results for debugging
+        error_log('Query results: ' . print_r($results, true));
     
         // Ensure results are not empty and have the expected structure
         if (empty($results)) {
@@ -171,6 +188,31 @@ class Admin {
             'values' => array_column($results, 'amount')
         ];
     }
+
+    private function getPeriodRevenue($period = 'daily') {
+        switch ($period) {
+            case 'weekly':
+                $query = "SELECT SUM(total_amount) as revenue
+                          FROM Transactions
+                          WHERE transaction_date >= DATE_SUB(CURRENT_DATE, INTERVAL 7 DAY)";
+                break;
+            case 'monthly':
+                $query = "SELECT SUM(total_amount) as revenue
+                          FROM Transactions
+                          WHERE transaction_date >= DATE_SUB(CURRENT_DATE, INTERVAL 1 MONTH)";
+                break;
+            case 'daily':
+            default:
+                $query = "SELECT SUM(total_amount) as revenue
+                          FROM Transactions
+                          WHERE DATE(transaction_date) = CURRENT_DATE";
+                break;
+        }
+
+        $stmt = $this->conn->query($query);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result['revenue'] ?? 0;
+    }    
 
     public function logAdminAction($adminId, $action) {
         try {

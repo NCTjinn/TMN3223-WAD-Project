@@ -100,9 +100,11 @@ async function fetchDashboardData() {
     showLoadingState();
     try {
         const data = await fetchWithAuth(API_CONFIG.endpoints.dashboardStats);
-        console.log('Dashboard data:', data); // Debug log
+        console.log('Fetched dashboard data:', data); // Debug log
         if (data.status === 'success') {
+            console.log('Fetched dashboard data:', data.data); // Debug log
             updateDashboard(data.data);
+            updateStats(data.data); // Ensure this function is called
             updateLastUpdated();
             hideErrorMessage();
         } else {
@@ -259,8 +261,50 @@ function initializeLineChart() {
 // UI Updates
 function updateDashboard(data) {
     console.log('Updating dashboard with data:', data); // Debugging log
+
+    // Ensure that orderStats contains the expected values
+    const dineInOrders = parseInt(data.orderStats.dineIn) || 0;
+    const takeawayOrders = parseInt(data.orderStats.takeaway) || 0;
+    const deliveryOrders = parseInt(data.orderStats.delivery) || 0;
+
+    const totalOrders = dineInOrders + takeawayOrders + deliveryOrders;
+
+    // Ensure totalOrders is not zero to avoid division by zero
+    const dineInPercentage = totalOrders ? ((dineInOrders / totalOrders) * 100).toFixed(2) : 0;
+    const takeawayPercentage = totalOrders ? ((takeawayOrders / totalOrders) * 100).toFixed(2) : 0;
+    const deliveryPercentage = totalOrders ? ((deliveryOrders / totalOrders) * 100).toFixed(2) : 0;
+
+    const statsMap = {
+        'dineInPercentage': `${dineInPercentage}%`,
+        'takeawayPercentage': `${takeawayPercentage}%`,
+        'deliveryPercentage': `${deliveryPercentage}%`,
+        'totalRevenue': formatCurrency(data.revenue_stats.total_revenue),
+        'weeklyRevenue': formatCurrency(data.revenue_stats.weekly_revenue),
+        'monthlyRevenue': formatCurrency(data.revenue_stats.monthly_revenue),
+        'topCategory': data.topCategory.name,
+        'topCategoryRevenue': formatCurrency(data.topCategory.revenue),
+        'topProduct': data.topProducts[0]?.name || 'N/A',
+        'topProductUnits': formatNumber(data.topProducts[0]?.units_sold || 0),
+        'topProductRevenue': formatCurrency(data.topProducts[0]?.revenue || 0),
+        'totalCustomers': formatNumber(data.total_customers),
+        'averageOrderValue': formatCurrency(data.average_order_value),
+        'totalOrders': formatNumber(data.total_orders),
+        'periodRevenue': formatCurrency(data.period_stats?.revenue || 0),
+    };
+
+    Object.entries(statsMap).forEach(([id, value]) => {
+        const element = document.getElementById(id);
+        if (element) {
+            element.textContent = value;
+            // Add fade-in animation for updated values
+            element.classList.add('value-updated');
+            setTimeout(() => element.classList.remove('value-updated'), 500);
+        } else {
+            console.warn(`Element with id: ${id} not found`); // Debug log
+        }
+    });
+
     updateCharts(data);
-    updateStats(data);
     updateLastUpdated();
 }
 
@@ -305,15 +349,17 @@ function updateCharts(data) {
     }
 
     // Update Line Chart based on selected period
+    console.log('Current period:', dashboardState.currentPeriod); // Debug log
+    console.log('Sales trend data:', data.salesTrend); // Debug log
     if (chartInstances.line) {
         const trendData = data.salesTrend[dashboardState.currentPeriod];
-        console.log('Updating Line Chart with trend data:', trendData); // Debug log
+        console.log('Trend data for period:', dashboardState.currentPeriod, trendData); // Debug log
         if (trendData && trendData.labels && trendData.values) {
             chartInstances.line.data.labels = trendData.labels;
             chartInstances.line.data.datasets[0].data = trendData.values;
             chartInstances.line.update();
         } else {
-            console.error('Sales trend data is missing or incomplete:', trendData);
+            console.error('Sales trend data is missing or incomplete for period:', dashboardState.currentPeriod);
             // Fallback to empty data if trendData is missing or incomplete
             chartInstances.line.data.labels = [];
             chartInstances.line.data.datasets[0].data = [];
@@ -322,6 +368,7 @@ function updateCharts(data) {
     }
 }
 
+// Function to update stats
 function updateStats(data) {
     console.log('Updating stats with data:', data); // Debugging log
 
@@ -336,6 +383,10 @@ function updateStats(data) {
     const dineInPercentage = totalOrders ? ((dineInOrders / totalOrders) * 100).toFixed(2) : 0;
     const takeawayPercentage = totalOrders ? ((takeawayOrders / totalOrders) * 100).toFixed(2) : 0;
     const deliveryPercentage = totalOrders ? ((deliveryOrders / totalOrders) * 100).toFixed(2) : 0;
+
+    const periodRevenue = data.periodRevenue[dashboardState.currentPeriod] || 0;
+    console.log('Current period:', dashboardState.currentPeriod); // Debug log
+    console.log('Period revenue:', periodRevenue); // Debug log
 
     const statsMap = {
         'dineInPercentage': `${dineInPercentage}%`,
@@ -352,9 +403,7 @@ function updateStats(data) {
         'totalCustomers': formatNumber(data.total_customers),
         'averageOrderValue': formatCurrency(data.average_order_value),
         'totalOrders': formatNumber(data.total_orders),
-        'periodRevenue': formatCurrency(data.period_stats?.revenue || 0),
-        'avgDailyOrders': formatNumber(data.period_stats?.avg_daily_orders || 0),
-        'growthRate': formatPercentage(data.period_stats?.growth_rate || 0)
+        'periodRevenue': formatCurrency(periodRevenue)
     };
 
     Object.entries(statsMap).forEach(([id, value]) => {
@@ -577,7 +626,5 @@ document.addEventListener('DOMContentLoaded', () => {
         { fn: fetchNotifications, ms: 60000 }    // 1 minute
     ];
     
-    intervals.forEach(({fn, ms}) => {
-        setInterval(fn, ms);
-    });
+    intervals.forEach(({fn, ms}) => setInterval(fn, ms));
 });
