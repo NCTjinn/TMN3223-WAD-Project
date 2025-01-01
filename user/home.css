@@ -105,6 +105,11 @@ body {
 .reviews {
     padding: 2rem;
     margin-bottom: 4rem;
+    display: flex;
+    flex-direction: column; /* Aligns content vertically */
+    align-items: center;    /* Horizontal centering */
+    justify-content: center; /* Vertical centering */
+    min-height: 100vh;       /* Ensures the section takes full viewport height */
 }
 
 .reviews h2 {
