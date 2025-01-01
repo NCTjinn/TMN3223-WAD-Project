@@ -370,3 +370,79 @@ body {
 .progress-steps {
     padding: 0 25px; /* Half of step-icon width to align with line */
 }
+
+.address-input-container {
+    position: relative;
+    margin-bottom: 1rem;
+}
+
+.address-input-container i {
+    position: absolute;
+    left: 1rem;
+    top: 30%;
+    transform: translateY(-50%);
+    color: var(--sage-green);
+}
+
+.address-input {
+    width: 100%;
+    padding: 0.8rem 2.5rem;
+    border: 1px solid var(--sage-green);
+    border-radius: 4px;
+}
+
+.delivery-fee-estimate {
+    color: var(--charcoal);
+    margin-bottom: 2rem;
+}
+
+.delivery-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.option-card {
+    background: white;
+    padding: 2rem;
+    border: 2px solid var(--sage-green);
+    border-radius: 8px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.option-card:hover {
+    border-color: var(--charcoal);
+}
+
+.option-card.selected {
+    background: var(--cream-dark);
+    border-color: var(--charcoal);
+}
+
+.option-card i {
+    font-size: 2rem;
+    color: var(--charcoal);
+    margin-bottom: 1rem;
+}
+
+.time-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.time-inputs.hidden {
+    display: none;
+}
+
+.date-input,
+.time-input {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid var(--sage-green);
+    border-radius: 4px;
+}
