@@ -8,7 +8,6 @@ USE PuffLab;
 -- Drop tables if they exist
 DROP TABLE IF EXISTS Users;
 DROP TABLE IF EXISTS Product_Categories;
-DROP TABLE IF EXISTS notifications;
 DROP TABLE IF EXISTS Products;
 DROP TABLE IF EXISTS Cart;
 DROP TABLE IF EXISTS Vouchers;
@@ -23,7 +22,6 @@ DROP TABLE IF EXISTS Addresses;
 DROP TABLE IF EXISTS Reviews;
 DROP TABLE IF EXISTS Community_Posts;
 DROP TABLE IF EXISTS User_Favorites;
-DROP TABLE IF EXISTS Admin_Actions_Log;
 DROP TABLE IF EXISTS Sales_Summary;
 
 -- Users table for storing user information
@@ -48,16 +46,6 @@ CREATE TABLE Product_Categories (
     description TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-);
-
--- Notifications table for user alerts
-CREATE TABLE Notifications (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT NOT NULL,
-    message TEXT NOT NULL,
-    is_read BOOLEAN DEFAULT FALSE,
-    status ENUM('unread', 'read') DEFAULT 'unread',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Products table for inventory management
@@ -225,15 +213,6 @@ CREATE TABLE User_Favorites (
     FOREIGN KEY (user_id) REFERENCES Users(user_id),
     FOREIGN KEY (product_id) REFERENCES Products(product_id),
     UNIQUE KEY unique_favorite (user_id, product_id)
-);
-
--- Admin actions log table for activity tracking
-CREATE TABLE Admin_Actions_Log (
-    log_id INT AUTO_INCREMENT PRIMARY KEY,
-    admin_id INT NOT NULL,
-    action TEXT NOT NULL,
-    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (admin_id) REFERENCES Users(user_id)
 );
 
 -- Sales summary table for analytics
@@ -594,12 +573,6 @@ INSERT INTO Community_Posts (title, image_url, description) VALUES
 -- User Favorites
 INSERT INTO User_Favorites (user_id, product_id) VALUES
 (4, 1), (4, 2), (5, 3), (6, 4), (7, 5), (8, 6);
-
--- Admin Actions Log
-INSERT INTO Admin_Actions_Log (admin_id, action) VALUES
-(1, 'Updated product prices'),
-(2, 'Added new promotion campaign'),
-(3, 'Processed refund for order #TRK001');
 
 -- Sales Summary
 INSERT INTO Sales_Summary (date, total_orders, gross_sales, returns, net_sales, delivery_fee, tax) VALUES

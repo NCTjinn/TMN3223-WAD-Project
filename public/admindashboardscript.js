@@ -465,13 +465,6 @@ function updateLastUpdated() {
     }
 }
 
-function updateProductIdsList(products) {
-    const productIdsList = document.getElementById('productIdsList');
-    if (!productIdsList) return;
-
-    productIdsList.innerHTML = products.map(product => `<li>${product.product_id}</li>`).join('');
-}
-
 // Loading State Management
 function showLoadingState() {
     const overlay = document.getElementById('loading-overlay');
