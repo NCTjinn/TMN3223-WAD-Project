@@ -1,15 +1,15 @@
-<!-- publichome.html (Public Home Page) -->
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PuffLab Home</title>
+    <title>PuffLab Menu</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css">
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="home.css">
+    <link rel="stylesheet" href="checkout-css.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
+
 <body>
     <nav>
         <div class="navbar">
@@ -38,9 +38,10 @@
                 <li class="dropdown">
                     <a href="myacc.html">My Account <i class='bx bxs-chevron-down'></i></a>
                     <ul class="dropdown-content">
-                        <li><a href="login.html">Dashboard</a></li> <!-- Redirect to Login -->
-                        <li><a href="login.html">Orders</a></li> 
-                        <li><a href="login.html">Rewards</a></li> 
+                        <li><a href="myacc.html">Dashboard</a></li> <!-- Link to My Account -->
+                        <li><a href="myorders.html">Orders</a></li> <!-- Link to My Orders -->
+                        <li><a href="rewards.html">Rewards</a></li> <!-- Link to My Rewards -->
+                        <li><a href="publichome.html">Log Out</a></li> <!-- Link to LogOut -->
                     </ul>
                 </li>
             </ul>
@@ -56,42 +57,73 @@
             </div>
         </div>
     </nav>
-
-    <div class="hero">
-        <h1>ONE BITE IS NEVER ENOUGH</h1>
+    <!-- Cart Page -->
+    <div class="container">
+        <div class="cart-header">
+        <h1>Cart</h1>
+        <u><a href="menu.html" class="continue-browsing ">Continue browsing</a></u>
     </div>
 
-    <div class="products-section">
-        <div class="tab-buttons">
-            <button class="tab-button active" id="bestsellers-btn">Monthly Bestsellers</button>
-            <button class="tab-button" id="arrivals-btn">New Arrivals</button>
+    <div class="cart-table">
+        <div class="cart-table-header">
+            <span>Product</span>
+            <span>Price</span>
+            <span>Quantity</span>
+            <span>Subtotal</span>
         </div>
 
-        <div class="products-grid" id="products-grid">
-            <div class="product-card"></div>
-            <div class="product-card"></div>
-            <div class="product-card"></div>
+        <div id="cartItems">
+            <!-- Cart items will be populated by JavaScript -->
+        </div>
+
+        <div class="cart-total">
+            Total: <span id="cartTotal">RM 0.00</span>
         </div>
     </div>
 
-    <section class="reviews">
-        <h2>Reviews</h2>
-        <div class="review-container">
-            <button class="nav-btn prev-btn">&lt;</button>
-            <div class="review-cards">
-                <div class="review-card"></div>
-                <div class="review-card"></div>
-                <div class="review-card"></div>
+    <div class="delivery-section">
+        <h2>Estimate Delivery Fee</h2>
+        <div class="address-input-container">
+            <i class="fas fa-map-marker-alt"></i>
+            <input type="text" id="addressInput" class="address-input" placeholder="Enter your address">
+        </div>
+        <div id="deliveryFeeEstimate" class="delivery-fee-estimate"></div>
+
+        <div class="delivery-options">
+            <div class="option-card" data-option="pickup">
+                <i class="fas fa-store"></i>
+                <h3>Pick Up</h3>
+                <div class="time-inputs hidden">
+                    <input type="date" class="date-input">
+                    <select class="time-input">
+                        <option value="">Select time</option>
+                        <option value="now">Now</option>
+                        <option value="9:00">9:00 AM</option>
+                        <option value="10:00">10:00 AM</option>
+                        <option value="11:00">11:00 AM</option>
+                    </select>
+                </div>
             </div>
-            <button class="nav-btn next-btn">&gt;</button>
+            <div class="option-card" data-option="delivery">
+                <i class="fas fa-truck"></i>
+                <h3>Delivery</h3>
+                <div class="time-inputs hidden">
+                    <input type="date" class="date-input">
+                    <select class="time-input">
+                        <option value="">Select time</option>
+                        <option value="now">Now</option>
+                        <option value="9:00">9:00 AM</option>
+                        <option value="10:00">10:00 AM</option>
+                        <option value="11:00">11:00 AM</option>
+                    </select>
+                </div>
+            </div>
         </div>
-    </section>
 
-    <section class="community-section">
-        <h2>Join our community!</h2>
-        <div class="divider"></div>
-    </section>
-
+        <button id="checkoutButton" class="checkout-button">Check Out</button>
+    </div>
+</div>
+    <script src="checkout-js.js"></script>
     <footer class="footer">
         <div class="footer-left">
             <img src="../assets/images/logo.png" alt="PuffLab Logo" style="max-height: 100px; display: block; margin: auto;">
@@ -134,6 +166,6 @@
     </footer>
 
     <script src="script.js"></script>
-    <script src="home.js"></script>
+    
 </body>
 </html>

@@ -1,0 +1,344 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap');
+
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+font-family: 'Poppins', sans-serif;
+}
+
+nav {
+background-color: #C2C9AD;
+width: 100%;
+padding: 10px 0;
+display: flex;
+justify-content: space-between;
+align-items: center;
+box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.navbar {
+display: flex;
+justify-content: space-between;
+align-items: center;
+width: 100%;
+padding: 0 2%;
+position: relative;
+}
+
+.logo img {
+height: auto;
+width: auto;
+max-height: 50px;
+display: block;
+margin: 0 auto;
+}
+
+.links {
+list-style: none;
+display: flex;
+position: absolute;
+left: 50%;
+transform: translateX(-50%);
+}
+
+.links li {
+padding: 0 15px;
+position: relative;
+}
+
+.links a {
+color: #1F1F1F;
+text-decoration: none;
+font-size: 18px;
+display: block;
+}
+
+.dropdown-content {
+display: none;
+position: absolute;
+background-color: #C2C9AD;
+box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+z-index: 1;
+min-width: 100%;
+}
+
+.dropdown-content li {
+list-style: none;
+}
+
+.dropdown-content a {
+color: #1F1F1F;
+padding: 12px 16px;
+text-decoration: none;
+display: block;
+font-size: 14px; /* Reduce font size */
+transition: background-color 0.3s;
+white-space: nowrap; /* Prevents text from wrapping to the next line */
+}
+
+.dropdown-content a:hover {
+background-color: #aab79f;
+}
+
+.dropdown:hover .dropdown-content {
+display: block;
+}
+
+.icons {
+display: flex;
+justify-content: flex-end;
+font-size: 25px;
+}
+
+.icons i {
+color: #1F1F1F;
+padding: 0 10px;
+cursor: pointer;
+transition: transform 0.3s, color 0.3s;
+}
+
+.icons i:hover {
+color: #6c7a5d;
+transform: scale(1.15);
+}
+
+.search-box {
+position: relative;
+}
+
+.search-txt {
+border: 1px solid;
+padding: 5px 10px;
+font-size: 15px;
+border-radius: 10px;
+position: absolute;
+    right: 35px;
+    right: 50px;
+width: 0;
+height: 30px;
+top: 50%;
+transform: translateY(-50%);
+opacity: 0;
+transition: all 0.4s ease-in-out;
+cursor: pointer;
+background-color: #F6EABE ;
+border-color: #F6EABE;
+}
+
+.search-txt:focus {
+width: 140px;
+opacity: 1;
+cursor: text;
+}
+
+
+.search-btn i {
+color: #1F1F1F;
+    font-size: 20px;
+    font-size: 23px;
+}
+
+.footer {
+background-color: #C2C9AD;
+font-size: large;
+padding: 5px 20px;
+color: #1F1F1F;
+display: grid;
+grid-template-columns: 1fr 2fr;
+gap: 20px;
+}
+
+.footer-left p{
+text-align:justify; /* Centers text inside the column */
+}
+
+
+.footer-top {
+margin-top: 20px;
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 20px;
+align-items: start;
+}
+
+
+.footer-col1, .footer-col2, .footer-col3, .footer-col4 {
+padding: 10px;
+background: #C2C9AD; 
+display: flex;
+flex-direction: column;
+align-items: center; 
+justify-content: center; 
+text-align: center; 
+}
+
+.footer-col2 h4, .footer-col3 h4, .footer-col4 h4 {
+font-size: x-large;
+}
+
+.footer-col2 ul, .footer-col3 ul {
+list-style-type: none; 
+line-height: 2.25;
+}
+
+
+.footer-col2 a, .footer-col3 a, .footer-col4 .social-icons a {
+text-decoration: none;
+color: #1F1F1F;
+}
+
+.footer-col2 a:hover, .footer-col3 a:hover, .footer-col4 .social-icons a:hover {
+color: #6c7a5d;
+}
+
+.footer-col4 .social-icons a {
+font-size: 30px;
+margin: 0 20px;
+transition: color 0.3s;
+}
+
+.footer .copyright {
+text-align: center;
+margin-top: 20px;
+grid-column: 1 / -1;
+font-size: 14px;
+font-weight: 400;
+}
+
+/* General Container */
+.container {
+    width: 100%; /* Make the container take the full width */
+    margin: 0 auto; /* Center-align content horizontally */
+    padding: 30px; /* Add some padding for spacing */
+    background-color: #f7edd4;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15); /* Modern shadow */
+}
+
+/* Hero Section */
+.hero-section {
+    text-align: center;
+    padding: 40px; /* Increased spacing for a better look */
+    background-color: #c2c9ad;
+    border-radius: 15px;
+    margin-bottom: 50px;
+}
+
+.hero-section h1 {
+    font-size: 42px; /* Larger and more prominent title */
+    color: #1f1f1f;
+    margin-bottom: 20px;
+}
+
+.hero-section p {
+    font-size: 20px; /* Larger text for better readability */
+    color: #6c7a5d;
+    margin-bottom: 30px;
+}
+
+.cta-buttons .btn {
+    display: inline-block;
+    padding: 15px 25px; /* Better button size */
+    font-size: 18px; /* Slightly larger text */
+    border-radius: 8px; /* Rounded corners for modern look */
+    text-decoration: none;
+    color: white;
+    margin: 0 15px; /* Spacing between buttons */
+    transition: background-color 0.3s ease;
+}
+
+.join-btn {
+    background-color: #6e7756; /* Primary theme color */
+}
+
+.login-btn {
+    background-color: #9aa186;
+}
+
+.btn:hover {
+    background-color: #5a6b48; /* Hover effect for buttons */
+}
+
+/* Missions and Rewards Sections */
+.missions-section,
+.rewards-section {
+    margin-bottom: 50px; /* Proper spacing between sections */
+    padding: 30px; /* Padding inside the sections */
+    background-color: #f6f1df; /* Light cream background for contrast */
+    border-radius: 15px;
+}
+
+.missions-section h2,
+.rewards-section h2 {
+    font-size: 30px;
+    color: #1f1f1f;
+    text-align: center;
+    margin-bottom: 25px;
+    border-bottom: 3px solid #c2c9ad; /* Emphasize the section title */
+    display: inline-block;
+    padding-bottom: 10px;
+}
+
+.missions-grid,
+.rewards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Adjust for responsiveness */
+    gap: 30px; /* Increase space between cards */
+    justify-items: center; /* Center-align grid items */
+}
+
+/* Card Styles */
+.mission-card,
+.reward-card {
+    background-color: #ffffff; /* White background for contrast */
+    border: 2px solid #c2c9ad;
+    border-radius: 15px;
+    padding: 25px;
+    text-align: center;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1); /* Softer shadow */
+    transition: transform 0.3s ease, background-color 0.3s ease;
+    max-width: 280px; /* Limit card width for uniformity */
+}
+
+.mission-card:hover,
+.reward-card:hover {
+    transform: translateY(-5px); /* Enhanced hover effect */
+    background-color: #9aa186;
+    color: white;
+}
+
+.mission-card i,
+.reward-card i {
+    font-size: 50px; /* Larger icons for visual appeal */
+    color: #6e7756;
+    margin-bottom: 15px;
+}
+
+.mission-card h3,
+.reward-card h3 {
+    font-size: 22px; /* Larger heading */
+    margin-bottom: 10px;
+    color: #1f1f1f;
+}
+
+.mission-card p,
+.reward-card p {
+    font-size: 18px; /* Increase text size for readability */
+    color: #6c7a5d;
+}
+
+/* Add spacing between sections for better layout */
+.missions-section {
+    margin-top: 40px;
+}
+
+@media (max-width: 768px) {
+    .missions-grid,
+    .rewards-grid {
+        grid-template-columns: 1fr; /* Single-column layout on smaller screens */
+        gap: 20px;
+    }
+}
+
+

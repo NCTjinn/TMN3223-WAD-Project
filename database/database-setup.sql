@@ -136,25 +136,6 @@ CREATE TABLE Rewards (
     FOREIGN KEY (mission_id) REFERENCES Mission_Templates(mission_id)
 );
 
--- FAQ Categories table
-CREATE TABLE FAQ_Categories (
-    category_id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-);
-
--- FAQs table for product-related questions
-CREATE TABLE FAQs (
-    faq_id INT AUTO_INCREMENT PRIMARY KEY,
-    category_id INT,
-    question TEXT NOT NULL,
-    answer TEXT NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (category_id) REFERENCES FAQ_Categories(category_id)
-);
-
 -- Addresses table for user delivery addresses
 CREATE TABLE Addresses (
     address_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -241,9 +222,6 @@ CREATE INDEX idx_address_user ON Addresses(user_id, is_default);
 -- Review indexes
 CREATE INDEX idx_review_product ON Reviews(product_id);
 CREATE INDEX idx_review_rating ON Reviews(rating);
-
--- FAQ indexes
-CREATE INDEX idx_faq_category ON FAQs(category_id);
 
 -- Sales and analytics indexes
 CREATE INDEX idx_sales_date ON Sales_Summary(date);
@@ -518,18 +496,6 @@ INSERT INTO Rewards (user_id, mission_id, mission_name, status, points_earned) V
 (6, 1, 'First Purchase', 'completed', 50),
 (7, 2, 'Review Master', 'pending', 100),
 (8, 3, 'Loyal Customer', 'pending', 150);
-
--- FAQ Categories
-INSERT INTO FAQ_Categories (name) VALUES
-('Orders'), ('Products'), ('Delivery'), ('Returns'), ('Membership');
-
--- FAQs
-INSERT INTO FAQs (category_id, question, answer) VALUES
-(1, 'How do I track my order?', 'You can track your order using the tracking number provided in your order confirmation email.'),
-(2, 'How long do the products stay fresh?', 'Our cream puffs are best consumed within 24 hours. Cakes can last up to 3 days when refrigerated.'),
-(3, 'What are your delivery areas?', 'We deliver island-wide in Singapore. Additional charges apply for certain postal codes.'),
-(4, 'What is your return policy?', 'Due to the nature of our products, we do not accept returns. Please contact us if you receive damaged items.'),
-(5, 'How do I earn points?', 'Earn points through purchases, completing missions, and leaving reviews.');
 
 -- Addresses
 INSERT INTO Addresses (user_id, address_line_1, city, state, postcode, country, is_default) VALUES

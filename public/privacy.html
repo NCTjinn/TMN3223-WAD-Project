@@ -1,15 +1,14 @@
-<!-- publichome.html (Public Home Page) -->
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PuffLab Home</title>
+    <title>Privacy Policy - PuffLab</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css">
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="home.css">
+    <link rel="stylesheet" href="privacystyle.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
+
 <body>
     <nav>
         <div class="navbar">
@@ -31,16 +30,17 @@
                 <li class="dropdown">
                     <a href="aboutus.html">About Us <i class='bx bxs-chevron-down'></i></a>
                     <ul class="dropdown-content">
-                        <li><a href="ourteam.html">Our Team</a></li>
-                        <li><a href="ourhistory.html">Our History</a></li>
+                        <li><a href="aboutus.html">Our Team</a></li>
+                        <li><a href="aboutus.html">Our History</a></li>
                     </ul>
                 </li>
                 <li class="dropdown">
                     <a href="myacc.html">My Account <i class='bx bxs-chevron-down'></i></a>
                     <ul class="dropdown-content">
-                        <li><a href="login.html">Dashboard</a></li> <!-- Redirect to Login -->
-                        <li><a href="login.html">Orders</a></li> 
-                        <li><a href="login.html">Rewards</a></li> 
+                        <li><a href="myacc.html">Dashboard</a></li> <!-- Link to My Account -->
+                        <li><a href="myorders.html">Orders</a></li> <!-- Link to My Orders -->
+                        <li><a href="rewards.html">Rewards</a></li> <!-- Link to My Rewards -->
+                        <li><a href="publichome.html">Log Out</a></li> <!-- Link to LogOut -->
                     </ul>
                 </li>
             </ul>
@@ -57,40 +57,47 @@
         </div>
     </nav>
 
-    <div class="hero">
-        <h1>ONE BITE IS NEVER ENOUGH</h1>
-    </div>
-
-    <div class="products-section">
-        <div class="tab-buttons">
-            <button class="tab-button active" id="bestsellers-btn">Monthly Bestsellers</button>
-            <button class="tab-button" id="arrivals-btn">New Arrivals</button>
-        </div>
-
-        <div class="products-grid" id="products-grid">
-            <div class="product-card"></div>
-            <div class="product-card"></div>
-            <div class="product-card"></div>
-        </div>
-    </div>
-
-    <section class="reviews">
-        <h2>Reviews</h2>
-        <div class="review-container">
-            <button class="nav-btn prev-btn">&lt;</button>
-            <div class="review-cards">
-                <div class="review-card"></div>
-                <div class="review-card"></div>
-                <div class="review-card"></div>
+    
+    <main>
+        <div class="main-content">
+            <div class="content-header">
+                <h1>Privacy Policy</h1>
+                <p>At PuffLab, your privacy matters to us. Learn how we collect, use, and safeguard your data below.</p>
             </div>
-            <button class="nav-btn next-btn">&gt;</button>
+            <section class="fade-in">
+                <h2>1. Information We Collect</h2>
+                <ul>
+                    <li><strong>Personal Data:</strong> Names, addresses, email addresses, and phone numbers provided during registration or transactions.</li>
+                    <li><strong>Usage Data:</strong> Insights on site navigation, including IP addresses, browser details, and cookies.</li>
+                </ul>
+            </section>
+            <section class="fade-in">
+                <h2>2. How We Use Your Information</h2>
+                <p>We use your data to:</p>
+                <ul>
+                    <li>Provide seamless services and improve your experience.</li>
+                    <li>Send updates and promotional content.</li>
+                    <li>Analyze and enhance website usability.</li>
+                </ul>
+            </section>
+            <section class="fade-in">
+                <h2>3. Cookies and Tracking</h2>
+                <p>We use cookies to optimize site functionality and provide personalized experiences. Adjust your browser settings if you wish to limit cookies.</p>
+            </section>
+            <section class="fade-in">
+                <h2>4. Your Rights</h2>
+                <ul>
+                    <li>Access, amend, or delete your data, as applicable.</li>
+                    <li>Opt out of promotional communications at any time.</li>
+                </ul>
+            </section>
+            <div class="contact-us slide-in">
+                <h2>Contact Us</h2>
+                <p>Have questions? Reach out at <a href="mailto:puff.lab2020@gmail.com">puff.lab2020@gmail.com</a>.</p>
+            </div>
         </div>
-    </section>
+    </main>
 
-    <section class="community-section">
-        <h2>Join our community!</h2>
-        <div class="divider"></div>
-    </section>
 
     <footer class="footer">
         <div class="footer-left">
@@ -133,7 +140,7 @@
         </div>
     </footer>
 
-    <script src="script.js"></script>
-    <script src="home.js"></script>
+    <script src="privacyscript.js"></script>
+    
 </body>
 </html>

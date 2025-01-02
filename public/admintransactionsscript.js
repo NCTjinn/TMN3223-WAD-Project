@@ -4,19 +4,11 @@ const baseUrl = window.location.hostname === 'localhost'
     : 'https://your-production-domain.com';
 
 const API_CONFIG = {
-    // Base URL - change this based on your environment
     baseUrl: baseUrl,
-    debug: true, // Enable debug mode
-    
-    // API endpoints
+    debug: true,
     endpoints: {
-        dashboardStats: `${baseUrl}/api/admin/dashboard`,
-        users: `${baseUrl}/api/admin/users`,
-        products: `${baseUrl}/api/admin/products`,
-        transactions: `${baseUrl}/api/admin/transactions`
+        transactions: `${baseUrl}/api/adminTransactions`
     },
-    
-    // Request timeout in milliseconds
     timeout: 5000
 };
 
