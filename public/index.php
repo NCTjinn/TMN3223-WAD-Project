@@ -24,7 +24,6 @@ require_once '../Order.php';
 require_once '../Cart.php';
 require_once '../Review.php';
 require_once '../Reward.php';
-require_once '../Admin.php';
 
 // Handle preflight requests
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
@@ -178,31 +177,8 @@ try {
             break;
 
         case 'admin':
-            $auth = authenticateRequest();
-            if($auth['role'] !== 'admin') {
-                throw new Exception('Unauthorized access');
-            }
-            $admin = new Admin();
-            switch($requestMethod) {
-                case 'GET':
-                    $action = $request[0] ?? 'dashboard';
-                    switch($action) {
-                        case 'dashboard':
-                            $response = $admin->getDashboardStats();
-                            break;
-                        case 'inventory':
-                            $response = $admin->getInventoryReport();
-                            break;
-                        case 'users':
-                            $response = $admin->getUserAnalytics();
-                            break;
-                        case 'engagement':
-                            $response = $admin->getCustomerEngagement();
-                            break;
-                    }
-                    break;
-            }
-            break;
+            require 'admin.php';
+            exit();
 
         default:
             throw new Exception('Invalid endpoint');

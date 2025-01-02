@@ -9,12 +9,8 @@ const API_CONFIG = {
     
     // API endpoints
     endpoints: {
-        notifications: `${baseUrl}/api/admin/notifications`,
         dashboardStats: `${baseUrl}/api/admin/dashboard`,
-        inventory: `${baseUrl}/api/admin/inventory`,
         users: `${baseUrl}/api/admin/users`,
-        engagement: `${baseUrl}/api/admin/engagement`,
-        unreadNotifications: `${baseUrl}/api/admin/notifications/unread`,
         products: `${baseUrl}/api/admin/products`,
         transactions: `${baseUrl}/api/admin/transactions`
     },
@@ -44,7 +40,6 @@ const CHART_OPTIONS = {
 // State Management
 let dashboardState = {
     currentPeriod: 'daily',
-    notifications: [],
     lastUpdate: new Date(),
     chartInstances: {}
 };
@@ -116,23 +111,6 @@ async function fetchDashboardData() {
         showErrorMessage(error.message);
     } finally {
         hideLoadingState();
-    }
-}
-
-async function fetchNotifications() {
-    try {
-        const data = await fetchWithAuth(API_CONFIG.endpoints.notifications);
-        console.log('Notifications data:', data); // Debug log
-        if (data.status === 'success') {
-            dashboardState.notifications = data.notifications;
-            updateNotificationBadge(data.unreadCount);
-            updateNotificationPanel();
-        } else {
-            throw new Error(data.error || 'Failed to load notifications');
-        }
-    } catch (error) {
-        console.error('Error fetching notifications:', error);
-        showErrorMessage(error.message);
     }
 }
 
@@ -278,7 +256,6 @@ function updateDashboard(data) {
         'topProductRevenue': formatCurrency(data.topProducts[0]?.revenue || 0),
         'totalCustomers': formatNumber(data.total_customers),
         'averageOrderValue': formatCurrency(data.average_order_value),
-        'totalOrders': formatNumber(data.total_orders),
         'periodRevenue': formatCurrency(data.period_stats?.revenue || 0),
     };
 
@@ -339,18 +316,53 @@ function updateCharts(data) {
     }
 
     // Update Line Chart based on selected period
-    console.log('Current period:', dashboardState.currentPeriod); // Debug log
-    console.log('Sales trend data:', data.salesTrend); // Debug log
     if (chartInstances.line) {
+        console.log('Current period:', dashboardState.currentPeriod);
+        console.log('Sales trend data:', data.salesTrend);
+        
         const trendData = data.salesTrend[dashboardState.currentPeriod];
-        console.log('Trend data for period:', dashboardState.currentPeriod, trendData); // Debug log
         if (trendData && trendData.labels && trendData.values) {
-            chartInstances.line.data.labels = trendData.labels;
-            chartInstances.line.data.datasets[0].data = trendData.values;
-            chartInstances.line.update();
+            let labels = [];
+            let values = [];
+
+            try {
+                // Get current date in YYYY-MM-DD format
+                const currentDate = new Date().toISOString().split('T')[0];
+                console.log('Current date:', currentDate);
+
+                // Generate complete date range
+                if (dashboardState.currentPeriod === 'weekly') {
+                    const startDate = new Date();
+                    startDate.setDate(startDate.getDate() - 6);
+                    labels = getDatesInRange(startDate, new Date());
+                } else if (dashboardState.currentPeriod === 'monthly') {
+                    const startDate = new Date();
+                    startDate.setDate(startDate.getDate() - 29);
+                    labels = getDatesInRange(startDate, new Date());
+                } else {
+                    labels = trendData.labels;
+                }
+
+                // Map values to dates, using 0 for missing dates
+                values = labels.map(date => {
+                    const index = trendData.labels.indexOf(date);
+                    return index !== -1 ? trendData.values[index] : 0;
+                });
+
+                console.log('Generated labels:', labels);
+                console.log('Generated values:', values);
+
+                chartInstances.line.data.labels = labels;
+                chartInstances.line.data.datasets[0].data = values;
+                chartInstances.line.update();
+            } catch (error) {
+                console.error('Error updating chart:', error);
+                chartInstances.line.data.labels = trendData.labels;
+                chartInstances.line.data.datasets[0].data = trendData.values;
+                chartInstances.line.update();
+            }
         } else {
-            console.error('Sales trend data is missing or incomplete for period:', dashboardState.currentPeriod);
-            // Fallback to empty data if trendData is missing or incomplete
+            console.error('Sales trend data is missing or incomplete');
             chartInstances.line.data.labels = [];
             chartInstances.line.data.datasets[0].data = [];
             chartInstances.line.update();
@@ -392,7 +404,6 @@ function updateStats(data) {
         'topProductRevenue': formatCurrency(data.topProducts[0]?.revenue || 0),
         'totalCustomers': formatNumber(data.total_customers),
         'averageOrderValue': formatCurrency(data.average_order_value),
-        'totalOrders': formatNumber(data.total_orders),
         'periodRevenue': formatCurrency(periodRevenue)
     };
 
@@ -409,40 +420,6 @@ function updateStats(data) {
     });
 }
 
-// Notification Management
-function updateNotificationBadge(count) {
-    console.log(`Updating notification badge with count: ${count}`); // Debug log
-    const badge = document.getElementById('notification-badge');
-    if (badge) {
-        badge.textContent = count;
-        badge.style.visibility = count > 0 ? 'visible' : 'hidden';
-    } else {
-        console.warn('Notification badge element not found'); // Debug log
-    }
-}
-
-function updateNotificationPanel() {
-    const container = document.getElementById('notifications-list');
-    if (!container) return;
-
-    container.innerHTML = dashboardState.notifications
-        .map(notification => `
-            <div class="notification-item ${notification.status}" data-id="${notification.id}">
-                <div class="notification-content">
-                    <span class="notification-title">${notification.title}</span>
-                    <span class="notification-message">${notification.message}</span>
-                    <span class="notification-time">${formatTimeAgo(notification.timestamp)}</span>
-                </div>
-                <button class="mark-read-btn" data-id="${notification.id}">
-                    <i class="fas fa-check"></i>
-                </button>
-            </div>
-        `)
-        .join('');
-
-    attachNotificationHandlers();
-}
-
 // Event Handlers
 function attachEventListeners() {
     // Period Selection Buttons
@@ -454,16 +431,6 @@ function attachEventListeners() {
             fetchDashboardData();
         });
     });
-
-    // Notification Panel Toggle
-    const notificationIcon = document.querySelector('.notification-icon');
-    const notificationPanel = document.getElementById('notification-panel');
-    
-    if (notificationIcon && notificationPanel) {
-        notificationIcon.addEventListener('click', () => {
-            notificationPanel.classList.toggle('active');
-        });
-    }
 
     // User Dropdown Toggle
     const profileIcon = document.getElementById('profile-icon');
@@ -480,44 +447,19 @@ function attachEventListeners() {
             dropdownMenu.classList.remove('active');
         });
     }
-
-    // Clear All Notifications
-    const clearBtn = document.getElementById('clear-notifications');
-    if (clearBtn) {
-        clearBtn.addEventListener('click', async () => {
-            try {
-                await fetchWithAuth(`${API_CONFIG.endpoints.notifications}/clear`, { method: 'POST' });
-                dashboardState.notifications = [];
-                updateNotificationPanel();
-                updateNotificationBadge(0);
-            } catch (error) {
-                console.error('Error clearing notifications:', error);
-            }
-        });
-    }
-}
-
-function attachNotificationHandlers() {
-    document.querySelectorAll('.mark-read-btn').forEach(button => {
-        button.addEventListener('click', async (e) => {
-            e.stopPropagation();
-            const notificationId = button.dataset.id;
-            try {
-                await fetchWithAuth(`${API_CONFIG.endpoints.notifications}/${notificationId}/read`, { method: 'POST' });
-                const notification = dashboardState.notifications.find(n => n.id === notificationId);
-                if (notification) {
-                    notification.status = 'read';
-                    updateNotificationPanel();
-                    updateNotificationBadge(dashboardState.notifications.filter(n => n.status === 'unread').length);
-                }
-            } catch (error) {
-                console.error('Error marking notification as read:', error);
-            }
-        });
-    });
 }
 
 // Utility Functions
+function getDatesInRange(startDate, endDate) {
+    const dates = [];
+    let currentDate = new Date(startDate);
+    while (currentDate <= endDate) {
+        dates.push(currentDate.toISOString().split('T')[0]);
+        currentDate.setDate(currentDate.getDate() + 1);
+    }
+    return dates;
+}
+
 function formatCurrency(value) {
     return new Intl.NumberFormat('en-US', {
         style: 'currency',
@@ -564,13 +506,6 @@ function updateLastUpdated() {
     }
 }
 
-function updateProductIdsList(products) {
-    const productIdsList = document.getElementById('productIdsList');
-    if (!productIdsList) return;
-
-    productIdsList.innerHTML = products.map(product => `<li>${product.product_id}</li>`).join('');
-}
-
 // Loading State Management
 function showLoadingState() {
     const overlay = document.getElementById('loading-overlay');
@@ -607,12 +542,10 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeCharts();
     attachEventListeners();
     fetchDashboardData();
-    fetchNotifications();
     
     // Set up polling intervals
     const intervals = [
         { fn: fetchDashboardData, ms: 30000 },  // 30 seconds
-        { fn: fetchNotifications, ms: 60000 }    // 1 minute
     ];
     
     intervals.forEach(({fn, ms}) => setInterval(fn, ms));

@@ -2,11 +2,7 @@
 // API Endpoints: /api/admin/*
 // Supported Methods:
 //   - GET: /dashboard - Get dashboard stats
-//   - GET: /inventory - Get inventory report
 //   - GET: /users - Get user analytics
-//   - GET: /engagement - Get customer engagement
-//   - GET: /logs - Get admin logs
-//   - GET: /notifications - Get notifications
 //   - GET: /products - Get products
 //   - GET: /transactions - Get transactions
 
@@ -56,22 +52,8 @@ try {
                     $response = $admin->getDashboardStats();
                     break;
                     
-                case 'inventory':
-                    $response = $admin->getInventoryReport();
-                    break;
-                    
                 case 'users':
                     $response = $admin->getUserAnalytics();
-                    break;
-                    
-                case 'engagement':
-                    $response = $admin->getCustomerEngagement();
-                    break;
-                    
-                case 'notifications':
-                    $response = isset($parts[3]) && $parts[3] === 'unread' 
-                        ? $admin->getUnreadNotifications()
-                        : $admin->getNotifications();
                     break;
                     
                 case 'products':

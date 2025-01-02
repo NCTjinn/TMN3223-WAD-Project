@@ -10,13 +10,6 @@ class Admin {
         $this->conn = $conn;
     }
 
-    private function getRecentNotifications() {
-        // Implement the logic to get recent notifications
-        $query = "SELECT * FROM Notifications ORDER BY created_at DESC LIMIT 10";
-        $stmt = $this->conn->query($query);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
     public function getDashboardStats() {
         try {
             $orderStats = $this->getOrderStats();
@@ -28,7 +21,6 @@ class Admin {
             $shippingMethodStats = $this->getShippingMethodStats();
             
             $data = [
-                'total_orders' => $this->getTotalOrders(),
                 'revenue_stats' => $this->getRevenueStats(),
                 'orderStats' => $orderStats,
                 'categoryRevenue' => $categoryRevenue,
@@ -81,22 +73,6 @@ class Admin {
             'revenue' => $categoryRevenue[$topCategory[0]]
         ];
     }
-
-    public function getNotifications() {
-        // Implement notification logic based on your requirements
-        return [
-            'status' => 'success',
-            'unreadCount' => $this->getUnreadNotificationCount(),
-            'notifications' => $this->getRecentNotifications()
-        ];
-    }
-
-    private function getUnreadNotificationCount() {
-        // Implement the logic to get the count of unread notifications
-        $query = "SELECT COUNT(*) as unread_count FROM Notifications WHERE status = 'unread'";
-        $stmt = $this->conn->query($query);
-        return $stmt->fetch(PDO::FETCH_ASSOC)['unread_count'];
-    }
     
     private function getOrderStats() {
         $query = "SELECT 
@@ -135,52 +111,77 @@ class Admin {
         return $revenue;
     }
     private function getSalesTrend($period = 'daily') {
+        // Log current date for debugging
+        error_log('Current date: ' . date('Y-m-d H:i:s'));
+        
         switch ($period) {
             case 'weekly':
                 $query = "SELECT 
-                    DATE_FORMAT(transaction_date, '%Y-%m-%d') as date,
-                    SUM(total_amount) as amount
-                    FROM Transactions
-                    WHERE transaction_date >= DATE_SUB(CURRENT_DATE, INTERVAL 7 DAY)
-                    GROUP BY DATE(transaction_date)
-                    ORDER BY DATE(transaction_date)";
+                    DATE_FORMAT(d.date, '%Y-%m-%d') as date,
+                    COALESCE(SUM(t.total_amount), 0) as amount
+                    FROM (
+                        SELECT DATE_SUB(CURRENT_DATE, INTERVAL n DAY) as date
+                        FROM (
+                            SELECT 0 as n UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 
+                            UNION SELECT 4 UNION SELECT 5 UNION SELECT 6
+                        ) days
+                    ) d
+                    LEFT JOIN Transactions t ON DATE(t.transaction_date) = d.date
+                    GROUP BY d.date
+                    ORDER BY d.date";
                 break;
             case 'monthly':
                 $query = "SELECT 
-                    DATE_FORMAT(transaction_date, '%Y-%m-%d') as date,
-                    SUM(total_amount) as amount
-                    FROM Transactions
-                    WHERE transaction_date >= DATE_SUB(CURRENT_DATE, INTERVAL 1 MONTH)
-                    GROUP BY DATE(transaction_date)
-                    ORDER BY DATE(transaction_date)";
+                    DATE_FORMAT(d.date, '%Y-%m-%d') as date,
+                    COALESCE(SUM(t.total_amount), 0) as amount
+                    FROM (
+                        SELECT DATE_SUB(CURRENT_DATE, INTERVAL n DAY) as date
+                        FROM (
+                            WITH RECURSIVE numbers AS (
+                                SELECT 0 as n 
+                                UNION ALL 
+                                SELECT n + 1 FROM numbers WHERE n < 29
+                            )
+                            SELECT n FROM numbers
+                        ) days
+                    ) d
+                    LEFT JOIN Transactions t ON DATE(t.transaction_date) = d.date
+                    GROUP BY d.date
+                    ORDER BY d.date";
                 break;
             case 'daily':
             default:
                 $query = "SELECT 
-                    DATE_FORMAT(transaction_date, '%H:00') as hour,
-                    SUM(total_amount) as amount
-                    FROM Transactions
-                    WHERE DATE(transaction_date) = CURRENT_DATE
-                    GROUP BY HOUR(transaction_date)
-                    ORDER BY HOUR(transaction_date)";
+                    DATE_FORMAT(h.hour, '%H:00') as hour,
+                    COALESCE(SUM(t.total_amount), 0) as amount
+                    FROM (
+                        SELECT DATE_ADD(
+                            DATE_FORMAT(CURRENT_DATE, '%Y-%m-%d 00:00:00'),
+                            INTERVAL n HOUR
+                        ) as hour
+                        FROM (
+                            WITH RECURSIVE hours AS (
+                                SELECT 0 as n 
+                                UNION ALL 
+                                SELECT n + 1 FROM hours WHERE n < 23
+                            )
+                            SELECT n FROM hours
+                        ) hours
+                    ) h
+                    LEFT JOIN Transactions t ON DATE(t.transaction_date) = CURRENT_DATE 
+                        AND HOUR(t.transaction_date) = HOUR(h.hour)
+                    GROUP BY h.hour
+                    ORDER BY h.hour";
                 break;
         }
     
-        // Log the query for debugging
         error_log('Executing query: ' . $query);
-    
         $stmt = $this->conn->query($query);
         $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
-        // Log the results for debugging
         error_log('Query results: ' . print_r($results, true));
     
-        // Ensure results are not empty and have the expected structure
         if (empty($results)) {
-            return [
-                'labels' => [],
-                'values' => []
-            ];
+            return ['labels' => [], 'values' => []];
         }
     
         return [
@@ -194,12 +195,12 @@ class Admin {
             case 'weekly':
                 $query = "SELECT SUM(total_amount) as revenue
                           FROM Transactions
-                          WHERE transaction_date >= DATE_SUB(CURRENT_DATE, INTERVAL 7 DAY)";
+                          WHERE transaction_date >= DATE_SUB(CURRENT_DATE, INTERVAL 6 DAY) AND transaction_date <= CURRENT_DATE";
                 break;
             case 'monthly':
                 $query = "SELECT SUM(total_amount) as revenue
                           FROM Transactions
-                          WHERE transaction_date >= DATE_SUB(CURRENT_DATE, INTERVAL 1 MONTH)";
+                          WHERE transaction_date >= DATE_SUB(CURRENT_DATE, INTERVAL 29 DAY) AND transaction_date <= CURRENT_DATE";
                 break;
             case 'daily':
             default:
@@ -208,11 +209,18 @@ class Admin {
                           WHERE DATE(transaction_date) = CURRENT_DATE";
                 break;
         }
-
+    
+        // Log the query for debugging
+        error_log('Executing query: ' . $query);
+    
         $stmt = $this->conn->query($query);
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+        // Log the result for debugging
+        error_log('Query result: ' . print_r($result, true));
+    
         return $result['revenue'] ?? 0;
-    }    
+    }
 
     public function updateSalesSummary() {
         try {
@@ -249,12 +257,6 @@ class Admin {
 
     private function getTotalUsers() {
         $query = "SELECT COUNT(*) as total FROM Users";
-        $stmt = $this->conn->query($query);
-        return $stmt->fetch(PDO::FETCH_ASSOC)['total'];
-    }
-
-    private function getTotalOrders() {
-        $query = "SELECT COUNT(*) as total FROM Orders";
         $stmt = $this->conn->query($query);
         return $stmt->fetch(PDO::FETCH_ASSOC)['total'];
     }
@@ -307,109 +309,34 @@ class Admin {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function getInventoryReport() {
-        try {
-            // Updated to include all necessary fields from schema
-            $query = "SELECT 
-                        p.*,
-                        pc.name as category_name,
-                        pc.description as category_description,
-                        COUNT(td.product_id) as total_sales,
-                        COALESCE(SUM(td.quantity), 0) as units_sold,
-                        COALESCE(SUM(td.subtotal), 0) as total_revenue
-                     FROM Products p
-                     LEFT JOIN Product_Categories pc ON p.category_id = pc.category_id
-                     LEFT JOIN Transaction_Details td ON p.product_id = td.product_id
-                     GROUP BY p.product_id
-                     ORDER BY units_sold DESC";
-
-            $stmt = $this->conn->query($query);
-            return [
-                'status' => 'success',
-                'data' => $stmt->fetchAll(PDO::FETCH_ASSOC)
-            ];
-        } catch(PDOException $e) {
-            return ['status' => 'error', 'message' => $e->getMessage()];
-        }
-    }
-
     public function getUserAnalytics() {
         try {
-            // Updated to match schema's user roles and include more metrics
-            $query = "SELECT 
-                        COUNT(*) as total_users,
-                        SUM(CASE WHEN created_at >= DATE_SUB(CURRENT_DATE, INTERVAL 30 DAY)
-                            THEN 1 ELSE 0 END) as new_users_month,
-                        AVG(points) as average_points,
-                        COUNT(CASE WHEN role = 'public' THEN 1 END) as public_users,
-                        COUNT(CASE WHEN role = 'member' THEN 1 END) as members,
-                        COUNT(CASE WHEN role = 'admin' THEN 1 END) as admins,
-                        MAX(points) as highest_points,
-                        MIN(points) as lowest_points
-                     FROM Users";
-
+            // Query to fetch user analytics
+            $query = "
+                SELECT 
+                    COUNT(*) AS total_users,
+                    SUM(CASE WHEN created_at >= DATE_SUB(CURRENT_DATE, INTERVAL 30 DAY) THEN 1 ELSE 0 END) AS new_users_month,
+                    AVG(points) AS average_points,
+                    COUNT(CASE WHEN role = 'public' THEN 1 END) AS public_users,
+                    COUNT(CASE WHEN role = 'member' THEN 1 END) AS members,
+                    COUNT(CASE WHEN role = 'admin' THEN 1 END) AS admins,
+                    MAX(points) AS highest_points,
+                    MIN(points) AS lowest_points
+                FROM Users
+            ";
+    
             $stmt = $this->conn->query($query);
-            
-            // Add engagement metrics
-            $engagementQuery = "SELECT 
-                                COUNT(DISTINCT r.user_id) as reviewing_users,
-                                COUNT(DISTINCT uf.user_id) as users_with_favorites,
-                                AVG(r.rating) as average_rating
-                              FROM Users u
-                              LEFT JOIN Reviews r ON u.user_id = r.user_id
-                              LEFT JOIN User_Favorites uf ON u.user_id = uf.user_id";
-            
-            $engagementStmt = $this->conn->query($engagementQuery);
-            
+            $data = $stmt->fetch(PDO::FETCH_ASSOC);
+    
             return [
                 'status' => 'success',
-                'data' => array_merge(
-                    $stmt->fetch(PDO::FETCH_ASSOC),
-                    $engagementStmt->fetch(PDO::FETCH_ASSOC)
-                )
+                'data' => $data
             ];
-        } catch(PDOException $e) {
-            return ['status' => 'error', 'message' => $e->getMessage()];
-        }
-    }
-
-    public function getCustomerEngagement($days = 30) {
-        try {
-            // Updated to include more engagement metrics from schema
-            $query = "SELECT 
-                        COUNT(DISTINCT t.user_id) as purchasing_users,
-                        COUNT(DISTINCT r.user_id) as reviewing_users,
-                        COUNT(DISTINCT uf.user_id) as users_with_favorites,
-                        AVG(r.rating) as average_rating,
-                        COUNT(DISTINCT m.user_id) as users_with_missions,
-                        SUM(CASE WHEN m.status = 'completed' THEN 1 ELSE 0 END) as completed_missions
-                     FROM Users u
-                     LEFT JOIN Transactions t ON u.user_id = t.user_id 
-                        AND t.transaction_date >= DATE_SUB(CURRENT_DATE, INTERVAL :days DAY)
-                     LEFT JOIN Reviews r ON u.user_id = r.user_id
-                     LEFT JOIN User_Favorites uf ON u.user_id = uf.user_id
-                     LEFT JOIN Rewards m ON u.user_id = m.user_id";
-
-            $stmt = $this->conn->prepare($query);
-            $stmt->bindParam(':days', $days, PDO::PARAM_INT);
-            $stmt->execute();
-            
-            // Add missions statistics
-            $missionsQuery = "SELECT 
-                              COUNT(*) as total_missions,
-                              AVG(points) as average_mission_points
-                            FROM Mission_Templates";
-            $missionStmt = $this->conn->query($missionsQuery);
-            
+        } catch (PDOException $e) {
             return [
-                'status' => 'success',
-                'data' => array_merge(
-                    $stmt->fetch(PDO::FETCH_ASSOC),
-                    $missionStmt->fetch(PDO::FETCH_ASSOC)
-                )
+                'status' => 'error',
+                'message' => $e->getMessage()
             ];
-        } catch(PDOException $e) {
-            return ['status' => 'error', 'message' => $e->getMessage()];
         }
     }
 
@@ -533,20 +460,6 @@ class Admin {
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            return ['status' => 'error', 'message' => $e->getMessage()];
-        }
-    }
-
-    public function getUnreadNotifications() {
-        try {
-            $query = "SELECT * FROM Notifications WHERE status = 'unread'";
-            $stmt = $this->conn->query($query);
-            return [
-                'status' => 'success',
-                'unreadCount' => $stmt->rowCount(),
-                'notifications' => $stmt->fetchAll(PDO::FETCH_ASSOC)
-            ];
-        } catch(PDOException $e) {
             return ['status' => 'error', 'message' => $e->getMessage()];
         }
     }
