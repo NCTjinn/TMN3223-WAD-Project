@@ -1,214 +1,146 @@
-document.addEventListener('DOMContentLoaded', function() {
-    // Modal Elements
-    const faqModal = document.getElementById('faqModal');
-    const sectionModal = document.getElementById('sectionModal');
-    const closeButtons = document.querySelectorAll('.close-modal');
-    const cancelButtons = document.querySelectorAll('.cancel-btn');
+document.addEventListener("DOMContentLoaded", function () {
+    const faqModal = document.getElementById("faqModal");
+    const faqForm = document.getElementById("faqForm");
+    const addFaqButton = document.getElementById("addFaqButton");
+    const closeModalButtons = document.querySelectorAll(".close-modal, .cancel-btn");
+    const faqContainer = document.getElementById("faqContainer");
+    let currentFaqId = null;
+    let newFaqId = null;
 
-    // Initialize FAQ data from localStorage or set default
-    let faqData = JSON.parse(localStorage.getItem('faqData')) || {
-        sections: Array.from(document.querySelectorAll('.faq-section')).map(section => ({
-            id: section.id || 'section-' + Date.now(),
-            title: section.querySelector('.section-title').firstChild.textContent.trim(),
-            faqs: Array.from(section.querySelectorAll('.faq-item')).map(faq => ({
-                id: faq.id || 'faq-' + Date.now(),
-                question: faq.querySelector('.faq-question').textContent,
-                answer: faq.querySelector('.faq-answer').textContent
-            }))
-        }))
-    };
+    // Profile dropdown functionality
+    const profileIcon = document.getElementById('profile-icon');
+    const profileDropdown = document.getElementById('dropdown-menu');
 
-    // Save data to localStorage
-    function saveData() {
-        localStorage.setItem('faqData', JSON.stringify(faqData));
-    }
-
-    // Render FAQ sections from data
-    function renderFAQs() {
-        const mainContent = document.querySelector('.admin-content');
-        mainContent.innerHTML = '<h1>FAQ Management</h1>';
-
-        faqData.sections.forEach(section => {
-            const sectionElement = document.createElement('div');
-            sectionElement.className = 'faq-section';
-            sectionElement.id = section.id;
-
-            sectionElement.innerHTML = `
-                <div class="section-header">
-                    <h2 class="section-title">
-                        ${section.title}
-                        <button class="edit-section-btn">
-                            <i class="fas fa-edit"></i> Edit Section
-                        </button>
-                    </h2>
-                </div>
-            `;
-
-            section.faqs.forEach(faq => {
-                const faqItem = createFaqItem(faq.question, faq.answer);
-                faqItem.id = faq.id;
-                sectionElement.appendChild(faqItem);
-            });
-
-            const addButton = document.createElement('button');
-            addButton.className = 'add-faq-btn';
-            addButton.id = 'add-btn-' + section.id;
-            addButton.innerHTML = '<i class="fas fa-plus"></i> Add New FAQ';
-            sectionElement.appendChild(addButton);
-
-            mainContent.appendChild(sectionElement);
-        });
-
-        // Reattach event listeners
-        attachEventListeners();
-    }
-
-    // Create new FAQ item
-    function createFaqItem(question, answer) {
-        const faqItem = document.createElement('div');
-        faqItem.className = 'faq-item';
-        faqItem.id = 'faq-' + Date.now();
-
-        faqItem.innerHTML = `
-            <div class="faq-content">
-                <div class="faq-question">${question}</div>
-                <div class="faq-answer">${answer}</div>
-            </div>
-            <div class="faq-actions">
-                <button class="edit-btn">
-                    <i class="fas fa-edit"></i> Edit
-                </button>
-                <button class="delete-btn">
-                    <i class="fas fa-trash"></i> Delete
-                </button>
-            </div>
-        `;
-
-        return faqItem;
-    }
-
-    // Attach event listeners to all interactive elements
-    function attachEventListeners() {
-        // Edit FAQ Buttons
-        document.querySelectorAll('.edit-btn').forEach(button => {
-            button.addEventListener('click', () => {
-                const faqItem = button.closest('.faq-item');
-                const question = faqItem.querySelector('.faq-question').textContent;
-                const answer = faqItem.querySelector('.faq-answer').textContent;
-
-                document.getElementById('faqQuestion').value = question;
-                document.getElementById('faqAnswer').value = answer;
-                faqModal.style.display = 'block';
-                faqModal.dataset.editingFaq = faqItem.id;
-                faqModal.dataset.sectionId = faqItem.closest('.faq-section').id;
-            });
-        });
-
-        // Edit Section Buttons
-        document.querySelectorAll('.edit-section-btn').forEach(button => {
-            button.addEventListener('click', () => {
-                const section = button.closest('.faq-section');
-                const sectionTitle = section.querySelector('.section-title').firstChild.textContent.trim();
-                document.getElementById('sectionTitle').value = sectionTitle;
-                sectionModal.style.display = 'block';
-                sectionModal.dataset.editingSection = section.id;
-            });
-        });
-
-        // Delete FAQ Buttons
-        document.querySelectorAll('.delete-btn').forEach(button => {
-            button.addEventListener('click', () => {
-                if (confirm('Are you sure you want to delete this FAQ?')) {
-                    const faqItem = button.closest('.faq-item');
-                    const sectionId = faqItem.closest('.faq-section').id;
-                    const sectionIndex = faqData.sections.findIndex(s => s.id === sectionId);
-                    const faqIndex = faqData.sections[sectionIndex].faqs.findIndex(f => f.id === faqItem.id);
-                    
-                    faqData.sections[sectionIndex].faqs.splice(faqIndex, 1);
-                    saveData();
-                    renderFAQs();
-                }
-            });
-        });
-
-        // Add New FAQ Buttons
-        document.querySelectorAll('.add-faq-btn').forEach(button => {
-            button.addEventListener('click', () => {
-                document.getElementById('faqQuestion').value = '';
-                document.getElementById('faqAnswer').value = '';
-                faqModal.style.display = 'block';
-                delete faqModal.dataset.editingFaq;
-                faqModal.dataset.sectionId = button.closest('.faq-section').id;
-            });
-        });
-    }
-
-    // Close Modals
-    function closeModals() {
-        faqModal.style.display = 'none';
-        sectionModal.style.display = 'none';
-        delete faqModal.dataset.editingFaq;
-        delete faqModal.dataset.sectionId;
-        delete sectionModal.dataset.editingSection;
-    }
-
-    closeButtons.forEach(button => {
-        button.addEventListener('click', closeModals);
+    profileIcon.addEventListener('click', (e) => {
+        e.stopPropagation();
+        profileDropdown.classList.toggle('active');
     });
 
-    cancelButtons.forEach(button => {
-        button.addEventListener('click', closeModals);
-    });
-
-    // Close modal when clicking outside
-    window.addEventListener('click', (event) => {
-        if (event.target === faqModal || event.target === sectionModal) {
-            closeModals();
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.user-dropdown')) {
+            profileDropdown.classList.remove('active');
         }
     });
 
-    // Handle form submissions
-    document.querySelectorAll('.modal-form').forEach(form => {
-        form.addEventListener('submit', (e) => {
-            e.preventDefault();
-            
-            if (form.closest('#faqModal')) {
-                const question = document.getElementById('faqQuestion').value;
-                const answer = document.getElementById('faqAnswer').value;
-                const sectionId = faqModal.dataset.sectionId;
-                const sectionIndex = faqData.sections.findIndex(s => s.id === sectionId);
-                
-                if (faqModal.dataset.editingFaq) {
-                    // Edit existing FAQ
-                    const faqId = faqModal.dataset.editingFaq;
-                    const faqIndex = faqData.sections[sectionIndex].faqs.findIndex(f => f.id === faqId);
-                    faqData.sections[sectionIndex].faqs[faqIndex] = {
-                        id: faqId,
-                        question,
-                        answer
-                    };
-                } else {
-                    // Add new FAQ
-                    const newFaq = {
-                        id: 'faq-' + Date.now(),
-                        question,
-                        answer
-                    };
-                    faqData.sections[sectionIndex].faqs.push(newFaq);
-                }
-            } else if (form.closest('#sectionModal')) {
-                // Edit section title
-                const sectionId = sectionModal.dataset.editingSection;
-                const sectionIndex = faqData.sections.findIndex(s => s.id === sectionId);
-                faqData.sections[sectionIndex].title = document.getElementById('sectionTitle').value;
-            }
-            
-            saveData();
-            renderFAQs();
-            closeModals();
+    // Modal handlers
+    addFaqButton.addEventListener("click", () => {
+        currentFaqId = null;
+        faqForm.reset();
+        
+        fetch("faqsmanagement.php?action=getMaxId")
+            .then(response => response.json())
+            .then(data => {
+                newFaqId = data.maxId;
+                faqModal.classList.add("active");
+            })
+            .catch(error => console.error("Error fetching max FAQ ID:", error));
+    });
+
+    closeModalButtons.forEach(button => {
+        button.addEventListener("click", () => {
+            faqModal.classList.remove("active");
+            newFaqId = null;
         });
     });
 
-    // Initial render
-    renderFAQs();
+    // Form submission
+    document.querySelector(".save-btn").addEventListener("click", function(e) {
+        e.preventDefault();
+        
+        const formData = {
+            question: document.getElementById("faqQuestion").value,
+            answer: document.getElementById("faqAnswer").value
+        };
+
+        if (currentFaqId) {
+            formData.faq_id = currentFaqId;
+        } else {
+            formData.faq_id = newFaqId;
+        }
+
+        fetch(`faqsmanagement.php?action=${currentFaqId ? 'update' : 'add'}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                faqModal.classList.remove("active");
+                newFaqId = null;
+                fetchFAQs();
+            } else {
+                alert(data.error || "An error occurred");
+            }
+        })
+        .catch(error => console.error("Error:", error));
+    });
+
+    // Fetch and render FAQs
+    function fetchFAQs() {
+        fetch("faqsmanagement.php?action=fetch")
+            .then(response => response.json())
+            .then(data => {
+                faqContainer.innerHTML = data.map(faq => `
+                    <div class="faq-item">
+                        <div class="faq-content">
+                            <div class="faq-question">${faq.question}</div>
+                            <div class="faq-answer">${faq.answer}</div>
+                        </div>
+                        <div class="faq-actions">
+                            <button class="edit-btn" data-id="${faq.faq_id}">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                            <button class="delete-btn" data-id="${faq.faq_id}">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+                attachEventListeners();
+            })
+            .catch(error => console.error("Error:", error));
+    }
+
+    function attachEventListeners() {
+        document.querySelectorAll(".edit-btn").forEach(btn => {
+            btn.addEventListener("click", (e) => {
+                const faqItem = e.target.closest('.faq-item');
+                currentFaqId = btn.dataset.id;
+                document.getElementById("faqQuestion").value = 
+                    faqItem.querySelector(".faq-question").textContent;
+                document.getElementById("faqAnswer").value = 
+                    faqItem.querySelector(".faq-answer").textContent;
+                faqModal.classList.add("active");
+            });
+        });
+
+        document.querySelectorAll(".delete-btn").forEach(btn => {
+            btn.addEventListener("click", () => {
+                if (confirm("Are you sure you want to delete this FAQ?")) {
+                    fetch("faqsmanagement.php?action=delete", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({ faq_id: btn.dataset.id })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            fetchFAQs();
+                        } else {
+                            alert(data.error || "An error occurred");
+                        }
+                    })
+                    .catch(error => console.error("Error:", error));
+                }
+            });
+        });
+    }
+
+    // Initial fetch
+    fetchFAQs();
 });
