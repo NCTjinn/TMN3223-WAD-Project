@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin FAQ Management</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="admindashboardstyle.css">
+    <link rel="stylesheet" href="adminfaqs.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+<body>
+    <!-- Header Section -->
+    <header class="admin-header">
+        <div class="logo">
+            <img src="logo.png" alt="PuffLab Logo">
+        </div>
+        <div class="utilities">
+            <div class="icon notification-icon">
+                <i class="fas fa-bell"></i>
+                <span id="notification-badge" class="badge">3</span>
+            </div>
+            <div class="user-dropdown">
+                <i class="fas fa-user-circle" id="profile-icon"></i>
+                <div class="dropdown-menu" id="dropdown-menu">
+                    <a href="adminprofile.html">Profile</a>
+                    <a href="publichome.html">Logout</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Layout -->
+    <div class="admin-layout">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar">
+            <a href="admindashboard.html" class="sidebar-item" data-tooltip="Admin Dashboard">
+                <i class="fas fa-tachometer-alt"></i>
+                <span class="sidebar-label">Dashboard</span>
+            </a>
+            <a href="adminmembers.html" class="sidebar-item" data-tooltip="Member Management">
+                <i class="fas fa-users"></i>
+                <span class="sidebar-label">Members</span>
+            </a>
+            <a href="adminproducts.html" class="sidebar-item" data-tooltip="Product Management">
+                <i class="fas fa-boxes"></i>
+                <span class="sidebar-label">Products</span>
+            </a>
+            <a href="admintransactions.html" class="sidebar-item" data-tooltip="Transaction Records">
+                <i class="fas fa-file-invoice-dollar"></i>
+                <span class="sidebar-label">Transactions</span>
+            </a>
+            <a href="adminfaqs.html" class="sidebar-item active" data-tooltip="FAQ Management">
+                <i class="fas fa-question-circle"></i>
+                <span class="sidebar-label">FAQs</span>
+            </a>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="admin-content">
+            <h1>FAQ Management</h1>
+            
+            <!-- FAQ Section 1 -->
+            <div class="faq-section">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        FAQ - Section 1
+                        <button class="edit-section-btn">
+                            <i class="fas fa-edit"></i> Edit Section
+                        </button>
+                    </h2>
+                </div>
+                
+                <!-- FAQ Items -->
+                <div class="faq-item">
+                    <div class="faq-content">
+                        <div class="faq-question">What are your operating hours?</div>
+                        <div class="faq-answer">We are open Monday to Friday, 9 AM to 6 PM.</div>
+                    </div>
+                    <div class="faq-actions">
+                        <button class="edit-btn">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <button class="delete-btn">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </div>
+                </div>
+
+                <button class="add-faq-btn">
+                    <i class="fas fa-plus"></i> Add New FAQ
+                </button>
+            </div>
+
+            <!-- FAQ Section 2 -->
+            <div class="faq-section">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        FAQ - Section 2
+                        <button class="edit-section-btn">
+                            <i class="fas fa-edit"></i> Edit Section
+                        </button>
+                    </h2>
+                </div>
+                
+                <!-- FAQ Items -->
+                <div class="faq-item">
+                    <div class="faq-content">
+                        <div class="faq-question">What payment methods do you accept?</div>
+                        <div class="faq-answer">We accept cash, credit cards, and digital payments.</div>
+                    </div>
+                    <div class="faq-actions">
+                        <button class="edit-btn">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <button class="delete-btn">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </div>
+                </div>
+
+                <button class="add-faq-btn">
+                    <i class="fas fa-plus"></i> Add New FAQ
+                </button>
+            </div>
+        </main>
+    </div>
+
+    <!-- Edit FAQ Modal -->
+    <div class="modal" id="faqModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Edit FAQ</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <form class="modal-form">
+                <div class="form-group">
+                    <label for="faqQuestion">Question</label>
+                    <input type="text" id="faqQuestion" required>
+                </div>
+                <div class="form-group">
+                    <label for="faqAnswer">Answer</label>
+                    <textarea id="faqAnswer" required></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="cancel-btn">Cancel</button>
+                    <button type="submit" class="save-btn">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Section Modal -->
+    <div class="modal" id="sectionModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Edit Section</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <form class="modal-form">
+                <div class="form-group">
+                    <label for="sectionTitle">Section Title</label>
+                    <input type="text" id="sectionTitle" required>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="cancel-btn">Cancel</button>
+                    <button type="submit" class="save-btn">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+        <!-- Footer Section -->
+        <footer class="admin-footer">
+            Copyright &copy; 2024 PuffLab
+        </footer>
+    
+        <script src="admindashboardscript.js"></script>
+        <script src="adminfaqs.js"></script>
+
+    </body>
+</html>

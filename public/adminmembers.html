@@ -12,7 +12,7 @@
     <!-- Header Section -->
     <header class="admin-header">
         <div class="logo">
-            <img src="logo.png" alt="PuffLab Logo">
+            <img src="../assets/images/logo.png" alt="PuffLab Logo">
         </div>
         <div class="utilities">
             <div class="user-dropdown">
@@ -57,18 +57,16 @@
             <!-- Filters -->
             <div class="member-management-actions">
                 <input type="text" id="searchBar" placeholder="Search by Username or ID" class="search-bar" />
-                <button id="historyLogBtn" class="history-log-btn">View History Log</button>
                 <div class="filter-actions">
                     <button class="dropdown-btn">Filter</button>
                     <div id="filterDropdown" class="dropdown-menu">
-                        <button class="filter-option" data-filter="active">Active Members</button>
-                        <button class="filter-option" data-filter="inactive">Inactive Members</button>
-                        <button class="filter-option" data-filter="high-spenders">High Spenders</button>
-                        <button class="filter-option" data-filter="high-to-low">High Spender (High to Low)</button>
+                        <button class="filter-option" data-filter="top-spenders">Top Spenders (High to Low)</button>
+                        <button class="filter-option" data-filter="recently-active">Recently Active (Last 30 Days)</button>
+                        <button class="filter-option" data-filter="inactive">Inactive Members (6+ Months)</button>
                         <button class="filter-option" data-filter="reset">Reset Filters</button>
                     </div>
+                    
                 </div>
-                <button id="addMemberBtn" class="add-member-btn">Add Member</button>
             </div>
             
             
@@ -82,7 +80,6 @@
                         <th>Points</th>
                         <th>Total Spent</th>
                         <th>Last Transaction</th>
-                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -95,45 +92,6 @@
                 <span id="pageNumbers">Page 1</span>
                 <button id="nextPageBtn" class="pagination-btn">Next</button>
             </div>
-            
-            <!-- Add Member Modal -->
-            <div id="addMemberModal" class="modal">
-                <div class="modal-content">
-                    <span class="close">&times;</span>
-                    <h2>Add Member</h2>
-                    <label for="addUsername">Username:</label>
-                    <input type="text" id="addUsername" placeholder="Enter Username" required />
-                    <label for="addPoints">Points:</label>
-                    <input type="number" id="addPoints" placeholder="Enter Points" required />
-                    <label for="addSpent">Total Spent:</label>
-                    <input type="number" id="addSpent" placeholder="Enter Total Spent" required />
-                    <div class="modal-actions">
-                        <button id="saveMemberBtn" class="save-btn">Save</button>
-                        <button id="cancelAddMemberBtn" class="cancel-btn">Cancel</button>
-                    </div>
-                    
-                </div>
-            </div>
-            
-            <!-- Update Member Modal -->
-            <div id="updateMemberModal" class="modal">
-                <div class="modal-content">
-                    <span class="close">&times;</span>
-                    <h2>Update Member</h2>
-                    <label for="updateUsername">Username:</label>
-                    <input type="text" id="updateUsername" required />
-                    <label for="updatePoints">Points:</label>
-                    <input type="number" id="updatePoints" required />
-                    <label for="updateSpent">Total Spent:</label>
-                    <input type="number" id="updateSpent" required />
-                    <div class="modal-actions">
-                        <button id="updateMemberSaveBtn" class="save-btn">Save Changes</button>
-                        <button id="cancelUpdateMemberBtn" class="cancel-btn">Cancel</button>
-                    </div>
-                    
-                </div>
-            </div>
-            
             
         </main>
     </div>
