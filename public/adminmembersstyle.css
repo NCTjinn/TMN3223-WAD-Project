@@ -452,7 +452,6 @@ body {
         width: 100%; /* Ensure full width on smaller devices */
     }
 }
-What this Achieves:
 
 /* Slide-Down Animation */
 @keyframes slideDown {
