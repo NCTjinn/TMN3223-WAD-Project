@@ -95,29 +95,6 @@ body {
     transform: translateY(0);
 }
 
-/* Badge Styles */
-.badge {
-    position: absolute;
-    top: 5px; /* Adjust for perfect alignment */
-    right: 5px; /* Adjust for perfect alignment */
-    background-color: #ff5722; /* Bright color for notifications */
-    color: white;
-    font-size: 12px;
-    font-weight: bold;
-    border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    visibility: hidden; /* Hidden by default */
-}
-
-/* Badge Parent Container for Positioning */
-.notification-icon {
-    position: relative;
-}
 
 
 /* Active State for Profile Icon */
@@ -151,60 +128,16 @@ body {
     transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-.notification-item:last-child,
+
 .dropdown-menu a:last-child {
     border-bottom: none;
 }
 
-.dropdown-menu a:hover,
-.notification-item:hover {
+.dropdown-menu a:hover {
     background-color: #f5f5f5;
     transform: scale(1.02);
 }
 
-/* Unread Indicator */
-.notification-item .unread-indicator {
-    width: 10px;
-    height: 10px;
-    background-color: #ff5722;
-    border-radius: 50%;
-    margin-right: 15px;
-}
-
-/* Notification Text Section */
-.notification-text {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-}
-
-/* Notification Title */
-.notification-title {
-    font-weight: bold;
-    margin-bottom: 2px;
-}
-
-/* Notification Time */
-.notification-time {
-    font-size: 12px;
-    color: #777;
-}
-
-/* Mark All as Read Button */
-button.mark-all-btn {
-    font-size: 14px;
-    padding: 10px 15px;
-    background-color: #6c7a5d;
-    color: white;
-    border: none;
-    width: 100%;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-button.mark-all-btn:hover {
-    background-color: #556d4f;
-}
 
 
 /* Footer Styling */
@@ -431,32 +364,45 @@ button.mark-all-btn:hover {
     position: relative;
 }
 
-.dropdown-btn,
-.add-member-btn {
-    padding: 10px 15px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: background-color 0.3s, transform 0.2s;
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+/* Fade-in Animation for Dropdown */
+.dropdown-menu {
+    display: none; /* Hidden by default */
+    position: absolute;
+    top: calc(100% + 10px); /* Slightly below the trigger */
+    right: 0;
+    width: 300px;
+    background-color: #fff;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    z-index: 10;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
-/* Add Member Button */
-.add-member-btn {
-    background-color: #4CAF50; /* Bright green for positivity and action */
-    color: #fff;
-}
-
-.add-member-btn:hover {
-    background-color: #45A049; /* Slightly darker green for hover */
-    transform: scale(1.05);
+.dropdown-menu.active {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
 }
 
 /* Dropdown Filter Button */
+.filter-actions {
+    position: relative;
+}
+
 .dropdown-btn {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
     background-color: #2196F3; /* Bright blue for utility actions */
-    color: #fff;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+    display: block;
+    width: auto; /* Adjust width as needed or keep it flexible */
 }
 
 .dropdown-btn:hover {
@@ -468,81 +414,45 @@ button.mark-all-btn:hover {
 #filterDropdown {
     display: none;
     position: absolute;
-    top: 100%; /* Place directly below the button */
-    left: -20px; /* Move it 20px to the left */
-    background-color: #FFFFFF; /* White background */
-    border: 1px solid #DDD; /* Subtle border */
-    z-index: 10;
-    width: 220px; /* Fixed width */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-    overflow: hidden; /* Prevent overflow */
-    animation: slideDown 0.2s ease; /* Smooth dropdown animation */
+    top: 100%; /* Position directly below the button */
+    right: 0; /* Align the dropdown to the right side of the button */
+    width: 100%; /* Stretch to match the width of the filter button */
+    min-width: 200px; /* Minimum width to prevent squeezing */
+    background-color: #FFFFFF;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    overflow: hidden;
+    z-index: 1000; /* Ensure it's on top of other elements */
 }
 
-/* Dropdown Arrow */
-#filterDropdown::before {
-    content: "";
-    position: absolute;
-    top: -8px;
-    left: 40px; /* Adjust arrow to match new dropdown alignment */
-    border-left: 8px solid transparent;
-    border-right: 8px solid transparent;
-    border-bottom: 8px solid transparent; /* Same as background */
-    z-index: 1;
-}
-
-/* Active Dropdown */
 #filterDropdown.active {
     display: block;
 }
 
 /* Filter Options */
 .filter-option {
-    background-color: #FFFFFF; /* White background */
-    color: #333333; /* Dark gray text */
-    text-align: center; /* Horizontally center-align text */
-    font-size: 12px; /* Smaller font size */
-    font-weight: 400; /* Regular weight */
+    padding: 10px;
+    color: #333;
+    text-align: center;
+    display: block;
+    width: 100%; /* Ensure full width */
     cursor: pointer;
-    transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transitions */
-    height: 45px; /* Fixed height for uniformity */
-    width: 100%; /* Match the width of the dropdown */
-    line-height: 45px; /* Vertically align text using line-height */
-    display: flex; /* Flexbox for vertical alignment */
-    align-items: center; /* Vertically center-align text */
-    justify-content: center; /* Horizontally center-align text */
+    transition: background-color 0.2s;
 }
 
-/* Hover Effect */
 .filter-option:hover {
-    background-color: #E6F4F1; /* Light teal hover */
-    color: #00796B; /* Teal text for hover */
-    font-weight: bold; /* Highlight hover option */
+    background-color: #E6F4F1; /* Light blue for hover effect */
 }
 
-/* Last Option */
-.filter-option:last-child {
-    border-bottom: 1px solid #DDD; /* Ensure bottom border exists */
-}
-
-/* Selected Option (Optional) */
-.filter-option.active {
-    background-color: #E6F4F1; /* Match hover color */
-    color: #00796B; /* Match hover text color */
-    font-weight: bold;
-}
-
-/* Adjust Dropdown Position for Small Screens */
+/* Adjust dropdown on smaller screens */
 @media screen and (max-width: 768px) {
     #filterDropdown {
-        width: 90%; /* Full width on smaller screens */
-        left: 5%; /* Center within the page */
-    }
-
-    #filterDropdown::before {
-        left: 20%; /* Adjust arrow for mobile */
+        right: 0; /* Adjust for right alignment */
+        left: 0; /* Stretch across on smaller screens */
+        width: 100%; /* Ensure full width on smaller devices */
     }
 }
+What this Achieves:
 
 /* Slide-Down Animation */
 @keyframes slideDown {
@@ -555,8 +465,6 @@ button.mark-all-btn:hover {
         transform: translateY(0);
     }
 }
-
-
 
 
 /* Table Styling */
@@ -642,166 +550,3 @@ td button {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* Update Button */
-.update-btn {
-    background-color: #03A9F4; /* Bright sky blue for editing */
-    color: #fff;
-}
-
-.update-btn:hover {
-    background-color: #0288D1; /* Slightly darker blue for hover */
-    transform: scale(1.05);
-}
-
-/* Delete Button */
-.delete-btn {
-    background-color: #F44336; /* Red for danger or deletion */
-    color: #fff;
-}
-
-.delete-btn:hover {
-    background-color: #D32F2F; /* Darker red for hover */
-    transform: scale(1.05);
-}
-
-
-/* Save Button */
-.save-btn {
-    background-color: #6C7A5D; /* Neutral green */
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: bold;
-    transition: background-color 0.3s, transform 0.2s;
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
-}
-
-.save-btn:hover {
-    background-color: #5A674C; /* Slightly darker green */
-    transform: scale(1.05); /* Subtle hover effect */
-}
-
-
-/* Active State (When clicked) */
-.save-btn:active {
-    background-color: #D84315; /* Even darker orange for active state */
-    transform: translateY(0); /* Remove lift effect */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); /* Reduced shadow for active state */
-}
-
-/* Disabled Button (Optional) */
-.save-btn:disabled {
-    background-color: #BDBDBD; /* Gray for disabled state */
-    cursor: not-allowed; /* Not-allowed cursor */
-    transform: none; /* No interaction effects */
-    box-shadow: none; /* No shadow */
-}
-
-
-/* Modal Styling */
-.modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    justify-content: center;
-    align-items: center;
-    z-index: 20;
-}
-
-.modal-content {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 10px;
-    width: 400px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    position: relative;
-}
-
-.modal-content h2 {
-    margin-bottom: 20px;
-    color: #1F1F1F;
-}
-
-.modal-content label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-    color: #1F1F1F;
-}
-
-.modal-content input {
-    width: 100%;
-    padding: 8px;
-    margin-bottom: 15px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    font-size: 14px;
-}
-
-/* Close Button */
-.close {
-    position: absolute;
-    top: 10px;
-    right: 20px;
-    font-size: 20px;
-    color: #333;
-    transition: color 0.3s;
-}
-
-.close:hover {
-    color: #F44336; /* Red for closing actions */
-}
-
-/* History Log Button */
-.history-log-btn {
-    padding: 10px 15px;
-    background-color: #6C7A5D; /* Neutral green */
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: bold;
-    transition: background-color 0.3s, transform 0.2s;
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
-}
-
-.history-log-btn:hover {
-    background-color: #5A674C; /* Slightly darker green */
-    transform: scale(1.05); /* Subtle hover effect */
-}
-
-
-/* Cancel Button */
-.cancel-btn {
-    background-color: #D9D9D9; /* Soft gray */
-    color: #333333; /* Darker text for contrast */
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: bold;
-    transition: background-color 0.3s, transform 0.2s;
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
-}
-
-.cancel-btn:hover {
-    background-color: #C4C4C4; /* Slightly darker gray */
-    transform: scale(1.05); /* Subtle hover effect */
-}
-
-/* Modal Actions Container */
-.modal-actions {
-    display: flex;
-    justify-content: center; /* Center-align the buttons */
-    gap: 15px; /* Add space between buttons */
-    margin-top: 20px; /* Add spacing above buttons */
-}
