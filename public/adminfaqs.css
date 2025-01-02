@@ -152,20 +152,20 @@
     }
 
 
-    /* Footer Styling */
-    .admin-footer {
-        background-color: #C2C9AD; /* Footer background */
-        text-align: center;
-        padding: 20px 10px;
-        color: #1F1F1F;
-        box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
-        position: fixed; /* Fixed footer */
-        bottom: 0;
-        left: 0;
-        right: 0;
-        z-index: 1000;
-        height: 50px; /* Fixed height */
-    }
+  /* Footer Styling */
+.admin-footer {
+    background-color: #C2C9AD;
+    text-align: center;
+    padding: 15px 10px;
+    color: #1F1F1F;
+    box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    height: 50px;
+}
 
     /* Layout */
     .admin-layout {
@@ -296,31 +296,30 @@
 
 /* Admin Content Layout */
 .admin-content {
-    margin-top: 70px; /* Offset for fixed header */
-    margin-left: 70px; /* Offset for fixed sidebar */
-    margin-bottom: 50px; /* Offset for fixed footer */
+    margin-top: 70px;
+    margin-left: 70px;
+    margin-bottom: 70px; /* Increased margin to prevent footer overlap */
     padding: 20px;
     background-color: #F2EDD3;
-    height: calc(100vh - 120px); /* Full height minus header and footer */
-    overflow: hidden; /* Prevent unnecessary scrolling */
+    min-height: calc(100vh - 140px); /* Adjusted to account for header and footer */
+    overflow: auto; /* Changed from hidden to allow scrolling */
     display: flex;
-    align-self:center;
-    flex-direction: column; /* Stack child elements vertically */
+    flex-direction: column;
+    width: calc(100% - 70px);
 }
 
 /* FAQ Section */
 .faq-section {
-    flex-grow: 1; /* Allow section to grow and fill available space */
+    flex-grow: 1;
     background: white;
     border-radius: 10px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    overflow-y: auto; /* Enable vertical scrolling for content */
+    overflow-y: auto;
     padding: 20px;
     display: flex;
     flex-direction: column;
     height: 100%;
-    width: max; /* Take the full width of the admin-content */
-    box-sizing: border-box; /* Ensure padding is included in width */
+    width: 100%;
 }
 
 /* Section Header */
