@@ -9,10 +9,8 @@ const API_CONFIG = {
     
     // API endpoints
     endpoints: {
-        dashboardStats: `${baseUrl}/api/admin/dashboard`,
-        users: `${baseUrl}/api/admin/users`,
-        products: `${baseUrl}/api/admin/products`,
-        transactions: `${baseUrl}/api/admin/transactions`
+        dashboardStats: `${baseUrl}/api/adminDashboard`,
+        transactions: `${baseUrl}/api/adminTransactions`
     },
     
     // Request timeout in milliseconds
@@ -93,6 +91,7 @@ async function fetchWithAuth(endpoint, options = {}) {
 
 // API Handlers
 async function fetchDashboardData() {
+    console.log('Fetching dashboard data...'); // Debug log
     showLoadingState();
     try {
         const data = await fetchWithAuth(API_CONFIG.endpoints.dashboardStats);

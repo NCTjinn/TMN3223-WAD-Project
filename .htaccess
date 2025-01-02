@@ -5,15 +5,20 @@ RewriteEngine On
 # Uncomment and set the correct subdirectory if needed
 # RewriteBase /TMN3223-WAD-Project/
 
-# Redirect all API requests to admin.php
+# Redirect all API requests to adminDashboard.php
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^api/admin/(.*)$ api/admin.php [QSA,L]
+RewriteRule ^api/adminDashboard/?$ api/adminDashboard.php [QSA,L]
+
+# Redirect all API requests to adminTransactions.php
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^api/adminTransactions/?$ api/adminTransactions.php [QSA,L]
 
 # Redirect all API requests to auth.php
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^api/auth/(.*)$ api/auth.php [QSA,L]
+RewriteRule ^api/auth/?$ api/auth.php [QSA,L]
 
 # Set JSON content type for API responses
 <IfModule mod_headers.c>
