@@ -10,9 +10,7 @@ const API_CONFIG = {
     // API endpoints
     endpoints: {
         dashboardStats: `${baseUrl}/api/admin/dashboard`,
-        inventory: `${baseUrl}/api/admin/inventory`,
         users: `${baseUrl}/api/admin/users`,
-        engagement: `${baseUrl}/api/admin/engagement`,
         products: `${baseUrl}/api/admin/products`,
         transactions: `${baseUrl}/api/admin/transactions`
     },

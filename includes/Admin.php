@@ -284,109 +284,34 @@ class Admin {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function getInventoryReport() {
-        try {
-            // Updated to include all necessary fields from schema
-            $query = "SELECT 
-                        p.*,
-                        pc.name as category_name,
-                        pc.description as category_description,
-                        COUNT(td.product_id) as total_sales,
-                        COALESCE(SUM(td.quantity), 0) as units_sold,
-                        COALESCE(SUM(td.subtotal), 0) as total_revenue
-                     FROM Products p
-                     LEFT JOIN Product_Categories pc ON p.category_id = pc.category_id
-                     LEFT JOIN Transaction_Details td ON p.product_id = td.product_id
-                     GROUP BY p.product_id
-                     ORDER BY units_sold DESC";
-
-            $stmt = $this->conn->query($query);
-            return [
-                'status' => 'success',
-                'data' => $stmt->fetchAll(PDO::FETCH_ASSOC)
-            ];
-        } catch(PDOException $e) {
-            return ['status' => 'error', 'message' => $e->getMessage()];
-        }
-    }
-
     public function getUserAnalytics() {
         try {
-            // Updated to match schema's user roles and include more metrics
-            $query = "SELECT 
-                        COUNT(*) as total_users,
-                        SUM(CASE WHEN created_at >= DATE_SUB(CURRENT_DATE, INTERVAL 30 DAY)
-                            THEN 1 ELSE 0 END) as new_users_month,
-                        AVG(points) as average_points,
-                        COUNT(CASE WHEN role = 'public' THEN 1 END) as public_users,
-                        COUNT(CASE WHEN role = 'member' THEN 1 END) as members,
-                        COUNT(CASE WHEN role = 'admin' THEN 1 END) as admins,
-                        MAX(points) as highest_points,
-                        MIN(points) as lowest_points
-                     FROM Users";
-
+            // Query to fetch user analytics
+            $query = "
+                SELECT 
+                    COUNT(*) AS total_users,
+                    SUM(CASE WHEN created_at >= DATE_SUB(CURRENT_DATE, INTERVAL 30 DAY) THEN 1 ELSE 0 END) AS new_users_month,
+                    AVG(points) AS average_points,
+                    COUNT(CASE WHEN role = 'public' THEN 1 END) AS public_users,
+                    COUNT(CASE WHEN role = 'member' THEN 1 END) AS members,
+                    COUNT(CASE WHEN role = 'admin' THEN 1 END) AS admins,
+                    MAX(points) AS highest_points,
+                    MIN(points) AS lowest_points
+                FROM Users
+            ";
+    
             $stmt = $this->conn->query($query);
-            
-            // Add engagement metrics
-            $engagementQuery = "SELECT 
-                                COUNT(DISTINCT r.user_id) as reviewing_users,
-                                COUNT(DISTINCT uf.user_id) as users_with_favorites,
-                                AVG(r.rating) as average_rating
-                              FROM Users u
-                              LEFT JOIN Reviews r ON u.user_id = r.user_id
-                              LEFT JOIN User_Favorites uf ON u.user_id = uf.user_id";
-            
-            $engagementStmt = $this->conn->query($engagementQuery);
-            
+            $data = $stmt->fetch(PDO::FETCH_ASSOC);
+    
             return [
                 'status' => 'success',
-                'data' => array_merge(
-                    $stmt->fetch(PDO::FETCH_ASSOC),
-                    $engagementStmt->fetch(PDO::FETCH_ASSOC)
-                )
+                'data' => $data
             ];
-        } catch(PDOException $e) {
-            return ['status' => 'error', 'message' => $e->getMessage()];
-        }
-    }
-
-    public function getCustomerEngagement($days = 30) {
-        try {
-            // Updated to include more engagement metrics from schema
-            $query = "SELECT 
-                        COUNT(DISTINCT t.user_id) as purchasing_users,
-                        COUNT(DISTINCT r.user_id) as reviewing_users,
-                        COUNT(DISTINCT uf.user_id) as users_with_favorites,
-                        AVG(r.rating) as average_rating,
-                        COUNT(DISTINCT m.user_id) as users_with_missions,
-                        SUM(CASE WHEN m.status = 'completed' THEN 1 ELSE 0 END) as completed_missions
-                     FROM Users u
-                     LEFT JOIN Transactions t ON u.user_id = t.user_id 
-                        AND t.transaction_date >= DATE_SUB(CURRENT_DATE, INTERVAL :days DAY)
-                     LEFT JOIN Reviews r ON u.user_id = r.user_id
-                     LEFT JOIN User_Favorites uf ON u.user_id = uf.user_id
-                     LEFT JOIN Rewards m ON u.user_id = m.user_id";
-
-            $stmt = $this->conn->prepare($query);
-            $stmt->bindParam(':days', $days, PDO::PARAM_INT);
-            $stmt->execute();
-            
-            // Add missions statistics
-            $missionsQuery = "SELECT 
-                              COUNT(*) as total_missions,
-                              AVG(points) as average_mission_points
-                            FROM Mission_Templates";
-            $missionStmt = $this->conn->query($missionsQuery);
-            
+        } catch (PDOException $e) {
             return [
-                'status' => 'success',
-                'data' => array_merge(
-                    $stmt->fetch(PDO::FETCH_ASSOC),
-                    $missionStmt->fetch(PDO::FETCH_ASSOC)
-                )
+                'status' => 'error',
+                'message' => $e->getMessage()
             ];
-        } catch(PDOException $e) {
-            return ['status' => 'error', 'message' => $e->getMessage()];
         }
     }
 
