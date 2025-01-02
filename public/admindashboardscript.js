@@ -256,7 +256,6 @@ function updateDashboard(data) {
         'topProductRevenue': formatCurrency(data.topProducts[0]?.revenue || 0),
         'totalCustomers': formatNumber(data.total_customers),
         'averageOrderValue': formatCurrency(data.average_order_value),
-        'totalOrders': formatNumber(data.total_orders),
         'periodRevenue': formatCurrency(data.period_stats?.revenue || 0),
     };
 
@@ -317,18 +316,53 @@ function updateCharts(data) {
     }
 
     // Update Line Chart based on selected period
-    console.log('Current period:', dashboardState.currentPeriod); // Debug log
-    console.log('Sales trend data:', data.salesTrend); // Debug log
     if (chartInstances.line) {
+        console.log('Current period:', dashboardState.currentPeriod);
+        console.log('Sales trend data:', data.salesTrend);
+        
         const trendData = data.salesTrend[dashboardState.currentPeriod];
-        console.log('Trend data for period:', dashboardState.currentPeriod, trendData); // Debug log
         if (trendData && trendData.labels && trendData.values) {
-            chartInstances.line.data.labels = trendData.labels;
-            chartInstances.line.data.datasets[0].data = trendData.values;
-            chartInstances.line.update();
+            let labels = [];
+            let values = [];
+
+            try {
+                // Get current date in YYYY-MM-DD format
+                const currentDate = new Date().toISOString().split('T')[0];
+                console.log('Current date:', currentDate);
+
+                // Generate complete date range
+                if (dashboardState.currentPeriod === 'weekly') {
+                    const startDate = new Date();
+                    startDate.setDate(startDate.getDate() - 6);
+                    labels = getDatesInRange(startDate, new Date());
+                } else if (dashboardState.currentPeriod === 'monthly') {
+                    const startDate = new Date();
+                    startDate.setDate(startDate.getDate() - 29);
+                    labels = getDatesInRange(startDate, new Date());
+                } else {
+                    labels = trendData.labels;
+                }
+
+                // Map values to dates, using 0 for missing dates
+                values = labels.map(date => {
+                    const index = trendData.labels.indexOf(date);
+                    return index !== -1 ? trendData.values[index] : 0;
+                });
+
+                console.log('Generated labels:', labels);
+                console.log('Generated values:', values);
+
+                chartInstances.line.data.labels = labels;
+                chartInstances.line.data.datasets[0].data = values;
+                chartInstances.line.update();
+            } catch (error) {
+                console.error('Error updating chart:', error);
+                chartInstances.line.data.labels = trendData.labels;
+                chartInstances.line.data.datasets[0].data = trendData.values;
+                chartInstances.line.update();
+            }
         } else {
-            console.error('Sales trend data is missing or incomplete for period:', dashboardState.currentPeriod);
-            // Fallback to empty data if trendData is missing or incomplete
+            console.error('Sales trend data is missing or incomplete');
             chartInstances.line.data.labels = [];
             chartInstances.line.data.datasets[0].data = [];
             chartInstances.line.update();
@@ -370,7 +404,6 @@ function updateStats(data) {
         'topProductRevenue': formatCurrency(data.topProducts[0]?.revenue || 0),
         'totalCustomers': formatNumber(data.total_customers),
         'averageOrderValue': formatCurrency(data.average_order_value),
-        'totalOrders': formatNumber(data.total_orders),
         'periodRevenue': formatCurrency(periodRevenue)
     };
 
@@ -417,6 +450,16 @@ function attachEventListeners() {
 }
 
 // Utility Functions
+function getDatesInRange(startDate, endDate) {
+    const dates = [];
+    let currentDate = new Date(startDate);
+    while (currentDate <= endDate) {
+        dates.push(currentDate.toISOString().split('T')[0]);
+        currentDate.setDate(currentDate.getDate() + 1);
+    }
+    return dates;
+}
+
 function formatCurrency(value) {
     return new Intl.NumberFormat('en-US', {
         style: 'currency',

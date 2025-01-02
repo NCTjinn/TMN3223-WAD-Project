@@ -21,7 +21,6 @@ class Admin {
             $shippingMethodStats = $this->getShippingMethodStats();
             
             $data = [
-                'total_orders' => $this->getTotalOrders(),
                 'revenue_stats' => $this->getRevenueStats(),
                 'orderStats' => $orderStats,
                 'categoryRevenue' => $categoryRevenue,
@@ -112,52 +111,77 @@ class Admin {
         return $revenue;
     }
     private function getSalesTrend($period = 'daily') {
+        // Log current date for debugging
+        error_log('Current date: ' . date('Y-m-d H:i:s'));
+        
         switch ($period) {
             case 'weekly':
                 $query = "SELECT 
-                    DATE_FORMAT(transaction_date, '%Y-%m-%d') as date,
-                    SUM(total_amount) as amount
-                    FROM Transactions
-                    WHERE transaction_date >= DATE_SUB(CURRENT_DATE, INTERVAL 7 DAY)
-                    GROUP BY DATE(transaction_date)
-                    ORDER BY DATE(transaction_date)";
+                    DATE_FORMAT(d.date, '%Y-%m-%d') as date,
+                    COALESCE(SUM(t.total_amount), 0) as amount
+                    FROM (
+                        SELECT DATE_SUB(CURRENT_DATE, INTERVAL n DAY) as date
+                        FROM (
+                            SELECT 0 as n UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 
+                            UNION SELECT 4 UNION SELECT 5 UNION SELECT 6
+                        ) days
+                    ) d
+                    LEFT JOIN Transactions t ON DATE(t.transaction_date) = d.date
+                    GROUP BY d.date
+                    ORDER BY d.date";
                 break;
             case 'monthly':
                 $query = "SELECT 
-                    DATE_FORMAT(transaction_date, '%Y-%m-%d') as date,
-                    SUM(total_amount) as amount
-                    FROM Transactions
-                    WHERE transaction_date >= DATE_SUB(CURRENT_DATE, INTERVAL 1 MONTH)
-                    GROUP BY DATE(transaction_date)
-                    ORDER BY DATE(transaction_date)";
+                    DATE_FORMAT(d.date, '%Y-%m-%d') as date,
+                    COALESCE(SUM(t.total_amount), 0) as amount
+                    FROM (
+                        SELECT DATE_SUB(CURRENT_DATE, INTERVAL n DAY) as date
+                        FROM (
+                            WITH RECURSIVE numbers AS (
+                                SELECT 0 as n 
+                                UNION ALL 
+                                SELECT n + 1 FROM numbers WHERE n < 29
+                            )
+                            SELECT n FROM numbers
+                        ) days
+                    ) d
+                    LEFT JOIN Transactions t ON DATE(t.transaction_date) = d.date
+                    GROUP BY d.date
+                    ORDER BY d.date";
                 break;
             case 'daily':
             default:
                 $query = "SELECT 
-                    DATE_FORMAT(transaction_date, '%H:00') as hour,
-                    SUM(total_amount) as amount
-                    FROM Transactions
-                    WHERE DATE(transaction_date) = CURRENT_DATE
-                    GROUP BY HOUR(transaction_date)
-                    ORDER BY HOUR(transaction_date)";
+                    DATE_FORMAT(h.hour, '%H:00') as hour,
+                    COALESCE(SUM(t.total_amount), 0) as amount
+                    FROM (
+                        SELECT DATE_ADD(
+                            DATE_FORMAT(CURRENT_DATE, '%Y-%m-%d 00:00:00'),
+                            INTERVAL n HOUR
+                        ) as hour
+                        FROM (
+                            WITH RECURSIVE hours AS (
+                                SELECT 0 as n 
+                                UNION ALL 
+                                SELECT n + 1 FROM hours WHERE n < 23
+                            )
+                            SELECT n FROM hours
+                        ) hours
+                    ) h
+                    LEFT JOIN Transactions t ON DATE(t.transaction_date) = CURRENT_DATE 
+                        AND HOUR(t.transaction_date) = HOUR(h.hour)
+                    GROUP BY h.hour
+                    ORDER BY h.hour";
                 break;
         }
     
-        // Log the query for debugging
         error_log('Executing query: ' . $query);
-    
         $stmt = $this->conn->query($query);
         $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
-        // Log the results for debugging
         error_log('Query results: ' . print_r($results, true));
     
-        // Ensure results are not empty and have the expected structure
         if (empty($results)) {
-            return [
-                'labels' => [],
-                'values' => []
-            ];
+            return ['labels' => [], 'values' => []];
         }
     
         return [
@@ -171,12 +195,12 @@ class Admin {
             case 'weekly':
                 $query = "SELECT SUM(total_amount) as revenue
                           FROM Transactions
-                          WHERE transaction_date >= DATE_SUB(CURRENT_DATE, INTERVAL 7 DAY)";
+                          WHERE transaction_date >= DATE_SUB(CURRENT_DATE, INTERVAL 6 DAY) AND transaction_date <= CURRENT_DATE";
                 break;
             case 'monthly':
                 $query = "SELECT SUM(total_amount) as revenue
                           FROM Transactions
-                          WHERE transaction_date >= DATE_SUB(CURRENT_DATE, INTERVAL 1 MONTH)";
+                          WHERE transaction_date >= DATE_SUB(CURRENT_DATE, INTERVAL 29 DAY) AND transaction_date <= CURRENT_DATE";
                 break;
             case 'daily':
             default:
@@ -185,11 +209,18 @@ class Admin {
                           WHERE DATE(transaction_date) = CURRENT_DATE";
                 break;
         }
-
+    
+        // Log the query for debugging
+        error_log('Executing query: ' . $query);
+    
         $stmt = $this->conn->query($query);
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+        // Log the result for debugging
+        error_log('Query result: ' . print_r($result, true));
+    
         return $result['revenue'] ?? 0;
-    }    
+    }
 
     public function updateSalesSummary() {
         try {
@@ -226,12 +257,6 @@ class Admin {
 
     private function getTotalUsers() {
         $query = "SELECT COUNT(*) as total FROM Users";
-        $stmt = $this->conn->query($query);
-        return $stmt->fetch(PDO::FETCH_ASSOC)['total'];
-    }
-
-    private function getTotalOrders() {
-        $query = "SELECT COUNT(*) as total FROM Orders";
         $stmt = $this->conn->query($query);
         return $stmt->fetch(PDO::FETCH_ASSOC)['total'];
     }

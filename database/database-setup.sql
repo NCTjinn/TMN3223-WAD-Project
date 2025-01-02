@@ -15,7 +15,6 @@ DROP TABLE IF EXISTS Transactions;
 DROP TABLE IF EXISTS Transaction_Details;
 DROP TABLE IF EXISTS Mission_Templates;
 DROP TABLE IF EXISTS Rewards;
-DROP TABLE IF EXISTS Orders;
 DROP TABLE IF EXISTS FAQ_Categories;
 DROP TABLE IF EXISTS FAQs;
 DROP TABLE IF EXISTS Addresses;
@@ -137,18 +136,6 @@ CREATE TABLE Rewards (
     FOREIGN KEY (mission_id) REFERENCES Mission_Templates(mission_id)
 );
 
--- Orders table for tracking order status
-CREATE TABLE Orders (
-    order_id INT AUTO_INCREMENT PRIMARY KEY,
-    transaction_id INT NOT NULL,
-    tracking_number VARCHAR(100) UNIQUE NOT NULL,
-    status ENUM('processing', 'shipped', 'delivered', 'cancelled') NOT NULL,
-    estimated_delivery DATE NOT NULL,
-    customer_notes TEXT,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (transaction_id) REFERENCES Transactions(transaction_id)
-);
-
 -- FAQ Categories table
 CREATE TABLE FAQ_Categories (
     category_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -239,11 +226,8 @@ CREATE INDEX idx_product_name ON Products(name);
 CREATE INDEX idx_product_price ON Products(price);
 CREATE INDEX idx_product_stock ON Products(stock_quantity);
 
--- Order and transaction indexes
+-- Transaction indexes
 CREATE INDEX idx_transaction_date ON Transactions(transaction_date);
-CREATE INDEX idx_order_status ON Orders(status);
-CREATE INDEX idx_order_tracking ON Orders(tracking_number);
-CREATE INDEX idx_order_estimated_delivery ON Orders(estimated_delivery);
 CREATE INDEX idx_transaction_payment_status ON Transactions(payment_status);
 CREATE INDEX idx_transaction_total ON Transactions(total_amount);
 
@@ -327,31 +311,31 @@ INSERT INTO Vouchers (voucher_code, discount_percentage, expiry_date) VALUES
 
 -- Transactions (December 2024 - January 2025)
 INSERT INTO Transactions (user_id, total_amount, delivery_fee, tax_amount, payment_status, delivery_address, shipping_method, transaction_date) VALUES
-(4, 42.40, 5.00, 2.24, 'successful', '123 Main St, #01-01, Singapore 123456', 'dine_in', '2024-12-01 10:00:00'),
-(5, 65.20, 5.00, 3.62, 'successful', '456 Orchard Rd, Singapore 234567', 'dine_in', '2024-12-01 14:30:00'),
-(6, 47.70, 5.00, 2.56, 'successful', '789 Cecil St, Singapore 345678', 'dine_in', '2024-12-02 09:15:00'),
-(7, 53.00, 5.00, 2.88, 'successful', '321 Victoria St, Singapore 456789', 'takeaway', '2024-12-02 11:45:00'),
-(8, 71.80, 5.00, 4.01, 'successful', '654 Bencoolen St, Singapore 567890', 'takeaway', '2024-12-02 15:20:00'),
-(9, 39.50, 5.00, 2.07, 'successful', '987 Beach Rd, Singapore 678901', 'delivery', '2024-12-03 10:30:00'),
-(10, 58.90, 5.00, 3.23, 'successful', '147 Bugis St, Singapore 789012', 'delivery', '2024-12-03 13:45:00'),
-(11, 44.10, 5.00, 2.34, 'successful', '258 Somerset Rd, Singapore 890123', 'delivery', '2024-12-04 09:00:00'),
-(12, 62.30, 5.00, 3.44, 'successful', '369 Serangoon Rd, Singapore 901234', 'delivery', '2024-12-04 14:15:00'),
-(13, 51.70, 5.00, 2.80, 'successful', '159 Tampines St, Singapore 012345', 'delivery', '2024-12-05 11:30:00'),
-(14, 43.20, 5.00, 2.29, 'successful', '357 Jurong St, Singapore 123450', 'dine_in', '2024-12-05 16:45:00'),
-(15, 69.40, 5.00, 3.87, 'successful', '486 Yishun St, Singapore 234501', 'dine_in', '2024-12-06 10:20:00'),
-(16, 45.80, 5.00, 2.44, 'successful', '753 Woodlands Dr, Singapore 345012', 'dine_in', '2024-12-06 13:50:00'),
-(17, 54.60, 5.00, 2.98, 'successful', '951 Clementi Rd, Singapore 450123', 'takeaway', '2024-12-07 09:45:00'),
-(18, 67.90, 5.00, 3.77, 'successful', '264 Hougang Ave, Singapore 501234', 'takeaway', '2024-12-07 14:30:00'),
-(19, 41.30, 5.00, 2.18, 'successful', '846 Bedok North St, Singapore 012345', 'delivery', '2024-12-08 11:15:00'),
-(20, 56.70, 5.00, 3.10, 'successful', '153 Pasir Ris Dr, Singapore 123450', 'delivery', '2024-12-08 15:40:00'),
-(4, 49.20, 5.00, 2.65, 'successful', '123 Main St, #01-01, Singapore 123456', 'dine_in', '2024-12-09 10:00:00'),
-(5, 63.80, 5.00, 3.52, 'successful', '456 Orchard Rd, Singapore 234567', 'dine_in', '2024-12-09 14:25:00'),
-(6, 44.90, 5.00, 2.38, 'successful', '789 Cecil St, Singapore 345678', 'dine_in', '2024-12-10 09:30:00'),
-(7, 57.30, 5.00, 3.13, 'successful', '321 Victoria St, Singapore 456789', 'takeaway', '2024-12-10 13:55:00'),
-(8, 72.40, 5.00, 4.04, 'successful', '654 Bencoolen St, Singapore 567890', 'takeaway', '2024-12-11 10:45:00'),
-(9, 46.50, 5.00, 2.48, 'successful', '987 Beach Rd, Singapore 678901', 'delivery', '2024-12-11 15:10:00'),
-(10, 59.80, 5.00, 3.28, 'successful', '147 Bugis St, Singapore 789012', 'delivery', '2024-12-12 11:20:00'),
-(11, 43.70, 5.00, 2.31, 'successful', '258 Somerset Rd, Singapore 890123', 'delivery', '2024-12-12 16:35:00'),
+(4, 42.40, 5.00, 2.24, 'successful', '123 Main St, #01-01, Singapore 123456', 'dine_in', '2024-12-21 10:00:00'),
+(5, 65.20, 5.00, 3.62, 'successful', '456 Orchard Rd, Singapore 234567', 'dine_in', '2024-12-21 14:30:00'),
+(6, 47.70, 5.00, 2.56, 'successful', '789 Cecil St, Singapore 345678', 'dine_in', '2024-12-22 09:15:00'),
+(7, 53.00, 5.00, 2.88, 'successful', '321 Victoria St, Singapore 456789', 'takeaway', '2024-12-22 11:45:00'),
+(8, 71.80, 5.00, 4.01, 'successful', '654 Bencoolen St, Singapore 567890', 'takeaway', '2024-12-22 15:20:00'),
+(9, 39.50, 5.00, 2.07, 'successful', '987 Beach Rd, Singapore 678901', 'delivery', '2024-12-23 10:30:00'),
+(10, 58.90, 5.00, 3.23, 'successful', '147 Bugis St, Singapore 789012', 'delivery', '2024-12-23 13:45:00'),
+(11, 44.10, 5.00, 2.34, 'successful', '258 Somerset Rd, Singapore 890123', 'delivery', '2024-12-24 09:00:00'),
+(12, 62.30, 5.00, 3.44, 'successful', '369 Serangoon Rd, Singapore 901234', 'delivery', '2024-12-24 14:15:00'),
+(13, 51.70, 5.00, 2.80, 'successful', '159 Tampines St, Singapore 012345', 'delivery', '2024-12-25 11:30:00'),
+(14, 43.20, 5.00, 2.29, 'successful', '357 Jurong St, Singapore 123450', 'dine_in', '2024-12-25 16:45:00'),
+(15, 69.40, 5.00, 3.87, 'successful', '486 Yishun St, Singapore 234501', 'dine_in', '2024-12-26 10:20:00'),
+(16, 45.80, 5.00, 2.44, 'successful', '753 Woodlands Dr, Singapore 345012', 'dine_in', '2024-12-26 13:50:00'),
+(17, 54.60, 5.00, 2.98, 'successful', '951 Clementi Rd, Singapore 450123', 'takeaway', '2024-12-27 09:45:00'),
+(18, 67.90, 5.00, 3.77, 'successful', '264 Hougang Ave, Singapore 501234', 'takeaway', '2024-12-27 14:30:00'),
+(19, 41.30, 5.00, 2.18, 'successful', '846 Bedok North St, Singapore 012345', 'delivery', '2024-12-28 11:15:00'),
+(20, 56.70, 5.00, 3.10, 'successful', '153 Pasir Ris Dr, Singapore 123450', 'delivery', '2024-12-28 15:40:00'),
+(4, 49.20, 5.00, 2.65, 'successful', '123 Main St, #01-01, Singapore 123456', 'dine_in', '2024-12-29 10:00:00'),
+(5, 63.80, 5.00, 3.52, 'successful', '456 Orchard Rd, Singapore 234567', 'dine_in', '2024-12-29 14:25:00'),
+(6, 44.90, 5.00, 2.38, 'successful', '789 Cecil St, Singapore 345678', 'dine_in', '2024-12-30 09:30:00'),
+(7, 57.30, 5.00, 3.13, 'successful', '321 Victoria St, Singapore 456789', 'takeaway', '2024-12-30 13:55:00'),
+(8, 72.40, 5.00, 4.04, 'successful', '654 Bencoolen St, Singapore 567890', 'takeaway', '2024-12-31 10:45:00'),
+(9, 46.50, 5.00, 2.48, 'successful', '987 Beach Rd, Singapore 678901', 'delivery', '2024-12-31 15:10:00'),
+(10, 59.80, 5.00, 3.28, 'successful', '147 Bugis St, Singapore 789012', 'delivery', '2024-01-01 11:20:00'),
+(11, 43.70, 5.00, 2.31, 'successful', '258 Somerset Rd, Singapore 890123', 'delivery', '2024-01-01 16:35:00'),
 (12, 61.90, 5.00, 3.41, 'successful', '369 Serangoon Rd, Singapore 901234', 'delivery', '2025-01-02 09:15:00'),
 (13, 48.30, 5.00, 2.60, 'successful', '159 Tampines St, Singapore 012345', 'delivery', '2025-01-02 13:40:00'),
 (14, 66.20, 5.00, 3.67, 'successful', '357 Jurong St, Singapore 123450', 'delivery', '2025-01-03 10:25:00'),
@@ -576,18 +560,18 @@ INSERT INTO User_Favorites (user_id, product_id) VALUES
 
 -- Sales Summary
 INSERT INTO Sales_Summary (date, total_orders, gross_sales, returns, net_sales, delivery_fee, tax) VALUES
-('2024-12-01', 2, 107.60, 0.00, 107.60, 10.00, 5.86),
-('2024-12-02', 3, 172.50, 0.00, 172.50, 15.00, 9.45),
-('2024-12-03', 2, 98.40, 0.00, 98.40, 10.00, 5.30),
-('2024-12-04', 2, 106.40, 0.00, 106.40, 10.00, 5.78),
-('2024-12-05', 2, 94.90, 0.00, 94.90, 10.00, 5.09),
-('2024-12-06', 2, 115.20, 0.00, 115.20, 10.00, 6.31),
-('2024-12-07', 2, 122.50, 0.00, 122.50, 10.00, 6.75),
-('2024-12-08', 2, 98.00, 0.00, 98.00, 10.00, 5.28),
-('2024-12-09', 2, 113.00, 0.00, 113.00, 10.00, 6.17),
-('2024-12-10', 2, 102.20, 0.00, 102.20, 10.00, 5.51),
-('2024-12-11', 2, 118.90, 0.00, 118.90, 10.00, 6.52),
-('2024-12-12', 2, 103.50, 0.00, 103.50, 10.00, 5.59),
+('2024-12-21', 2, 107.60, 0.00, 107.60, 10.00, 5.86),
+('2024-12-22', 3, 172.50, 0.00, 172.50, 15.00, 9.45),
+('2024-12-23', 2, 98.40, 0.00, 98.40, 10.00, 5.30),
+('2024-12-24', 2, 106.40, 0.00, 106.40, 10.00, 5.78),
+('2024-12-25', 2, 94.90, 0.00, 94.90, 10.00, 5.09),
+('2024-12-26', 2, 115.20, 0.00, 115.20, 10.00, 6.31),
+('2024-12-27', 2, 122.50, 0.00, 122.50, 10.00, 6.75),
+('2024-12-28', 2, 98.00, 0.00, 98.00, 10.00, 5.28),
+('2024-12-29', 2, 113.00, 0.00, 113.00, 10.00, 6.17),
+('2024-12-30', 2, 102.20, 0.00, 102.20, 10.00, 5.51),
+('2024-12-31', 2, 118.90, 0.00, 118.90, 10.00, 6.52),
+('2024-01-01', 2, 103.50, 0.00, 103.50, 10.00, 5.59),
 ('2025-01-02', 2, 110.20, 0.00, 110.20, 10.00, 6.01),
 ('2025-01-03', 2, 111.60, 0.00, 111.60, 10.00, 6.09),
 ('2025-01-04', 2, 101.50, 0.00, 101.50, 10.00, 5.48),
