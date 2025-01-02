@@ -9,12 +9,10 @@ const API_CONFIG = {
     
     // API endpoints
     endpoints: {
-        notifications: `${baseUrl}/api/admin/notifications`,
         dashboardStats: `${baseUrl}/api/admin/dashboard`,
         inventory: `${baseUrl}/api/admin/inventory`,
         users: `${baseUrl}/api/admin/users`,
         engagement: `${baseUrl}/api/admin/engagement`,
-        unreadNotifications: `${baseUrl}/api/admin/notifications/unread`,
         products: `${baseUrl}/api/admin/products`,
         transactions: `${baseUrl}/api/admin/transactions`
     },
@@ -44,7 +42,6 @@ const CHART_OPTIONS = {
 // State Management
 let dashboardState = {
     currentPeriod: 'daily',
-    notifications: [],
     lastUpdate: new Date(),
     chartInstances: {}
 };
@@ -116,23 +113,6 @@ async function fetchDashboardData() {
         showErrorMessage(error.message);
     } finally {
         hideLoadingState();
-    }
-}
-
-async function fetchNotifications() {
-    try {
-        const data = await fetchWithAuth(API_CONFIG.endpoints.notifications);
-        console.log('Notifications data:', data); // Debug log
-        if (data.status === 'success') {
-            dashboardState.notifications = data.notifications;
-            updateNotificationBadge(data.unreadCount);
-            updateNotificationPanel();
-        } else {
-            throw new Error(data.error || 'Failed to load notifications');
-        }
-    } catch (error) {
-        console.error('Error fetching notifications:', error);
-        showErrorMessage(error.message);
     }
 }
 
@@ -409,40 +389,6 @@ function updateStats(data) {
     });
 }
 
-// Notification Management
-function updateNotificationBadge(count) {
-    console.log(`Updating notification badge with count: ${count}`); // Debug log
-    const badge = document.getElementById('notification-badge');
-    if (badge) {
-        badge.textContent = count;
-        badge.style.visibility = count > 0 ? 'visible' : 'hidden';
-    } else {
-        console.warn('Notification badge element not found'); // Debug log
-    }
-}
-
-function updateNotificationPanel() {
-    const container = document.getElementById('notifications-list');
-    if (!container) return;
-
-    container.innerHTML = dashboardState.notifications
-        .map(notification => `
-            <div class="notification-item ${notification.status}" data-id="${notification.id}">
-                <div class="notification-content">
-                    <span class="notification-title">${notification.title}</span>
-                    <span class="notification-message">${notification.message}</span>
-                    <span class="notification-time">${formatTimeAgo(notification.timestamp)}</span>
-                </div>
-                <button class="mark-read-btn" data-id="${notification.id}">
-                    <i class="fas fa-check"></i>
-                </button>
-            </div>
-        `)
-        .join('');
-
-    attachNotificationHandlers();
-}
-
 // Event Handlers
 function attachEventListeners() {
     // Period Selection Buttons
@@ -454,16 +400,6 @@ function attachEventListeners() {
             fetchDashboardData();
         });
     });
-
-    // Notification Panel Toggle
-    const notificationIcon = document.querySelector('.notification-icon');
-    const notificationPanel = document.getElementById('notification-panel');
-    
-    if (notificationIcon && notificationPanel) {
-        notificationIcon.addEventListener('click', () => {
-            notificationPanel.classList.toggle('active');
-        });
-    }
 
     // User Dropdown Toggle
     const profileIcon = document.getElementById('profile-icon');
@@ -480,41 +416,6 @@ function attachEventListeners() {
             dropdownMenu.classList.remove('active');
         });
     }
-
-    // Clear All Notifications
-    const clearBtn = document.getElementById('clear-notifications');
-    if (clearBtn) {
-        clearBtn.addEventListener('click', async () => {
-            try {
-                await fetchWithAuth(`${API_CONFIG.endpoints.notifications}/clear`, { method: 'POST' });
-                dashboardState.notifications = [];
-                updateNotificationPanel();
-                updateNotificationBadge(0);
-            } catch (error) {
-                console.error('Error clearing notifications:', error);
-            }
-        });
-    }
-}
-
-function attachNotificationHandlers() {
-    document.querySelectorAll('.mark-read-btn').forEach(button => {
-        button.addEventListener('click', async (e) => {
-            e.stopPropagation();
-            const notificationId = button.dataset.id;
-            try {
-                await fetchWithAuth(`${API_CONFIG.endpoints.notifications}/${notificationId}/read`, { method: 'POST' });
-                const notification = dashboardState.notifications.find(n => n.id === notificationId);
-                if (notification) {
-                    notification.status = 'read';
-                    updateNotificationPanel();
-                    updateNotificationBadge(dashboardState.notifications.filter(n => n.status === 'unread').length);
-                }
-            } catch (error) {
-                console.error('Error marking notification as read:', error);
-            }
-        });
-    });
 }
 
 // Utility Functions
@@ -607,12 +508,10 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeCharts();
     attachEventListeners();
     fetchDashboardData();
-    fetchNotifications();
     
     // Set up polling intervals
     const intervals = [
         { fn: fetchDashboardData, ms: 30000 },  // 30 seconds
-        { fn: fetchNotifications, ms: 60000 }    // 1 minute
     ];
     
     intervals.forEach(({fn, ms}) => setInterval(fn, ms));

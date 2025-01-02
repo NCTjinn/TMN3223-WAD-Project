@@ -10,13 +10,6 @@ class Admin {
         $this->conn = $conn;
     }
 
-    private function getRecentNotifications() {
-        // Implement the logic to get recent notifications
-        $query = "SELECT * FROM Notifications ORDER BY created_at DESC LIMIT 10";
-        $stmt = $this->conn->query($query);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
     public function getDashboardStats() {
         try {
             $orderStats = $this->getOrderStats();
@@ -80,22 +73,6 @@ class Admin {
             'name' => ucfirst($topCategory[0]),
             'revenue' => $categoryRevenue[$topCategory[0]]
         ];
-    }
-
-    public function getNotifications() {
-        // Implement notification logic based on your requirements
-        return [
-            'status' => 'success',
-            'unreadCount' => $this->getUnreadNotificationCount(),
-            'notifications' => $this->getRecentNotifications()
-        ];
-    }
-
-    private function getUnreadNotificationCount() {
-        // Implement the logic to get the count of unread notifications
-        $query = "SELECT COUNT(*) as unread_count FROM Notifications WHERE status = 'unread'";
-        $stmt = $this->conn->query($query);
-        return $stmt->fetch(PDO::FETCH_ASSOC)['unread_count'];
     }
     
     private function getOrderStats() {
@@ -533,20 +510,6 @@ class Admin {
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            return ['status' => 'error', 'message' => $e->getMessage()];
-        }
-    }
-
-    public function getUnreadNotifications() {
-        try {
-            $query = "SELECT * FROM Notifications WHERE status = 'unread'";
-            $stmt = $this->conn->query($query);
-            return [
-                'status' => 'success',
-                'unreadCount' => $stmt->rowCount(),
-                'notifications' => $stmt->fetchAll(PDO::FETCH_ASSOC)
-            ];
-        } catch(PDOException $e) {
             return ['status' => 'error', 'message' => $e->getMessage()];
         }
     }

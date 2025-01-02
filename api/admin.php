@@ -6,7 +6,6 @@
 //   - GET: /users - Get user analytics
 //   - GET: /engagement - Get customer engagement
 //   - GET: /logs - Get admin logs
-//   - GET: /notifications - Get notifications
 //   - GET: /products - Get products
 //   - GET: /transactions - Get transactions
 
@@ -66,12 +65,6 @@ try {
                     
                 case 'engagement':
                     $response = $admin->getCustomerEngagement();
-                    break;
-                    
-                case 'notifications':
-                    $response = isset($parts[3]) && $parts[3] === 'unread' 
-                        ? $admin->getUnreadNotifications()
-                        : $admin->getNotifications();
                     break;
                     
                 case 'products':
