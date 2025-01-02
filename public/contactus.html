@@ -1,15 +1,14 @@
-<!-- publichome.html (Public Home Page) -->
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PuffLab Home</title>
+    <title>Contact Us - PuffLab</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css">
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="home.css">
+    <link rel="stylesheet" href="contactusstyle.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
+
 <body>
     <nav>
         <div class="navbar">
@@ -31,16 +30,17 @@
                 <li class="dropdown">
                     <a href="aboutus.html">About Us <i class='bx bxs-chevron-down'></i></a>
                     <ul class="dropdown-content">
-                        <li><a href="ourteam.html">Our Team</a></li>
-                        <li><a href="ourhistory.html">Our History</a></li>
+                        <li><a href="aboutus.html">Our Team</a></li>
+                        <li><a href="aboutus.html">Our History</a></li>
                     </ul>
                 </li>
                 <li class="dropdown">
                     <a href="myacc.html">My Account <i class='bx bxs-chevron-down'></i></a>
                     <ul class="dropdown-content">
-                        <li><a href="login.html">Dashboard</a></li> <!-- Redirect to Login -->
-                        <li><a href="login.html">Orders</a></li> 
-                        <li><a href="login.html">Rewards</a></li> 
+                        <li><a href="myacc.html">Dashboard</a></li> <!-- Link to My Account -->
+                        <li><a href="myorders.html">Orders</a></li> <!-- Link to My Orders -->
+                        <li><a href="rewards.html">Rewards</a></li> <!-- Link to My Rewards -->
+                        <li><a href="publichome.html">Log Out</a></li> <!-- Link to LogOut -->
                     </ul>
                 </li>
             </ul>
@@ -57,40 +57,68 @@
         </div>
     </nav>
 
-    <div class="hero">
-        <h1>ONE BITE IS NEVER ENOUGH</h1>
-    </div>
-
-    <div class="products-section">
-        <div class="tab-buttons">
-            <button class="tab-button active" id="bestsellers-btn">Monthly Bestsellers</button>
-            <button class="tab-button" id="arrivals-btn">New Arrivals</button>
-        </div>
-
-        <div class="products-grid" id="products-grid">
-            <div class="product-card"></div>
-            <div class="product-card"></div>
-            <div class="product-card"></div>
-        </div>
-    </div>
-
-    <section class="reviews">
-        <h2>Reviews</h2>
-        <div class="review-container">
-            <button class="nav-btn prev-btn">&lt;</button>
-            <div class="review-cards">
-                <div class="review-card"></div>
-                <div class="review-card"></div>
-                <div class="review-card"></div>
+    <main class="contact-container">
+        <h1>Contact Us</h1>
+        <p class="contact-intro">
+            We’d love to hear from you! Reach out to us using any of the methods below.
+        </p>
+        
+        <div class="contact-grid">
+            <!-- Visit Us -->
+            <div class="contact-card">
+                <div class="icon-circle visit-icon">
+                    <i class="fas fa-map-marker-alt"></i>
+                </div>
+                <h2>Visit Us</h2>
+                <p class="contact-details">
+                    <a href="https://www.google.com/maps/place/Puff+Lab+PLT/@1.9006337,103.4271573,7z/data=!4m6!3m5!1s0x31fba35fea9f3a3f:0x1b889b5da8e7a852!8m2!3d1.4645096!4d110.4306475!16s%2Fg%2F11rd9g8s55?entry=ttu&g_ep=EgoyMDI0MTIxMS4wIKXMDSoASAFQAw%3D%3D" target="_blank">
+                        Lakeview, UNIMAS
+                    </a>
+                </p>
             </div>
-            <button class="nav-btn next-btn">&gt;</button>
-        </div>
-    </section>
 
-    <section class="community-section">
-        <h2>Join our community!</h2>
-        <div class="divider"></div>
-    </section>
+            <!-- WhatsApp -->
+            <div class="contact-card">
+                <div class="icon-circle whatsapp-icon">
+                    <i class="fab fa-whatsapp"></i>
+                </div>
+                <h2>WhatsApp</h2>
+                <p class="contact-details">
+                    <a href="https://wa.me/60133119957" target="_blank">013-311 9957</a>
+                </p>
+            </div>
+
+            <!-- Email -->
+            <div class="contact-card">
+                <div class="icon-circle email-icon">
+                    <i class="fas fa-envelope"></i>
+                </div>
+                <h2>Email</h2>
+                <p class="contact-details">
+                    <a href="mailto:puff.lab2020@gmail.com">puff.lab2020@gmail.com</a>
+                </p>
+            </div>
+
+            <!-- Follow Us -->
+            <div class="contact-card">
+                <div class="icon-circle social-icon">
+                    <i class="fas fa-share-alt"></i>
+                </div>
+                <h2>Follow Us</h2>
+                <div class="social-media">
+                    <a href="https://www.instagram.com/puff.lab/" target="_blank" class="instagram">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="https://www.facebook.com/PuffLabPLT/" target="_blank" class="facebook">
+                        <i class="fab fa-facebook"></i>
+                    </a>
+                    <a href="https://www.tiktok.com/@pufflabplt" target="_blank" class="tiktok">
+                        <i class="fab fa-tiktok"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
 
     <footer class="footer">
         <div class="footer-left">
@@ -133,7 +161,7 @@
         </div>
     </footer>
 
-    <script src="script.js"></script>
-    <script src="home.js"></script>
+    <script src="contactusscript.js"></script>
+    
 </body>
 </html>

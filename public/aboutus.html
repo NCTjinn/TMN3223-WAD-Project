@@ -1,15 +1,14 @@
-<!-- publichome.html (Public Home Page) -->
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PuffLab Home</title>
+    <title>About Us - PuffLab</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css">
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="home.css">
+    <link rel="stylesheet" href="aboutusstyle.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
+
 <body>
     <nav>
         <div class="navbar">
@@ -31,16 +30,17 @@
                 <li class="dropdown">
                     <a href="aboutus.html">About Us <i class='bx bxs-chevron-down'></i></a>
                     <ul class="dropdown-content">
-                        <li><a href="ourteam.html">Our Team</a></li>
-                        <li><a href="ourhistory.html">Our History</a></li>
+                        <li><a href="aboutus.html">Our Team</a></li>
+                        <li><a href="aboutus.html">Our History</a></li>
                     </ul>
                 </li>
                 <li class="dropdown">
                     <a href="myacc.html">My Account <i class='bx bxs-chevron-down'></i></a>
                     <ul class="dropdown-content">
-                        <li><a href="login.html">Dashboard</a></li> <!-- Redirect to Login -->
-                        <li><a href="login.html">Orders</a></li> 
-                        <li><a href="login.html">Rewards</a></li> 
+                        <li><a href="myacc.html">Dashboard</a></li> <!-- Link to My Account -->
+                        <li><a href="myorders.html">Orders</a></li> <!-- Link to My Orders -->
+                        <li><a href="rewards.html">Rewards</a></li> <!-- Link to My Rewards -->
+                        <li><a href="publichome.html">Log Out</a></li> <!-- Link to LogOut -->
                     </ul>
                 </li>
             </ul>
@@ -57,41 +57,76 @@
         </div>
     </nav>
 
-    <div class="hero">
-        <h1>ONE BITE IS NEVER ENOUGH</h1>
-    </div>
-
-    <div class="products-section">
-        <div class="tab-buttons">
-            <button class="tab-button active" id="bestsellers-btn">Monthly Bestsellers</button>
-            <button class="tab-button" id="arrivals-btn">New Arrivals</button>
-        </div>
-
-        <div class="products-grid" id="products-grid">
-            <div class="product-card"></div>
-            <div class="product-card"></div>
-            <div class="product-card"></div>
-        </div>
-    </div>
-
-    <section class="reviews">
-        <h2>Reviews</h2>
-        <div class="review-container">
-            <button class="nav-btn prev-btn">&lt;</button>
-            <div class="review-cards">
-                <div class="review-card"></div>
-                <div class="review-card"></div>
-                <div class="review-card"></div>
+    <div class="about-us">
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-content">
+                <h1>Welcome to PuffLab</h1>
+                <p>Where Passion Meets Pastry</p>
             </div>
-            <button class="nav-btn next-btn">&gt;</button>
-        </div>
-    </section>
-
-    <section class="community-section">
-        <h2>Join our community!</h2>
-        <div class="divider"></div>
-    </section>
-
+            <div class="hero-image">
+                <img src="pufflab title.jpg" alt="Delicious PuffLab Pastries">
+            </div>
+        </section>
+    
+        <!-- Separator Line -->
+        <div class="separator"></div>
+    
+        <!-- Our Team Section -->
+        <section class="team">
+            <div class="section-header">
+                <h1>Our Team</h1>
+                <p>Meet the Culinary Experts</p>
+            </div>
+            <div class="team-content">
+                <div class="team-text">
+                    <p>
+                        Our team is the heartbeat of PuffLab. Led by founders Muhammad Yazid Bin Mohd. Rizman Clement, Azizah Sayan Binti Lukman Hakim, and Chong Siaw Ting, 
+                        we are a group of culinary artisans and service professionals united by a passion for exceptional pastry experiences. Our team's diverse backgrounds 
+                        contribute to our unique creations, blending traditional techniques with innovative flavors. Each member brings their unique flair to our bakery, 
+                        ensuring that every visit to PuffLab is both memorable and delightful.
+                    </p>
+                </div>
+                <div class="team-image">
+                    <img src="pufflab staff.jpeg" alt="PuffLab Team Photo">
+                </div>
+            </div>
+        </section>
+    
+        <!-- Separator Line -->
+        <div class="separator"></div>
+    
+        <!-- Our History Section -->
+        <section class="history">
+            <div class="section-header">
+                <h1>Our History</h1>
+                <p>From Humble Beginnings to Culinary Excellence</p>
+            </div>
+            <div class="history-content">
+                <div class="history-video">
+                    <video muted playsinline loop>
+                        <source src="puff lab video.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <div class="video-controls">
+                        <i class="control-icon play-pause-icon fas fa-play"></i>
+                        <i class="control-icon mute-icon fas fa-volume-mute"></i>
+                    </div>
+                </div>
+                
+                <div class="history-text">
+                    <p>
+                        PuffLab's journey began at UNIMAS in September 2019 as a modest project named PuffyPuff. Officially established as PuffLab in 2020, 
+                        our bakery has grown from a university project into a community favorite. Each step of our growth has been guided by innovation and the 
+                        support of our patrons. As a registered business since November 2020, we continue to push the boundaries of pastry art, making every effort 
+                        to enrich Kuching's culinary scene with our delightful creations.
+                    </p>
+                </div>
+            </div>
+        </section>
+    </div>
+    
+    
     <footer class="footer">
         <div class="footer-left">
             <img src="logo.png" alt="PuffLab Logo" style="max-height: 100px; display: block; margin: auto;">
@@ -133,7 +168,7 @@
         </div>
     </footer>
 
-    <script src="script.js"></script>
-    <script src="home.js"></script>
+    <script src="aboutusscript.js"></script>
+    
 </body>
 </html>

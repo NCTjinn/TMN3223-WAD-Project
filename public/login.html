@@ -1,4 +1,4 @@
-<!-- publichome.html (Public Home Page) -->
+<!-- login.html (Login Page) -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css">
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="home.css">
+    <link rel="stylesheet" href="login.css">
 </head>
 <body>
     <nav>
@@ -57,40 +57,24 @@
         </div>
     </nav>
 
-    <div class="hero">
-        <h1>ONE BITE IS NEVER ENOUGH</h1>
-    </div>
-
-    <div class="products-section">
-        <div class="tab-buttons">
-            <button class="tab-button active" id="bestsellers-btn">Monthly Bestsellers</button>
-            <button class="tab-button" id="arrivals-btn">New Arrivals</button>
-        </div>
-
-        <div class="products-grid" id="products-grid">
-            <div class="product-card"></div>
-            <div class="product-card"></div>
-            <div class="product-card"></div>
-        </div>
-    </div>
-
-    <section class="reviews">
-        <h2>Reviews</h2>
-        <div class="review-container">
-            <button class="nav-btn prev-btn">&lt;</button>
-            <div class="review-cards">
-                <div class="review-card"></div>
-                <div class="review-card"></div>
-                <div class="review-card"></div>
+    <div class="login-container">
+        <form class="login-form">
+            <h1>Great to see you again!</h1>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" required>
             </div>
-            <button class="nav-btn next-btn">&gt;</button>
-        </div>
-    </section>
-
-    <section class="community-section">
-        <h2>Join our community!</h2>
-        <div class="divider"></div>
-    </section>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" required>
+            </div>
+            <div class="checkbox-group">
+                <input type="checkbox" id="remember" required>
+                <label for="remember">Remember me</label>
+            </div>
+            <button type="submit" class="login-button">Log In</button>
+        </form>
+    </div>
 
     <footer class="footer">
         <div class="footer-left">
@@ -134,6 +118,6 @@
     </footer>
 
     <script src="script.js"></script>
-    <script src="home.js"></script>
+    <script src="login.js"></script>
 </body>
 </html>

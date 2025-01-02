@@ -1,14 +1,13 @@
-<!-- publichome.html (Public Home Page) -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PuffLab Home</title>
+    <title>Welcome to PuffLab</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css">
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="home.css">
+    <link rel="stylesheet" href="welcome.css">
 </head>
 <body>
     <nav>
@@ -57,40 +56,21 @@
         </div>
     </nav>
 
-    <div class="hero">
-        <h1>ONE BITE IS NEVER ENOUGH</h1>
-    </div>
-
-    <div class="products-section">
-        <div class="tab-buttons">
-            <button class="tab-button active" id="bestsellers-btn">Monthly Bestsellers</button>
-            <button class="tab-button" id="arrivals-btn">New Arrivals</button>
-        </div>
-
-        <div class="products-grid" id="products-grid">
-            <div class="product-card"></div>
-            <div class="product-card"></div>
-            <div class="product-card"></div>
-        </div>
-    </div>
-
-    <section class="reviews">
-        <h2>Reviews</h2>
-        <div class="review-container">
-            <button class="nav-btn prev-btn">&lt;</button>
-            <div class="review-cards">
-                <div class="review-card"></div>
-                <div class="review-card"></div>
-                <div class="review-card"></div>
+    <div class="welcome-container">
+        <div class="welcome-content">
+            <h1>PUFF LAB WELCOMES YOU!</h1>
+            <div class="action-buttons">
+                <div class="button-section">
+                    <p class="tagline">Start your sweet journey with us!</p>
+                    <a href="signup.html" class="action-btn">SIGN UP</a>
+                </div>
+                <div class="button-section">
+                    <p class="tagline">Welcome back, dessert lover!</p>
+                    <a href="login.html" class="action-btn">LOG IN</a>
+                </div>
             </div>
-            <button class="nav-btn next-btn">&gt;</button>
         </div>
-    </section>
-
-    <section class="community-section">
-        <h2>Join our community!</h2>
-        <div class="divider"></div>
-    </section>
+    </div>
 
     <footer class="footer">
         <div class="footer-left">
@@ -134,6 +114,5 @@
     </footer>
 
     <script src="script.js"></script>
-    <script src="home.js"></script>
 </body>
 </html>
