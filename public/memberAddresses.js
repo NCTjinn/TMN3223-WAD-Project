@@ -1,7 +1,11 @@
-// Event listener for DOM content loaded to fetch address details
-document.addEventListener('DOMContentLoaded', fetchAddress);
+document.addEventListener('DOMContentLoaded', function() {
+    // Fetch address details
+    fetchAddress();
 
-// Function to fetch address details from the server
+    // Set up button event listeners
+    setUpModalEventListeners();
+});
+
 async function fetchAddress() {
     try {
         const response = await fetch('../api/memberAddresses.php', { method: 'GET' });
@@ -15,7 +19,6 @@ async function fetchAddress() {
     }
 }
 
-// Function to display address details in the UI
 function displayAddress(data) {
     const addressElement = document.querySelector('.address-details');
     addressElement.innerHTML = `
@@ -23,12 +26,10 @@ function displayAddress(data) {
         <p>${data.address_line_1}, ${data.address_line_2 || ''}</p>
         <p>${data.city}, ${data.state} ${data.postcode}</p>
         <p>${data.country}</p>
-        <p>Phone: ${data.phone}</p>
     `;
     document.querySelector('.edit-btn').onclick = () => openEditModal(data);
 }
 
-// Function to open the edit modal with pre-filled data
 function openEditModal(data) {
     const modal = document.getElementById('address-modal');
     modal.style.display = 'flex';
@@ -38,22 +39,18 @@ function openEditModal(data) {
     document.getElementById('state').value = data.state;
     document.getElementById('postcode').value = data.postcode;
     document.getElementById('country').value = data.country;
-    document.getElementById('phone-number').value = data.phone;
 
     document.querySelector('.save-btn').onclick = function() {
         saveAddress(data.address_id);
     };
 }
 
-// Function to close the modal and clear form data
 function closeModal() {
     document.getElementById('address-modal').style.display = 'none';
     clearForm();
 }
 
-// Function to clear form inputs in the modal
 function clearForm() {
-    document.getElementById('address-title').value = '';
     document.getElementById('address-line-1').value = '';
     document.getElementById('address-line-2').value = '';
     document.getElementById('city').value = '';
@@ -63,11 +60,30 @@ function clearForm() {
     document.getElementById('phone-number').value = '';
 }
 
-// Event listeners for closing the modal
-document.querySelector('.close-modal').addEventListener('click', closeModal);
-document.querySelector('.cancel-btn').addEventListener('click', closeModal);
+function setUpModalEventListeners() {
+    document.querySelectorAll('.edit-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const modal = document.getElementById('address-modal');
+            modal.style.display = 'flex';
+        });
+    });
 
-// Function to save updated address details to the server
+    document.querySelector('.close-modal').addEventListener('click', function() {
+        closeModal();
+    });
+
+    document.querySelector('.cancel-btn').addEventListener('click', function() {
+        closeModal();
+    });
+
+    window.addEventListener('click', function(event) {
+        const modal = document.getElementById('address-modal');
+        if (event.target === modal) {
+            closeModal();
+        }
+    });
+}
+
 async function saveAddress(addressId) {
     const addressLine1 = document.getElementById('address-line-1').value;
     const addressLine2 = document.getElementById('address-line-2').value;
@@ -75,14 +91,11 @@ async function saveAddress(addressId) {
     const state = document.getElementById('state').value;
     const postcode = document.getElementById('postcode').value;
     const country = document.getElementById('country').value;
-    const phone = document.getElementById('phone-number').value;
 
     try {
         const response = await fetch('../api/memberAddresses.php', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({
                 address_id: addressId,
                 address_line_1: addressLine1,
@@ -91,14 +104,18 @@ async function saveAddress(addressId) {
                 state: state,
                 postcode: postcode,
                 country: country,
-                phone: phone
             }),
         });
 
-        if (!response.ok) throw new Error('Failed to update address');
+        const result = await response.json();
+        console.log("Server response:", result); // Log the full response
 
-        alert('Address updated successfully!');
-        window.location.reload(); // Reload the page to show the updated address
+        if (result.success) {
+            alert('Address updated successfully!');
+            window.location.reload(); // Refresh to show new data
+        } else {
+            throw new Error(result.message || 'Failed to update address.');
+        }
     } catch (error) {
         console.error('Error:', error);
         alert('Error updating address. Please check the console for details.');
