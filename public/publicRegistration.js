@@ -8,19 +8,28 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Client-side validation
     function validateForm(formData) {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         const usernameRegex = /^[a-zA-Z0-9_]{3,20}$/;
-        const passwordRegex = /^.{8,}$/;
+        const firstNameRegex = /^[a-zA-Z]+$/;
+        const lastNameRegex = /^[a-zA-Z]+$/;
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const passwordRegex = /^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.*[^\s]).{8,}$/;
+        
 
         // Validation for user fields
         if (!usernameRegex.test(formData.username)) {
             throw new Error('Username must be 3-20 characters and contain only letters, numbers, and underscores');
         }
+        if (!firstNameRegex.test(formData.first_name)) {
+            throw new Error('First name must contain only letters');
+        }
+        if (!lastNameRegex.test(formData.last_name)) {
+            throw new Error('Last name must contain only letters');
+        }
         if (!emailRegex.test(formData.email)) {
             throw new Error('Please enter a valid email address');
         }
         if (!passwordRegex.test(formData.password)) {
-            throw new Error('Password must be at least 8 characters long');
+            throw new Error('Password must be at least 8 characters long and contain at least one uppercase letter, one number, one special character, and no spaces');
         }
         if (formData.password !== formData.confirm_password) {
             throw new Error('Passwords do not match');
