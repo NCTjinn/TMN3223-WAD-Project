@@ -117,6 +117,7 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         });
 
+        /* Delete button event listener */
         document.querySelectorAll(".delete-btn").forEach(btn => {
             btn.addEventListener("click", () => {
                 if (confirm("Are you sure you want to delete this FAQ?")) {
