@@ -363,14 +363,7 @@ font-weight: 400;
     color: white;
 }
 
-.delete-btn {
-    background-color: #e85d5d;
-    color: white;
-}
 
-.delete-btn:hover {
-    background-color: #b04343;
-}
 
 /* Modal Form Layout Improvements */
 .modal-form {
