@@ -82,7 +82,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Close the modal after a delay and redirect to the home page
                 setTimeout(function() {
                     modal.style.display = "none";
-                    window.location.href = 'publicHome.html';
+                    window.location.href = 'publicLogin.html';
                 }, 3000); // 3 seconds delay
             } else {
                 throw new Error(result.message);
