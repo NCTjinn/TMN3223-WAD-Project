@@ -1,57 +1,62 @@
 <?php
-session_start();
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
-// Hardcoding user_id for testing purposes
-$_SESSION['user_id'] = 4;
+session_start();
+header('Content-Type: application/json');
 
 // Database configuration
-$dbConfig = [
+$config = [
     'host' => 'localhost',
     'username' => 'root',
     'password' => '',
-    'database' => 'your_database_name'
+    'database' => 'pufflab'
 ];
 
-$conn = new mysqli($dbConfig['host'], $dbConfig['username'], $dbConfig['password'], $dbConfig['database']);
-if ($conn->connect_error) {
-    exit(json_encode(['error' => true, 'message' => 'Connection failed: ' . $conn->connect_error]));
-}
+try {
+    $conn = new mysqli($config['host'], $config['username'], $config['password'], $config['database']);
 
-$user_id = $_SESSION['user_id'];
-
-if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    fetchAddress($conn, $user_id);
-} elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    updateAddress($conn, $user_id);
-}
-
-function fetchAddress($conn, $user_id) {
-    $query = "SELECT * FROM Addresses WHERE user_id = ? LIMIT 1";
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param('i', $user_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    if ($result->num_rows > 0) {
-        echo json_encode($result->fetch_assoc());
-    } else {
-        echo json_encode(['error' => true, 'message' => 'No address found']);
+    if ($conn->connect_error) {
+        throw new Exception("Connection failed: " . $conn->connect_error);
     }
-    $stmt->close();
-}
 
-function updateAddress($conn, $user_id) {
-    $data = json_decode(file_get_contents('php://input'), true);
-    $stmt = $conn->prepare("UPDATE Addresses SET address_line_1=?, address_line_2=?, city=?, state=?, postcode=?, country=?, phone=? WHERE address_id=? AND user_id=?");
-    $stmt->bind_param("ssssssisi", $data['address_line_1'], $data['address_line_2'], $data['city'], $data['state'], $data['postcode'], $data['country'], $data['phone'], $data['address_id'], $user_id);
-
-    if ($stmt->execute()) {
-        echo json_encode(['success' => true]);
-    } else {
-        echo json_encode(['error' => true, 'message' => 'Update failed: ' . $stmt->error]);
+    if (!isset($_SESSION['user_id'])) {
+        echo json_encode(['error' => true, 'message' => 'User not authenticated']);
+        exit;
     }
-    $stmt->close();
-}
 
-$conn->close();
+    $user_id = $_SESSION['user_id'];
+
+    if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+        $stmt = $conn->prepare("SELECT address_line_1, address_line_2, city, state, postcode, country FROM Addresses WHERE user_id = ?");
+        $stmt->bind_param("i", $user_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $address = $result->fetch_assoc();
+
+        echo json_encode($address);
+    } elseif ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        $data = json_decode(file_get_contents('php://input'), true);
+
+        $stmt = $conn->prepare("UPDATE Addresses SET address_line_1 = ?, address_line_2 = ?, city = ?, state = ?, postcode = ?, country = ? WHERE user_id = ?");
+        $stmt->bind_param("ssssssi", $data['address_line_1'], $data['address_line_2'], $data['city'], $data['state'], $data['postcode'], $data['country'], $user_id);
+
+        if ($stmt->execute()) {
+            echo json_encode(['success' => true, 'message' => 'Address updated successfully']);
+        } else {
+            // Use HTTP response codes to indicate errors
+            http_response_code(500); // Internal Server Error
+            throw new Exception("Error updating address: " . $stmt->error);
+        }
+        
+    }
+
+} catch (Exception $e) {
+    error_log($e->getMessage());
+    echo json_encode(['error' => true, 'message' => 'Database error: ' . $e->getMessage()]);
+} finally {
+    if (isset($conn)) {
+        $conn->close();
+    }
+}
 ?>
