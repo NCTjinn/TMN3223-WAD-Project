@@ -1,4 +1,4 @@
-<!-- signup.html -->
+<!-- publicRegistration.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -21,7 +21,7 @@
                 </a>
             </div>
             <ul class="links">
-                <li><a href="memberHome.html">Home</a></li>
+                <li><a href="publicHome.html">Home</a></li>
                 <li class="dropdown">
                     <a href="publicMenu.html">Menu <i class='bx bxs-chevron-down'></i></a>
                     <ul class="dropdown-content">
@@ -37,57 +37,60 @@
                         <li><a href="publicAboutUs.html">Our History</a></li>
                     </ul>
                 </li>
-                <li class="dropdown">
-                    <a href="memberAcc.html">My Account <i class='bx bxs-chevron-down'></i></a>
-                    <ul class="dropdown-content">
-                        <li><a href="memberAcc.html">Dashboard</a></li> <!-- Link to My Account -->
-                        <li><a href="memberOrders.html">Orders</a></li> <!-- Link to My Orders -->
-                        <li><a href="memberRewards.html">Rewards</a></li> <!-- Link to My Rewards -->
-                        <li><a href="publicHome.html">Log Out</a></li> <!-- Link to LogOut -->
-                    </ul>
-                </li>
             </ul>
-            <div class="icons">
-                <div class="search-box">
-                    <input type="text" class="search-txt" placeholder="Type to search...">
-                    <a href="javascript:void(0);" class="search-btn">
-                        <i class='bx bx-search'></i>
-                    </a>
-                </div>
-                <a href="memberCart.html"><i class='bx bx-cart'></i></a>
-            </div>
         </div>
     </nav>
 
-    <div class="signup-container">
-        <form class="signup-form">
-            <h1>Greetings!</h1>
+    <!-- Modal HTML -->
+    <div id="successModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <p>Registration Successful!</p>
+        </div>
+    </div>
+
+    <div class="registration-container">
+        <form class="registration-form">
+            <h1>Welcome to PuffLab!</h1>
             <div class="form-group">
                 <label for="username">Username</label>
-                <input type="text" id="username" required>
+                <input type="text" name="username" required>
             </div>
             <div class="form-group">
                 <label for="first_name">First Name</label>
-                <input type="text" id="first_name" required>
+                <input type="text" name="first_name" required>
             </div>
             <div class="form-group">
                 <label for="last_name">Last Name</label>
-                <input type="text" id="last_name" required>
+                <input type="text" name="last_name" required>
             </div>
             <div class="form-group">
                 <label for="email">Email</label>
-                <input type="email" id="email" required>
+                <input type="email" name="email" required>
             </div>
             <div class="form-group">
                 <label for="password">Password</label>
-                <input type="password" id="password" required>
+                <input type="password" name="password" required>
+            </div>
+            <div class="form-group">
+                <label for="confirm_password">Confirm Password</label>
+                <input type="password" name="confirm_password" required>
             </div>
             <div class="checkbox-group">
                 <input type="checkbox" id="terms" required>
-                <label for="terms">I agree to the terms and conditions</label>
+                <label for="terms">I agree to the <a href="publicTNC.html">terms and conditions</a></label>
             </div>
-            <button type="submit" class="signup-button">Sign Up</button>
+            <button type="submit" class="register-button">Register Now</button>
+            <p>Already have an account? <a href="publicLogin.html">Login here</a></p>
         </form>
+    </div>
+
+    <!-- Modal HTML -->
+    <div id="successModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <p>Registration Successful!</p>
+        </div>
     </div>
 
     <footer class="footer">
@@ -130,7 +133,5 @@
             Copyright &copy; 2024 PuffLab
         </div>
     </footer>
-
-
 </body>
 </html>

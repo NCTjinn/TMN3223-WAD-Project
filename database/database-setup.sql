@@ -14,7 +14,6 @@ DROP TABLE IF EXISTS Vouchers;
 DROP TABLE IF EXISTS Transactions;
 DROP TABLE IF EXISTS Transaction_Details;
 DROP TABLE IF EXISTS Mission_Templates;
-DROP TABLE IF EXISTS Rewards;
 DROP TABLE IF EXISTS FAQ_Categories;
 DROP TABLE IF EXISTS FAQs;
 DROP TABLE IF EXISTS Addresses;
@@ -121,20 +120,6 @@ CREATE TABLE Mission_Templates (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
--- Rewards table for user missions and points
-CREATE TABLE Rewards (
-    reward_id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT NOT NULL,
-    mission_id INT,
-    mission_name VARCHAR(255) NOT NULL,
-    status ENUM('pending', 'completed') NOT NULL,
-    points_earned INT NOT NULL,
-    redeemed BOOLEAN DEFAULT FALSE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES Users(user_id),
-    FOREIGN KEY (mission_id) REFERENCES Mission_Templates(mission_id)
-);
-
 -- Addresses table for user delivery addresses
 CREATE TABLE Addresses (
     address_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -226,18 +211,16 @@ CREATE INDEX idx_review_rating ON Reviews(rating);
 CREATE INDEX idx_sales_date ON Sales_Summary(date);
 
 -- Rewards indexes
-CREATE INDEX idx_rewards_status ON Rewards(status);
-CREATE INDEX idx_rewards_user ON Rewards(user_id, status);
 CREATE INDEX idx_mission_points ON Mission_Templates(points);
 
 -- Voucher indexes
 CREATE INDEX idx_voucher_expiry ON Vouchers(expiry_date);
 
 -- Admin Users
-INSERT INTO Users (username, first_name, last_name, display_name, email, password, role) VALUES
-('admin1', 'John', 'Doe', 'Admin John', 'admin1@pufflab.com', '$2y$10$abc', 'admin'),
-('admin2', 'Jane', 'Smith', 'Admin Jane', 'admin2@pufflab.com', '$2y$10$def', 'admin'),
-('admin3', 'Mike', 'Johnson', 'Admin Mike', 'admin3@pufflab.com', '$2y$10$ghi', 'admin');
+INSERT INTO Users (username, first_name, last_name, email, password, role) VALUES
+('admin1', 'John', 'Doe', 'admin1@pufflab.com', '$2y$10$abc', 'admin'),
+('admin2', 'Jane', 'Smith', 'admin2@pufflab.com', '$2y$10$def', 'admin'),
+('admin3', 'Mike', 'Johnson', 'admin3@pufflab.com', '$2y$10$ghi', 'admin');
 
 -- Member Users
 INSERT INTO Users (username, first_name, last_name, email, password, role, points) VALUES
@@ -487,14 +470,6 @@ INSERT INTO Mission_Templates (name, description, points, requirements) VALUES
 ('Loyal Customer', 'Make 3 purchases in a month', 150, 'Complete 3 orders within 30 days'),
 ('Social Butterfly', 'Share 3 products on social media', 75, 'Share products on social platforms'),
 ('Birthday Special', 'Order on your birthday', 200, 'Place order on birthday date');
-
--- Rewards
-INSERT INTO Rewards (user_id, mission_id, mission_name, status, points_earned) VALUES
-(4, 1, 'First Purchase', 'completed', 50),
-(5, 1, 'First Purchase', 'completed', 50),
-(6, 1, 'First Purchase', 'completed', 50),
-(7, 2, 'Review Master', 'pending', 100),
-(8, 3, 'Loyal Customer', 'pending', 150);
 
 -- Addresses
 INSERT INTO Addresses (user_id, address_line_1, city, state, postcode, country, is_default) VALUES
