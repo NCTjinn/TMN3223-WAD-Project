@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Member Management</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link rel="stylesheet" href="adminmembersstyle.css">
+    <link rel="stylesheet" href="adminMember.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
 </head>
 <body>
@@ -18,8 +18,7 @@
             <div class="user-dropdown">
                 <i class="fas fa-user-circle" id="profile-icon"></i>
                 <div class="dropdown-menu" id="dropdown-menu">
-                    <a href="adminprofile.html">Profile</a>
-                    <a href="publichome.html">Logout</a>
+                    <a href="publicHome.html">Logout</a>
                 </div>
             </div>
         </div>
@@ -29,23 +28,23 @@
     <div class="admin-layout">
         <!-- Sidebar -->
         <aside class="admin-sidebar">
-            <a href="admindashboard.html" class="sidebar-item" data-tooltip="Admin Dashboard">
+            <a href="adminDashboard.html" class="sidebar-item" data-tooltip="Admin Dashboard">
                 <i class="fas fa-tachometer-alt"></i>
                 <span class="sidebar-label">Dashboard</span>
             </a>
-            <a href="adminmembers.html" class="sidebar-item active" data-tooltip="Member Management">
+            <a href="adminMembers.html" class="sidebar-item active" data-tooltip="Member Management">
                 <i class="fas fa-users"></i>
                 <span class="sidebar-label">Members</span>
             </a>
-            <a href="adminproducts.html" class="sidebar-item" data-tooltip="Product Management">
+            <a href="adminProducts.html" class="sidebar-item" data-tooltip="Product Management">
                 <i class="fas fa-boxes"></i>
                 <span class="sidebar-label">Products</span>
             </a>
-            <a href="admintransactions.html" class="sidebar-item" data-tooltip="Transaction Records">
+            <a href="adminTransactions.html" class="sidebar-item" data-tooltip="Transaction Records">
                 <i class="fas fa-file-invoice-dollar"></i>
                 <span class="sidebar-label">Transactions</span>
             </a>
-            <a href="adminfaqs.html" class="sidebar-item" data-tooltip="FAQ Management">
+            <a href="adminFaqs.html" class="sidebar-item" data-tooltip="FAQ Management">
                 <i class="fas fa-question-circle"></i>
                 <span class="sidebar-label">FAQs</span>
             </a>
@@ -101,6 +100,6 @@
         Copyright &copy; 2024 PuffLab
     </footer>
 
-    <script src="adminmembersscript.js"></script>
+    <script src="adminMembers.js"></script>
 </body>
 </html>
