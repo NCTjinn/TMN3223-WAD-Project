@@ -2,10 +2,10 @@
 <html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
-    <title>Contact Us - PuffLab</title>
+    <title>Frequency Asked Question - PuffLab</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css">
-    <link rel="stylesheet" href="memberContactUs.css">
+    <link rel="stylesheet" href="memberFaqs.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
@@ -20,18 +20,18 @@
             <ul class="links">
                 <li><a href="memberHome.html">Home</a></li>
                 <li class="dropdown">
-                    <a href="publicMenu.html">Menu <i class='bx bxs-chevron-down'></i></a>
+                    <a href="memberMenu.html">Menu <i class='bx bxs-chevron-down'></i></a>
                     <ul class="dropdown-content">
-                        <li><a href="publicMenu.html">Cream Puff</a></li>
-                        <li><a href="publicMenu.html">Petit Gateux</a></li>
-                        <li><a href="publicMenu.html">Shortcakes</a></li>
+                        <li><a href="memberMenu.html">Cream Puff</a></li>
+                        <li><a href="memberMenu.html">Petit Gateux</a></li>
+                        <li><a href="memberMenu.html">Shortcakes</a></li>
                     </ul>
                 </li>
                 <li class="dropdown">
-                    <a href="publicAboutUs.html">About Us <i class='bx bxs-chevron-down'></i></a>
+                    <a href="memberAboutUs.html">About Us <i class='bx bxs-chevron-down'></i></a>
                     <ul class="dropdown-content">
-                        <li><a href="publicAboutUs.html">Our Team</a></li>
-                        <li><a href="publicAboutUs.html">Our History</a></li>
+                        <li><a href="memberAboutUs.html">Our Team</a></li>
+                        <li><a href="memberAboutUs.html">Our History</a></li>
                     </ul>
                 </li>
                 <li class="dropdown">
@@ -39,7 +39,7 @@
                     <ul class="dropdown-content">
                         <li><a href="memberAcc.html">Dashboard</a></li> <!-- Link to My Account -->
                         <li><a href="memberOrders.html">Orders</a></li> <!-- Link to My Orders -->
-                        <li><a href="publicHome.html">Log Out</a></li> <!-- Link to LogOut -->
+                        <li><a href="Logout.php">Logout</a></li> <!-- Link to LogOut -->
                     </ul>
                 </li>
             </ul>
@@ -56,68 +56,22 @@
         </div>
     </nav>
 
-    <main class="contact-container">
-        <h1>Contact Us</h1>
-        <p class="contact-intro">
-            We’d love to hear from you! Reach out to us using any of the methods below.
-        </p>
-        
-        <div class="contact-grid">
-            <!-- Visit Us -->
-            <div class="contact-card">
-                <div class="icon-circle visit-icon">
-                    <i class="fas fa-map-marker-alt"></i>
-                </div>
-                <h2>Visit Us</h2>
-                <p class="contact-details">
-                    <a href="https://www.google.com/maps/place/Puff+Lab+PLT/@1.9006337,103.4271573,7z/data=!4m6!3m5!1s0x31fba35fea9f3a3f:0x1b889b5da8e7a852!8m2!3d1.4645096!4d110.4306475!16s%2Fg%2F11rd9g8s55?entry=ttu&g_ep=EgoyMDI0MTIxMS4wIKXMDSoASAFQAw%3D%3D" target="_blank">
-                        Lakeview, UNIMAS
-                    </a>
-                </p>
+    <main>
+        <div class="container">
+            <div class="page-title">
+                <h1>Frequently Asked Questions</h1>
+                <p>Got a question? We're here to help! Check out our FAQs below for quick answers.</p>
             </div>
 
-            <!-- WhatsApp -->
-            <div class="contact-card">
-                <div class="icon-circle whatsapp-icon">
-                    <i class="fab fa-whatsapp"></i>
-                </div>
-                <h2>WhatsApp</h2>
-                <p class="contact-details">
-                    <a href="https://wa.me/60133119957" target="_blank">013-311 9957</a>
-                </p>
-            </div>
-
-            <!-- Email -->
-            <div class="contact-card">
-                <div class="icon-circle email-icon">
-                    <i class="fas fa-envelope"></i>
-                </div>
-                <h2>Email</h2>
-                <p class="contact-details">
-                    <a href="mailto:puff.lab2020@gmail.com">puff.lab2020@gmail.com</a>
-                </p>
-            </div>
-
-            <!-- Follow Us -->
-            <div class="contact-card">
-                <div class="icon-circle social-icon">
-                    <i class="fas fa-share-alt"></i>
-                </div>
-                <h2>Follow Us</h2>
-                <div class="social-media">
-                    <a href="https://www.instagram.com/puff.lab/" target="_blank" class="instagram">
-                        <i class="fab fa-instagram"></i>
-                    </a>
-                    <a href="https://www.facebook.com/PuffLabPLT/" target="_blank" class="facebook">
-                        <i class="fab fa-facebook"></i>
-                    </a>
-                    <a href="https://www.tiktok.com/@pufflabplt" target="_blank" class="tiktok">
-                        <i class="fab fa-tiktok"></i>
-                    </a>
+            <div class="faq-section">
+                <div id="loading-spinner" class="loading-spinner">
+                    <div class="spinner"></div>
+                    <p>Loading FAQs...</p>
                 </div>
             </div>
         </div>
     </main>
+
 
     <footer class="footer">
         <div class="footer-left">
@@ -131,16 +85,16 @@
                 <div class="footer-col2">
                     <h4>CUSTOMER CARE</h4>
                     <ul>
-                        <li><a href="publicTNC.html">Terms & Conditions</a></li>
-                        <li><a href="publicPrivacyPolicy.html">Privacy Policy</a></li>
-                        <li><a href="publicFaqs.html">FAQs</a></li>
+                        <li><a href="memberTNC.html">Terms & Conditions</a></li>
+                        <li><a href="memberPrivacyPolicy.html">Privacy Policy</a></li>
+                        <li><a href="memberFaqs.html">FAQs</a></li>
                     </ul>
                 </div>
                 <div class="footer-col3">
                     <h4>STORE INFORMATION</h4>
                     <ul>
-                        <li><a href="publicAboutUs.html">About Us</a></li>
-                        <li><a href="publicContactUs.html">Contact Us</a></li>
+                        <li><a href="memberAboutUs.html">About Us</a></li>
+                        <li><a href="memberContactUs.html">Contact Us</a></li>
                     </ul>
                 </div>
             </div>
@@ -160,7 +114,8 @@
         </div>
     </footer>
 
-    <script src="memberContactUs.js"></script>
+    <script src="script.js"></script>
+    <script src="memberFaqs.js"></script>
     
 </body>
 </html>
