@@ -1,16 +1,37 @@
-// Example: Use AJAX to fetch data dynamically
 function fetchDashboardData() {
-    fetch('backend_endpoint.php') // Replace with your backend API endpoint
+    showLoadingState();
+
+    fetch('../api/memberDashboard.php')
         .then(response => response.json())
         .then(data => {
-            // Populate HTML with fetched data
-            document.querySelector('.overview-item:nth-child(1) p').innerText = data.total_orders + ' Orders';
-            document.querySelector('.overview-item:nth-child(2) p').innerText = data.saved_addresses + ' Addresses';
-            document.querySelector('.overview-item:nth-child(3) p').innerText = data.account_status;
-            document.querySelector('.overview-item:nth-child(4) p').innerText = data.reward_points + ' Points';
+            if (data.error) {
+                throw new Error(data.message);
+            }
+            updateDashboard(data);
         })
-        .catch(error => console.error('Error fetching data:', error));
+        .catch(error => {
+            console.error('Error:', error);
+            showErrorState();
+        });
 }
 
-// Call the function when the page loads
+function showLoadingState() {
+    const overviewItems = document.querySelectorAll('.overview-item p');
+    overviewItems.forEach(item => item.innerHTML = '<i class="fa fa-spinner fa-spin"></i>');
+}
+
+function showErrorState() {
+    const overviewItems = document.querySelectorAll('.overview-item p');
+    overviewItems.forEach(item => item.textContent = 'Error loading data');
+}
+
+function updateDashboard(data) {
+    document.getElementById('orders-overview').querySelector('p').textContent = 
+        `${data.total_orders} Orders`;
+    document.getElementById('addresses-overview').querySelector('p').textContent = 
+        `${data.saved_addresses} Addresses`;
+    document.getElementById('status-overview').querySelector('p').textContent = 
+        `Member since ${data.account_created}`;
+}
+
 document.addEventListener('DOMContentLoaded', fetchDashboardData);
