@@ -1,98 +1,106 @@
-// Open the modal when "Add New Address" is clicked
-document.querySelector('.add-btn').addEventListener('click', () => {
-    document.getElementById('address-modal').style.display = 'flex';
-});
+// Event listener for DOM content loaded to fetch address details
+document.addEventListener('DOMContentLoaded', fetchAddress);
 
-// Close the modal when "X" or "Cancel" is clicked
-document.querySelector('.close-modal').addEventListener('click', () => {
-    closeModal();
-});
+// Function to fetch address details from the server
+async function fetchAddress() {
+    try {
+        const response = await fetch('../api/memberAddresses.php', { method: 'GET' });
+        if (!response.ok) throw new Error('Failed to fetch address');
 
-document.querySelector('.cancel-btn').addEventListener('click', () => {
-    closeModal();
-});
+        const addressData = await response.json();
+        displayAddress(addressData);
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error fetching address. Please check the console for details.');
+    }
+}
 
-// Function to close the modal
+// Function to display address details in the UI
+function displayAddress(data) {
+    const addressElement = document.querySelector('.address-details');
+    addressElement.innerHTML = `
+        <h4>${data.type || 'Default Address'}</h4>
+        <p>${data.address_line_1}, ${data.address_line_2 || ''}</p>
+        <p>${data.city}, ${data.state} ${data.postcode}</p>
+        <p>${data.country}</p>
+        <p>Phone: ${data.phone}</p>
+    `;
+    document.querySelector('.edit-btn').onclick = () => openEditModal(data);
+}
+
+// Function to open the edit modal with pre-filled data
+function openEditModal(data) {
+    const modal = document.getElementById('address-modal');
+    modal.style.display = 'flex';
+    document.getElementById('address-line-1').value = data.address_line_1;
+    document.getElementById('address-line-2').value = data.address_line_2 || '';
+    document.getElementById('city').value = data.city;
+    document.getElementById('state').value = data.state;
+    document.getElementById('postcode').value = data.postcode;
+    document.getElementById('country').value = data.country;
+    document.getElementById('phone-number').value = data.phone;
+
+    document.querySelector('.save-btn').onclick = function() {
+        saveAddress(data.address_id);
+    };
+}
+
+// Function to close the modal and clear form data
 function closeModal() {
     document.getElementById('address-modal').style.display = 'none';
     clearForm();
 }
 
-document.querySelector('.save-btn').addEventListener('click', async function (e) {
-    e.preventDefault(); // Prevent the default form behavior
-
-    // Collect form data
-    const addressTitle = document.getElementById('address-title').value;
-    const addressLine = document.getElementById('address-line').value;
-    const phoneNumber = document.getElementById('phone-number').value;
-
-    // Validate inputs
-    if (addressTitle && addressLine && phoneNumber) {
-        try {
-            // Send data to the backend (assuming an API endpoint exists)
-            const response = await fetch('/api/addresses', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    title: addressTitle,
-                    address: addressLine,
-                    phone: phoneNumber,
-                }),
-            });
-
-            if (!response.ok) {
-                const error = await response.json();
-                console.error('Error:', error);
-                alert(`Failed to save address: ${error.error || 'Unknown error'}`);
-                return;
-            }
-
-            // If the backend responds successfully
-            const newAddress = await response.json();
-
-            // Update the frontend with the new address
-            const addressCard = document.createElement('div');
-            addressCard.classList.add('address-card');
-            addressCard.innerHTML = `
-                <div class="address-icon">
-                    <i class="fa fa-map-marker-alt"></i>
-                </div>
-                <div class="address-details">
-                    <h4>${newAddress.title}</h4>
-                    <p>${newAddress.address}</p>
-                    <p>Phone: ${newAddress.phone}</p>
-                </div>
-                <div class="address-actions">
-                    <button class="edit-btn"><i class="fa fa-edit"></i> Edit</button>
-                    <button class="delete-btn"><i class="fa fa-trash"></i> Delete</button>
-                </div>
-            `;
-
-            document.querySelector('.addresses-list').appendChild(addressCard);
-
-            // Close the modal
-            document.getElementById('address-modal').style.display = 'none';
-
-            // Clear the form inputs
-            document.getElementById('address-title').value = '';
-            document.getElementById('address-line').value = '';
-            document.getElementById('phone-number').value = '';
-        } catch (error) {
-            console.error('Fetch Error:', error);
-            alert('Failed to save address. Please check the console for details.');
-        }
-    } else {
-        alert('Please fill in all fields!');
-    }
-});
-
-
-
-// Clear the form inputs
+// Function to clear form inputs in the modal
 function clearForm() {
     document.getElementById('address-title').value = '';
-    document.getElementById('address-line').value = '';
+    document.getElementById('address-line-1').value = '';
+    document.getElementById('address-line-2').value = '';
+    document.getElementById('city').value = '';
+    document.getElementById('state').value = '';
+    document.getElementById('postcode').value = '';
+    document.getElementById('country').value = '';
     document.getElementById('phone-number').value = '';
+}
+
+// Event listeners for closing the modal
+document.querySelector('.close-modal').addEventListener('click', closeModal);
+document.querySelector('.cancel-btn').addEventListener('click', closeModal);
+
+// Function to save updated address details to the server
+async function saveAddress(addressId) {
+    const addressLine1 = document.getElementById('address-line-1').value;
+    const addressLine2 = document.getElementById('address-line-2').value;
+    const city = document.getElementById('city').value;
+    const state = document.getElementById('state').value;
+    const postcode = document.getElementById('postcode').value;
+    const country = document.getElementById('country').value;
+    const phone = document.getElementById('phone-number').value;
+
+    try {
+        const response = await fetch('../api/memberAddresses.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                address_id: addressId,
+                address_line_1: addressLine1,
+                address_line_2: addressLine2,
+                city: city,
+                state: state,
+                postcode: postcode,
+                country: country,
+                phone: phone
+            }),
+        });
+
+        if (!response.ok) throw new Error('Failed to update address');
+
+        alert('Address updated successfully!');
+        window.location.reload(); // Reload the page to show the updated address
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error updating address. Please check the console for details.');
+    }
 }
