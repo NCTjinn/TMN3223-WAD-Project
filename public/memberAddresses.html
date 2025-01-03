@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css">
     <link rel="stylesheet" href="memberAddresses.css">
     <script src="memberAddresses.js"></script>
-    <script src="memberAddresses.html"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
@@ -79,59 +78,51 @@
             </div>
 
             <div class="right-box">
-                <h2>My Addresses</h2>
-            
+                <h2>My Address</h2>
                 <!-- Existing Addresses -->
                 <div class="addresses-list">
-                    <!-- Example Address Card -->
                     <div class="address-card">
                         <div class="address-icon">
                             <i class="fa fa-home"></i>
                         </div>
                         <div class="address-details">
-                            <h4>Home Address</h4>
-                            <p>123 Puff Street, Kuching, Sarawak</p>
-                            <p>Phone: +60 12-345-6789</p>
+                            <!-- Dynamic content will be loaded here -->
                         </div>
                         <div class="address-actions">
                             <button class="edit-btn"><i class="fa fa-edit"></i> Edit</button>
-                            <button class="delete-btn"><i class="fa fa-trash"></i> Delete</button>
-                        </div>
-                    </div>
-                    <div class="address-card">
-                        <div class="address-icon">
-                            <i class="fa fa-briefcase"></i>
-                        </div>
-                        <div class="address-details">
-                            <h4>Office Address</h4>
-                            <p>Suite 456, Lakeview UNIMAS, Sarawak</p>
-                            <p>Phone: +60 12-987-6543</p>
-                        </div>
-                        <div class="address-actions">
-                            <button class="edit-btn"><i class="fa fa-edit"></i> Edit</button>
-                            <button class="delete-btn"><i class="fa fa-trash"></i> Delete</button>
                         </div>
                     </div>
                 </div>
-            
-                <!-- Add New Address Section -->
-                <div class="add-address">
-                    <button class="add-btn"><i class="fa fa-plus"></i> Add New Address</button>
-                </div>
-            
-                <!-- Modal for Adding/Editing Address -->
+                
+                <!-- Modal for Editing Address -->
                 <div class="modal" id="address-modal">
                     <div class="modal-content">
                         <span class="close-modal">&times;</span>
-                        <h3>Add/Edit Address</h3>
+                        <h3>Edit Address</h3>
                         <form action="#" method="POST" class="modal-form">
                             <div class="form-group">
-                                <label for="address-title">Address Title</label>
-                                <input type="text" id="address-title" name="address-title" placeholder="e.g., Home or Office" required>
+                                <label for="address-line-1">Address Line 1</label>
+                                <input type="text" id="address-line-1" name="address-line-1" placeholder="Enter address line 1" required>
                             </div>
                             <div class="form-group">
-                                <label for="address-line">Address</label>
-                                <input type="text" id="address-line" name="address-line" placeholder="Enter your address" required>
+                                <label for="address-line-2">Address Line 2</label>
+                                <input type="text" id="address-line-2" name="address-line-2" placeholder="Enter address line 2">
+                            </div>
+                            <div class="form-group">
+                                <label for="city">City</label>
+                                <input type="text" id="city" name="city" placeholder="Enter city" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="state">State</label>
+                                <input type="text" id="state" name="state" placeholder="Enter state" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="postcode">Postcode</label>
+                                <input type="text" id="postcode" name="postcode" placeholder="Enter postcode" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="country">Country</label>
+                                <input type="text" id="country" name="country" placeholder="Enter country" required>
                             </div>
                             <div class="form-group">
                                 <label for="phone-number">Phone Number</label>
@@ -144,10 +135,7 @@
                         </form>
                     </div>
                 </div>
-
             </div>
-            
-            
         </div>
     </div>
 
