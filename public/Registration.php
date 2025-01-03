@@ -1,5 +1,5 @@
 <?php
-// publicRegistration.php
+session_start();
 header('Content-Type: application/json');
 
 $servername = "localhost";
@@ -15,9 +15,6 @@ if ($conn->connect_error) {
 
 $action = $_GET['action'] ?? '';
 $data = json_decode(file_get_contents("php://input"), true);
-
-// Start session
-session_start();
 
 // Generate and verify CSRF token
 if (empty($_SESSION['csrf_token'])) {

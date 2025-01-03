@@ -1,3 +1,22 @@
+<?php
+session_start();
+
+// Check if user is logged in
+if (!isset($_SESSION['user_id'])) {
+    header("Location: publicLogin.html");
+    exit();
+}
+
+// Check user's role if needed
+if ($_SESSION['role'] !== 'admin') {
+    echo "Access denied";
+    exit();
+}
+
+// Your protected content here
+echo "Welcome to the admin section!";
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -19,7 +38,7 @@
             <div class="user-dropdown">
                 <i class="fas fa-user-circle" id="profile-icon"></i>
                 <div class="dropdown-menu" id="dropdown-menu">
-                    <a href="publicHome.html">Logout</a>
+                    <a href="Logout.php">Logout</a>
                 </div>
             </div>
         </div>
@@ -29,11 +48,11 @@
     <div class="admin-layout">
         <!-- Sidebar -->
         <aside class="admin-sidebar">
-            <a href="adminDashboard.html" class="sidebar-item" data-tooltip="Admin Dashboard">
+            <a href="adminDashboard.php" class="sidebar-item" data-tooltip="Admin Dashboard">
                 <i class="fas fa-tachometer-alt"></i>
                 <span class="sidebar-label">Dashboard</span>
             </a>
-            <a href="adminMembers.html" class="sidebar-item" data-tooltip="Member Management">
+            <a href="adminMembers.php" class="sidebar-item" data-tooltip="Member Management">
                 <i class="fas fa-users"></i>
                 <span class="sidebar-label">Members</span>
             </a>
@@ -41,11 +60,11 @@
                 <i class="fas fa-boxes"></i>
                 <span class="sidebar-label">Products</span>
             </a>
-            <a href="adminTransactions.html" class="sidebar-item" data-tooltip="Transaction Records">
+            <a href="adminTransactions.php" class="sidebar-item" data-tooltip="Transaction Records">
                 <i class="fas fa-file-invoice-dollar"></i>
                 <span class="sidebar-label">Transactions</span>
             </a>
-            <a href="adminFaqs.html" class="sidebar-item active" data-tooltip="FAQ Management">
+            <a href="adminFaqs.php" class="sidebar-item active" data-tooltip="FAQ Management">
                 <i class="fas fa-question-circle"></i>
                 <span class="sidebar-label">FAQs</span>
             </a>
