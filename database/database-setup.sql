@@ -29,7 +29,6 @@ CREATE TABLE Users (
     username VARCHAR(255) UNIQUE NOT NULL,
     first_name VARCHAR(255) NOT NULL,
     last_name VARCHAR(255) NOT NULL,
-    display_name VARCHAR(255) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
     role ENUM('public', 'member', 'admin') NOT NULL,
@@ -241,27 +240,27 @@ INSERT INTO Users (username, first_name, last_name, display_name, email, passwor
 ('admin3', 'Mike', 'Johnson', 'Admin Mike', 'admin3@pufflab.com', '$2y$10$ghi', 'admin');
 
 -- Member Users
-INSERT INTO Users (username, first_name, last_name, display_name, email, password, role, points) VALUES
-('member1', 'Alice', 'Wong', 'Alice W', 'alice@email.com', '$2y$10$jkl', 'member', 100),
-('member2', 'Bob', 'Tan', 'Bob T', 'bob@email.com', '$2y$10$mno', 'member', 150),
-('member3', 'Charlie', 'Lee', 'Charlie L', 'charlie@email.com', '$2y$10$pqr', 'member', 200),
-('member4', 'Diana', 'Chen', 'Diana C', 'diana@email.com', '$2y$10$stu', 'member', 75),
-('member5', 'Edward', 'Lim', 'Edward L', 'edward@email.com', '$2y$10$vwx', 'member', 300),
-('member6', 'Fiona', 'Ng', 'Fiona N', 'fiona@email.com', '$2y$10$yza', 'member', 250),
-('member7', 'George', 'Tan', 'George T', 'george@email.com', '$2y$10$bcd', 'member', 175),
-('member8', 'Hannah', 'Wu', 'Hannah W', 'hannah@email.com', '$2y$10$efg', 'member', 125),
-('member9', 'Ian', 'Zhang', 'Ian Z', 'ian@email.com', '$2y$10$hij', 'member', 225),
-('member10', 'Julia', 'Liu', 'Julia L', 'julia@email.com', '$2y$10$klm', 'member', 350),
-('member11', 'Kevin', 'Wang', 'Kevin W', 'kevin@email.com', '$2y$10$nop', 'member', 400),
-('member12', 'Linda', 'Goh', 'Linda G', 'linda@email.com', '$2y$10$qrs', 'member', 275),
-('member13', 'Michael', 'Ong', 'Michael O', 'michael@email.com', '$2y$10$tuv', 'member', 150),
-('member14', 'Nancy', 'Chua', 'Nancy C', 'nancy@email.com', '$2y$10$wxy', 'member', 200),
-('member15', 'Oliver', 'Teo', 'Oliver T', 'oliver@email.com', '$2y$10$zab', 'member', 325),
-('member16', 'Patricia', 'Koh', 'Patricia K', 'patricia@email.com', '$2y$10$cde', 'member', 275),
-('member17', 'Quinn', 'Sim', 'Quinn S', 'quinn@email.com', '$2y$10$fgh', 'member', 225),
-('member18', 'Ryan', 'Low', 'Ryan L', 'ryan@email.com', '$2y$10$ijk', 'member', 175),
-('member19', 'Sarah', 'Yeo', 'Sarah Y', 'sarah@email.com', '$2y$10$lmn', 'member', 300),
-('member20', 'Tom', 'Pang', 'Tom P', 'tom@email.com', '$2y$10$opq', 'member', 250);
+INSERT INTO Users (username, first_name, last_name, email, password, role, points) VALUES
+('member1', 'Alice', 'Wong', 'alice@email.com', '$2y$10$jkl', 'member', 100),
+('member2', 'Bob', 'Tan', 'bob@email.com', '$2y$10$mno', 'member', 150),
+('member3', 'Charlie', 'Lee', 'charlie@email.com', '$2y$10$pqr', 'member', 200),
+('member4', 'Diana', 'Chen', 'diana@email.com', '$2y$10$stu', 'member', 75),
+('member5', 'Edward', 'Lim', 'edward@email.com', '$2y$10$vwx', 'member', 300),
+('member6', 'Fiona', 'Ng', 'fiona@email.com', '$2y$10$yza', 'member', 250),
+('member7', 'George', 'Tan', 'george@email.com', '$2y$10$bcd', 'member', 175),
+('member8', 'Hannah', 'Wu', 'hannah@email.com', '$2y$10$efg', 'member', 125),
+('member9', 'Ian', 'Zhang', 'ian@email.com', '$2y$10$hij', 'member', 225),
+('member10', 'Julia', 'Liu', 'julia@email.com', '$2y$10$klm', 'member', 350),
+('member11', 'Kevin', 'Wang', 'kevin@email.com', '$2y$10$nop', 'member', 400),
+('member12', 'Linda', 'Goh', 'linda@email.com', '$2y$10$qrs', 'member', 275),
+('member13', 'Michael', 'Ong', 'michael@email.com', '$2y$10$tuv', 'member', 150),
+('member14', 'Nancy', 'Chua', 'nancy@email.com', '$2y$10$wxy', 'member', 200),
+('member15', 'Oliver', 'Teo', 'oliver@email.com', '$2y$10$zab', 'member', 325),
+('member16', 'Patricia', 'Koh', 'patricia@email.com', '$2y$10$cde', 'member', 275),
+('member17', 'Quinn', 'Sim', 'quinn@email.com', '$2y$10$fgh', 'member', 225),
+('member18', 'Ryan', 'Low', 'ryan@email.com', '$2y$10$ijk', 'member', 175),
+('member19', 'Sarah', 'Yeo', 'sarah@email.com', '$2y$10$lmn', 'member', 300),
+('member20', 'Tom', 'Pang', 'tom@email.com', '$2y$10$opq', 'member', 250);
 
 -- Product Categories
 INSERT INTO Product_Categories (name, description) VALUES
