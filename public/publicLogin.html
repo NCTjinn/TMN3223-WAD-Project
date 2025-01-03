@@ -8,70 +8,51 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css">
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="login.css">
+    <link rel="stylesheet" href="publicLogin.css">
+    <script src="script.js"></script>
+    <script src="publicLogin.js"></script>
 </head>
 <body>
     <nav>
         <div class="navbar">
             <div class="logo">
-                <a href="home.html">
+                <a href="memberHome.html">
                     <img src="../assets/images/logo.png" alt="PuffLab Logo" style="height: 50px;">
                 </a>
             </div>
             <ul class="links">
-                <li><a href="home.html">Home</a></li>
+                <li><a href="memberHome.html">Home</a></li>
                 <li class="dropdown">
-                    <a href="menu.html">Menu <i class='bx bxs-chevron-down'></i></a>
+                    <a href="publicMenu.html">Menu <i class='bx bxs-chevron-down'></i></a>
                     <ul class="dropdown-content">
-                        <li><a href="menu.html">Cream Puff</a></li>
-                        <li><a href="menu.html">Petit Gateux</a></li>
-                        <li><a href="menu.html">Shortcakes</a></li>
+                        <li><a href="publicMenu.html">Cream Puff</a></li>
+                        <li><a href="publicMenu.html">Petit Gateux</a></li>
+                        <li><a href="publicMenu.html">Shortcakes</a></li>
                     </ul>
                 </li>
                 <li class="dropdown">
-                    <a href="aboutus.html">About Us <i class='bx bxs-chevron-down'></i></a>
+                    <a href="publicAboutUs.html">About Us <i class='bx bxs-chevron-down'></i></a>
                     <ul class="dropdown-content">
-                        <li><a href="ourteam.html">Our Team</a></li>
-                        <li><a href="ourhistory.html">Our History</a></li>
-                    </ul>
-                </li>
-                <li class="dropdown">
-                    <a href="myacc.html">My Account <i class='bx bxs-chevron-down'></i></a>
-                    <ul class="dropdown-content">
-                        <li><a href="login.html">Dashboard</a></li> <!-- Redirect to Login -->
-                        <li><a href="login.html">Orders</a></li> 
-                        <li><a href="login.html">Rewards</a></li> 
+                        <li><a href="publicAboutUs.html">Our Team</a></li>
+                        <li><a href="publicAboutUs.html">Our History</a></li>
                     </ul>
                 </li>
             </ul>
-            <div class="icons">
-                <div class="search-box">
-                    <input type="text" class="search-txt" placeholder="Type to search...">
-                    <a href="javascript:void(0);" class="search-btn">
-                        <i class='bx bx-search'></i>
-                    </a>
-                </div>
-                <a href="favorites.html"><i class='bx bx-heart'></i></a>
-                <a href="cart.html"><i class='bx bx-cart'></i></a>
-            </div>
         </div>
     </nav>
 
     <div class="login-container">
         <form class="login-form">
-            <h1>Great to see you again!</h1>
+            <h1>Welcome Back!</h1>
             <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" required>
+                <label for="username">Username</label>
+                <input type="text" name="username" required>
             </div>
             <div class="form-group">
                 <label for="password">Password</label>
-                <input type="password" id="password" required>
+                <input type="password" name="password" required>
             </div>
-            <div class="checkbox-group">
-                <input type="checkbox" id="remember" required>
-                <label for="remember">Remember me</label>
-            </div>
+
             <button type="submit" class="login-button">Log In</button>
         </form>
     </div>
@@ -116,8 +97,5 @@
             Copyright &copy; 2024 PuffLab
         </div>
     </footer>
-
-    <script src="script.js"></script>
-    <script src="login.js"></script>
 </body>
 </html>

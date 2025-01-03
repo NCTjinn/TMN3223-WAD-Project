@@ -13,7 +13,7 @@ DROP TABLE IF EXISTS Cart;
 DROP TABLE IF EXISTS Vouchers;
 DROP TABLE IF EXISTS Transactions;
 DROP TABLE IF EXISTS Transaction_Details;
-DROP TABLE IF EXISTS Mission_Templates;
+DROP TABLE IF EXISTS Orders;
 DROP TABLE IF EXISTS FAQ_Categories;
 DROP TABLE IF EXISTS FAQs;
 DROP TABLE IF EXISTS Addresses;
@@ -109,15 +109,35 @@ CREATE TABLE Transaction_Details (
     FOREIGN KEY (product_id) REFERENCES Products(product_id)
 );
 
--- Mission templates table for the rewards system
-CREATE TABLE Mission_Templates (
-    mission_id INT AUTO_INCREMENT PRIMARY KEY,
+-- Orders table for tracking order status
+CREATE TABLE Orders (
+    order_id INT AUTO_INCREMENT PRIMARY KEY,
+    transaction_id INT NOT NULL,
+    tracking_number VARCHAR(100) UNIQUE NOT NULL,
+    status ENUM('processing', 'shipped', 'delivered', 'cancelled') NOT NULL,
+    estimated_delivery DATE NOT NULL,
+    customer_notes TEXT,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (transaction_id) REFERENCES Transactions(transaction_id)
+);
+
+-- FAQ Categories table
+CREATE TABLE FAQ_Categories (
+    category_id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
-    description TEXT NOT NULL,
-    points INT NOT NULL,
-    requirements TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- FAQs table for product-related questions
+CREATE TABLE FAQs (
+    faq_id INT AUTO_INCREMENT PRIMARY KEY,
+    category_id INT,
+    question TEXT NOT NULL,
+    answer TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (category_id) REFERENCES FAQ_Categories(category_id)
 );
 
 -- Addresses table for user delivery addresses
@@ -197,43 +217,43 @@ CREATE INDEX idx_address_user ON Addresses(user_id, is_default);
 CREATE INDEX idx_review_product ON Reviews(product_id);
 CREATE INDEX idx_review_rating ON Reviews(rating);
 
+-- FAQ indexes
+CREATE INDEX idx_faq_category ON FAQs(category_id);
+
 -- Sales and analytics indexes
 CREATE INDEX idx_sales_date ON Sales_Summary(date);
-
--- Rewards indexes
-CREATE INDEX idx_mission_points ON Mission_Templates(points);
 
 -- Voucher indexes
 CREATE INDEX idx_voucher_expiry ON Vouchers(expiry_date);
 
 -- Admin Users
 INSERT INTO Users (username, first_name, last_name, email, password, role) VALUES
-('admin1', 'John', 'Doe', 'admin1@pufflab.com', '$2y$10$abc', 'admin'),
-('admin2', 'Jane', 'Smith', 'admin2@pufflab.com', '$2y$10$def', 'admin'),
-('admin3', 'Mike', 'Johnson', 'admin3@pufflab.com', '$2y$10$ghi', 'admin');
+('admin1', 'John', 'Doe', 'admin1@pufflab.com', '$argon2id$v=19$m=65536,t=4,p=3$QzBRYlp6ZGxuOXF2Sm1Uaw$/rIVH9L4CqkoXXInX1phNH7uop1X1Feb9o6mXHpBWx0', 'admin'),
+('admin2', 'Jane', 'Smith', 'admin2@pufflab.com', '$argon2id$v=19$m=65536,t=4,p=3$UG55V1B0ZUZxM0paYUN0VA$qlNuehEO/tLkUc3bbkr+6bJ2I+Smb+NhJZUzBofREIc', 'admin'),
+('admin3', 'Mike', 'Johnson', 'admin3@pufflab.com', '$argon2id$v=19$m=65536,t=4,p=3$Sm1mN2xXOVZ4V2xHMk1FZg$LtB+HhWOfG0FEyogmntFGB6CqaK7Onr7w1qixT5zSAs', 'admin');
 
 -- Member Users
 INSERT INTO Users (username, first_name, last_name, email, password, role, points) VALUES
-('member1', 'Alice', 'Wong', 'alice@email.com', '$2y$10$jkl', 'member', 100),
-('member2', 'Bob', 'Tan', 'bob@email.com', '$2y$10$mno', 'member', 150),
-('member3', 'Charlie', 'Lee', 'charlie@email.com', '$2y$10$pqr', 'member', 200),
-('member4', 'Diana', 'Chen', 'diana@email.com', '$2y$10$stu', 'member', 75),
-('member5', 'Edward', 'Lim', 'edward@email.com', '$2y$10$vwx', 'member', 300),
-('member6', 'Fiona', 'Ng', 'fiona@email.com', '$2y$10$yza', 'member', 250),
-('member7', 'George', 'Tan', 'george@email.com', '$2y$10$bcd', 'member', 175),
-('member8', 'Hannah', 'Wu', 'hannah@email.com', '$2y$10$efg', 'member', 125),
-('member9', 'Ian', 'Zhang', 'ian@email.com', '$2y$10$hij', 'member', 225),
-('member10', 'Julia', 'Liu', 'julia@email.com', '$2y$10$klm', 'member', 350),
-('member11', 'Kevin', 'Wang', 'kevin@email.com', '$2y$10$nop', 'member', 400),
-('member12', 'Linda', 'Goh', 'linda@email.com', '$2y$10$qrs', 'member', 275),
-('member13', 'Michael', 'Ong', 'michael@email.com', '$2y$10$tuv', 'member', 150),
-('member14', 'Nancy', 'Chua', 'nancy@email.com', '$2y$10$wxy', 'member', 200),
-('member15', 'Oliver', 'Teo', 'oliver@email.com', '$2y$10$zab', 'member', 325),
-('member16', 'Patricia', 'Koh', 'patricia@email.com', '$2y$10$cde', 'member', 275),
-('member17', 'Quinn', 'Sim', 'quinn@email.com', '$2y$10$fgh', 'member', 225),
-('member18', 'Ryan', 'Low', 'ryan@email.com', '$2y$10$ijk', 'member', 175),
-('member19', 'Sarah', 'Yeo', 'sarah@email.com', '$2y$10$lmn', 'member', 300),
-('member20', 'Tom', 'Pang', 'tom@email.com', '$2y$10$opq', 'member', 250);
+('member1', 'Alice', 'Wong', 'alice@email.com', '$argon2id$v=19$m=65536,t=4,p=3$Rld0dUppN1lpSUxoN0FRVA$3iXNG2AxjE1d5F+y666rGrBhfrwDEG1ZY04vvGVu0JM', 'member', 100),
+('member2', 'Bob', 'Tan', 'bob@email.com', '$argon2id$v=19$m=65536,t=4,p=3$RnpCRGE0SGJVNnRaMWx5VQ$HOUkujg4TuhnyyJgAcMnWDSh+Gm/Zev1I39oNddKQq0', 'member', 150),
+('member3', 'Charlie', 'Lee', 'charlie@email.com', '$argon2id$v=19$m=65536,t=4,p=3$bmk4Ri8wa04ucXYwMWFVRw$MVHvaJO0FcSve5kiqfruPT9LTyaEmxIDNNw34ThlJ1Y', 'member', 200),
+('member4', 'Diana', 'Chen', 'diana@email.com', '$argon2id$v=19$m=65536,t=4,p=3$bml0NEkveThrY2JiV0RaMQ$fimv+MLQbjs5LePORGaG/D1WP5OVP+sDorO9xX8UYMQ', 'member', 75),
+('member5', 'Edward', 'Lim', 'edward@email.com', '$argon2id$v=19$m=65536,t=4,p=3$QmYuQ250Y21tSTZQVUdHWQ$0CWHNmdLsUt4HYUujt99n6HeZnjot1TpJQYMlcxJjSA', 'member', 300),
+('member6', 'Fiona', 'Ng', 'fiona@email.com', '$argon2id$v=19$m=65536,t=4,p=3$SlRGY2JNWnBNY3R2SlA5Yw$RaoAmer9/jsLQaww7KpMSt3N0n0nf0MqdLeg8a/GM6U', 'member', 250),
+('member7', 'George', 'Tan', 'george@email.com', '$argon2id$v=19$m=65536,t=4,p=3$NlBWVlo0eFB0NHpZZmJyag$ljbEgk83cTA6Kt5uFitlCKx5sGYD96MKVymwtJxWi1g', 'member', 175),
+('member8', 'Hannah', 'Wu', 'hannah@email.com', '$argon2id$v=19$m=65536,t=4,p=3$YW01U1phc2FsYUxCaTRaUw$5b94aTDc1eASBoCV1SvzkmD7JYFt22ccnx8DsabsE0E', 'member', 125),
+('member9', 'Ian', 'Zhang', 'ian@email.com', '$argon2id$v=19$m=65536,t=4,p=3$NW5GMXZjLk9FNlRWc05NUw$GgrU7X1g7LEjb/MMfw82YbvKnUBF2IAb0O7+OMro3bw', 'member', 225),
+('member10', 'Julia', 'Liu', 'julia@email.com', '$argon2id$v=19$m=65536,t=4,p=3$bWliTy9xQ1RHWmYvQ3hscA$cxnrPamzkXHAGn5TMahEQq5qLGVhgbLBu+j+OZf68kk', 'member', 350),
+('member11', 'Kevin', 'Wang', 'kevin@email.com', '$argon2id$v=19$m=65536,t=4,p=3$Rld0dUppN1lpSUxoN0FRVA$3iXNG2AxjE1d5F+y666rGrBhfrwDEG1ZY04vvGVu0JM', 'member', 400),
+('member12', 'Linda', 'Goh', 'linda@email.com', '$argon2id$v=19$m=65536,t=4,p=3$RnpCRGE0SGJVNnRaMWx5VQ$HOUkujg4TuhnyyJgAcMnWDSh+Gm/Zev1I39oNddKQq0', 'member', 275),
+('member13', 'Michael', 'Ong', 'michael@email.com', '$argon2id$v=19$m=65536,t=4,p=3$bmk4Ri8wa04ucXYwMWFVRw$MVHvaJO0FcSve5kiqfruPT9LTyaEmxIDNNw34ThlJ1Y', 'member', 150),
+('member14', 'Nancy', 'Chua', 'nancy@email.com', '$argon2id$v=19$m=65536,t=4,p=3$bml0NEkveThrY2JiV0RaMQ$fimv+MLQbjs5LePORGaG/D1WP5OVP+sDorO9xX8UYMQ', 'member', 200),
+('member15', 'Oliver', 'Teo', 'oliver@email.com', '$argon2id$v=19$m=65536,t=4,p=3$QmYuQ250Y21tSTZQVUdHWQ$0CWHNmdLsUt4HYUujt99n6HeZnjot1TpJQYMlcxJjSA', 'member', 325),
+('member16', 'Patricia', 'Koh', 'patricia@email.com', '$argon2id$v=19$m=65536,t=4,p=3$SlRGY2JNWnBNY3R2SlA5Yw$RaoAmer9/jsLQaww7KpMSt3N0n0nf0MqdLeg8a/GM6U', 'member', 275),
+('member17', 'Quinn', 'Sim', 'quinn@email.com', '$argon2id$v=19$m=65536,t=4,p=3$NlBWVlo0eFB0NHpZZmJyag$ljbEgk83cTA6Kt5uFitlCKx5sGYD96MKVymwtJxWi1g', 'member', 225),
+('member18', 'Ryan', 'Low', 'ryan@email.com', '$argon2id$v=19$m=65536,t=4,p=3$YW01U1phc2FsYUxCaTRaUw$5b94aTDc1eASBoCV1SvzkmD7JYFt22ccnx8DsabsE0E', 'member', 175),
+('member19', 'Sarah', 'Yeo', 'sarah@email.com', '$argon2id$v=19$m=65536,t=4,p=3$NW5GMXZjLk9FNlRWc05NUw$GgrU7X1g7LEjb/MMfw82YbvKnUBF2IAb0O7+OMro3bw', 'member', 300),
+('member20', 'Tom', 'Pang', 'tom@email.com', '$argon2id$v=19$m=65536,t=4,p=3$bWliTy9xQ1RHWmYvQ3hscA$cxnrPamzkXHAGn5TMahEQq5qLGVhgbLBu+j+OZf68kk', 'member', 250);
 
 -- Product Categories
 INSERT INTO Product_Categories (name, description) VALUES
@@ -453,13 +473,17 @@ INSERT INTO Transaction_Details (transaction_id, product_id, quantity, price_per
 (50, 9, 4, 4.50, 18.00),
 (50, 3, 3, 4.00, 12.00);
 
--- Mission Templates
-INSERT INTO Mission_Templates (name, description, points, requirements) VALUES
-('First Purchase', 'Complete your first order', 50, 'Make 1 purchase'),
-('Review Master', 'Leave 5 product reviews', 100, 'Submit 5 reviews'),
-('Loyal Customer', 'Make 3 purchases in a month', 150, 'Complete 3 orders within 30 days'),
-('Social Butterfly', 'Share 3 products on social media', 75, 'Share products on social platforms'),
-('Birthday Special', 'Order on your birthday', 200, 'Place order on birthday date');
+-- FAQ Categories
+INSERT INTO FAQ_Categories (name) VALUES
+('Orders'), ('Products'), ('Delivery'), ('Returns'), ('Membership');
+
+-- FAQs
+INSERT INTO FAQs (category_id, question, answer) VALUES
+(1, 'How do I track my order?', 'You can track your order using the tracking number provided in your order confirmation email.'),
+(2, 'How long do the products stay fresh?', 'Our cream puffs are best consumed within 24 hours. Cakes can last up to 3 days when refrigerated.'),
+(3, 'What are your delivery areas?', 'We deliver island-wide in Singapore. Additional charges apply for certain postal codes.'),
+(4, 'What is your return policy?', 'Due to the nature of our products, we do not accept returns. Please contact us if you receive damaged items.'),
+(5, 'How do I earn points?', 'Earn points through purchases, completing missions, and leaving reviews.');
 
 -- Addresses
 INSERT INTO Addresses (user_id, address_line_1, city, state, postcode, country, is_default) VALUES
