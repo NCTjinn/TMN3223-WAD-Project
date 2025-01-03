@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (result.success) {
                 // Redirect based on user role
                 if (result.role === 'admin') {
-                    window.location.href = 'adminDashboard.html';
+                    window.location.href = 'adminDashboard.php';
                 } else if (result.role === 'member') {
                     window.location.href = 'memberHome.html';
                 }
