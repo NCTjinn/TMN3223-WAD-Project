@@ -30,6 +30,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         die(json_encode(['success' => false, 'message' => 'Invalid request']));
     }
 
+    // Begin transaction
+    $conn->begin_transaction();
+
     try {
         // Sanitize and validate inputs
         $username = filter_var($data['username'], FILTER_SANITIZE_STRING);
@@ -38,6 +41,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $email = filter_var($data['email'], FILTER_SANITIZE_EMAIL);
         $password = $data['password'] ?? '';
         $role = 'member';
+
+        $addressLine1 = filter_var($data['address_line_1'], FILTER_SANITIZE_STRING);
+        $addressLine2 = filter_var($data['address_line_2'], FILTER_SANITIZE_STRING);
+        $city = filter_var($data['city'], FILTER_SANITIZE_STRING);
+        $state = filter_var($data['state'], FILTER_SANITIZE_STRING);
+        $postcode = filter_var($data['postcode'], FILTER_SANITIZE_STRING);
+        $country = filter_var($data['country'], FILTER_SANITIZE_STRING);
+        $isDefault = filter_var($data['is_default'], FILTER_VALIDATE_BOOLEAN);
 
         // Additional validation
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -82,11 +93,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ");
         $stmt->bind_param("ssssss", $username, $firstName, $lastName, $email, $hashedPassword, $role);
         $stmt->execute();
+        
+        // Get the user_id of the newly created user
+        $user_id = $stmt->insert_id;
+
+        $stmt->close();
+
+        // Insert address for the new user
+        $stmt = $conn->prepare("
+            INSERT INTO Addresses (user_id, address_line_1, address_line_2, city, state, postcode, country, is_default)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        ");
+        $stmt->bind_param("issssssi", $user_id, $addressLine1, $addressLine2, $city, $state, $postcode, $country, $isDefault);
+        $stmt->execute();
+
+        $stmt->close();
+
+        // Commit transaction
+        $conn->commit();
 
         // Success response
         echo json_encode(['success' => true, 'message' => 'Registration successful']);
 
     } catch (Exception $e) {
+        // Rollback transaction in case of error
+        $conn->rollback();
+
         error_log($e->getMessage());
         echo json_encode(['success' => false, 'message' => $e->getMessage()]);
     }

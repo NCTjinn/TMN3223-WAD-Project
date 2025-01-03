@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const usernameRegex = /^[a-zA-Z0-9_]{3,20}$/;
         const passwordRegex = /^.{8,}$/;
 
+        // Validation for user fields
         if (!usernameRegex.test(formData.username)) {
             throw new Error('Username must be 3-20 characters and contain only letters, numbers, and underscores');
         }
@@ -23,6 +24,23 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         if (formData.password !== formData.confirm_password) {
             throw new Error('Passwords do not match');
+        }
+
+        // Validation for address fields
+        if (!formData.address_line_1) {
+            throw new Error('Address line 1 is required');
+        }
+        if (!formData.city) {
+            throw new Error('City is required');
+        }
+        if (!formData.state) {
+            throw new Error('State is required');
+        }
+        if (!formData.postcode) {
+            throw new Error('Postcode is required');
+        }
+        if (!formData.country) {
+            throw new Error('Country is required');
         }
     }
 
@@ -38,11 +56,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 jsonData[pair[0]] = sanitizeInput(pair[1]);
             }
 
+            // Convert is_default checkbox value to boolean
+            jsonData['is_default'] = form.querySelector('input[name="is_default"]').checked;
+
             // Validate form
             validateForm(jsonData);
 
             // Send data to server
-            const response = await fetch('publicRegistration.php?action=register', {
+            const response = await fetch('Registration.php?action=register', {
                 method: 'POST',
                 body: JSON.stringify(jsonData),
                 headers: {

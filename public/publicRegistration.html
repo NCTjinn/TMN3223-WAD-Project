@@ -1,4 +1,3 @@
-<!-- publicRegistration.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,38 +12,38 @@
     <script src="publicRegistration.js"></script>
 </head>
 <body>
-    <body>
-        <nav>
-            <div class="navbar">
-                <div class="logo">
-                    <a href="memberHome.html">
-                        <img src="../assets/images/logo.png" alt="PuffLab Logo" style="height: 50px;">
-                    </a>
-                </div>
-                <ul class="links">
-                    <li><a href="memberHome.html">Home</a></li>
-                    <li class="dropdown">
-                        <a href="publicMenu.html">Menu <i class='bx bxs-chevron-down'></i></a>
-                        <ul class="dropdown-content">
-                            <li><a href="publicMenu.html">Cream Puff</a></li>
-                            <li><a href="publicMenu.html">Petit Gateux</a></li>
-                            <li><a href="publicMenu.html">Shortcakes</a></li>
-                        </ul>
-                    </li>
-                    <li class="dropdown">
-                        <a href="publicAboutUs.html">About Us <i class='bx bxs-chevron-down'></i></a>
-                        <ul class="dropdown-content">
-                            <li><a href="publicAboutUs.html">Our Team</a></li>
-                            <li><a href="publicAboutUs.html">Our History</a></li>
-                        </ul>
-                    </li>
-                </ul>
+    <nav>
+        <div class="navbar">
+            <div class="logo">
+                <a href="memberHome.html">
+                    <img src="../assets/images/logo.png" alt="PuffLab Logo" style="height: 50px;">
+                </a>
             </div>
-        </nav>
+            <ul class="links">
+                <li><a href="memberHome.html">Home</a></li>
+                <li class="dropdown">
+                    <a href="publicMenu.html">Menu <i class='bx bxs-chevron-down'></i></a>
+                    <ul class="dropdown-content">
+                        <li><a href="publicMenu.html">Cream Puff</a></li>
+                        <li><a href="publicMenu.html">Petit Gateux</a></li>
+                        <li><a href="publicMenu.html">Shortcakes</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="publicAboutUs.html">About Us <i class='bx bxs-chevron-down'></i></a>
+                    <ul class="dropdown-content">
+                        <li><a href="publicAboutUs.html">Our Team</a></li>
+                        <li><a href="publicAboutUs.html">Our History</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </nav>
 
     <div class="registration-container">
         <form class="registration-form">
             <h1>Welcome to PuffLab!</h1>
+            <!-- User fields -->
             <div class="form-group">
                 <label for="username">Username</label>
                 <input type="text" name="username" required>
@@ -69,6 +68,37 @@
                 <label for="confirm_password">Confirm Password</label>
                 <input type="password" name="confirm_password" required>
             </div>
+            
+            <!-- Address fields -->
+            <div class="form-group">
+                <label for="address_line_1">Address Line 1</label>
+                <input type="text" name="address_line_1" required>
+            </div>
+            <div class="form-group">
+                <label for="address_line_2">Address Line 2</label>
+                <input type="text" name="address_line_2">
+            </div>
+            <div class="form-group">
+                <label for="city">City</label>
+                <input type="text" name="city" required>
+            </div>
+            <div class="form-group">
+                <label for="state">State</label>
+                <input type="text" name="state" required>
+            </div>
+            <div class="form-group">
+                <label for="postcode">Postcode</label>
+                <input type="text" name="postcode" required>
+            </div>
+            <div class="form-group">
+                <label for="country">Country</label>
+                <input type="text" name="country" required>
+            </div>
+            <div class="checkbox-group">
+                <input type="checkbox" id="is_default" name="is_default">
+                <label for="is_default">Set as default address</label>
+            </div>
+
             <div class="checkbox-group">
                 <input type="checkbox" id="terms" required>
                 <label for="terms">I agree to the <a href="publicTNC.html">terms and conditions</a></label>
