@@ -146,16 +146,6 @@ CREATE TABLE Reviews (
     FOREIGN KEY (product_id) REFERENCES Products(product_id)
 );
 
--- Community posts table
-CREATE TABLE Community_Posts (
-    post_id INT AUTO_INCREMENT PRIMARY KEY,
-    title VARCHAR(255) NOT NULL,
-    image_url VARCHAR(255) NOT NULL,
-    description TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-);
-
 -- User favorites table
 CREATE TABLE User_Favorites (
     favorite_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -487,12 +477,6 @@ INSERT INTO Reviews (user_id, product_id, rating, comment, created_at) VALUES
 (9, 6, 5, 'Beautiful red velvet cake, not too sweet.', '2024-01-07'),
 (10, 7, 4, 'Perfect bubble tea pearls.', '2024-01-08'),
 (11, 8, 5, 'Smooth and rich matcha latte.', '2024-01-09');
-
--- Community Posts
-INSERT INTO Community_Posts (title, image_url, description) VALUES
-('New Matcha Series Launch!', '/images/matcha-series.jpg', 'Introducing our new Matcha Series featuring premium Uji matcha'),
-('Christmas Collection 2024', '/images/christmas-2024.jpg', 'Pre-order our festive collection now'),
-('Customer Appreciation Day', '/images/customer-day.jpg', 'Join us for double points this weekend');
 
 -- User Favorites
 INSERT INTO User_Favorites (user_id, product_id) VALUES
