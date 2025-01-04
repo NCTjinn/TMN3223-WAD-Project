@@ -69,7 +69,6 @@ if ($_SESSION['role'] !== 'member') {
                         <i class='bx bx-search'></i>
                     </a>
                 </div>
-                <a href="memberFavorites.php"><i class='bx bx-heart'></i></a>
                 <a href="memberCart.php"><i class='bx bx-cart'></i></a>
             </div>
         </div>
