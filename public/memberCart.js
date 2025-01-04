@@ -24,8 +24,12 @@ const cart = {
                 body: JSON.stringify({ product_id: productId, quantity: quantity })
             });
             
-            if (!response.ok) throw new Error('Failed to add item');
-            await this.loadCartItems();
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.message || 'Failed to add item');
+            }
+            
+            await this.loadCartItems(); // Reload cart after successful addition
             return true;
         } catch (error) {
             console.error('Error adding item:', error);
