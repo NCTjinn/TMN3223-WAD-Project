@@ -2,6 +2,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // Tab functionality
     const bestsellersBtn = document.getElementById('bestsellers-btn');
     const arrivalsBtn = document.getElementById('arrivals-btn');
+    const productsGrid = document.getElementById('products-grid');
+    
+    // Load bestsellers by default
+    loadProducts('bestsellers');
     
     bestsellersBtn.addEventListener('click', function() {
         bestsellersBtn.classList.add('active');
@@ -14,47 +18,45 @@ document.addEventListener('DOMContentLoaded', function() {
         bestsellersBtn.classList.remove('active');
         loadProducts('arrivals');
     });
-
-    // Review carousel navigation
-    const reviewCards = document.querySelector('.review-cards');
-    const prevBtn = document.querySelector('.prev-btn');
-    const nextBtn = document.querySelector('.next-btn');
-    
-    prevBtn.addEventListener('click', () => {
-        reviewCards.scrollBy({
-            left: -320,
-            behavior: 'smooth'
-        });
-    });
-    
-    nextBtn.addEventListener('click', () => {
-        reviewCards.scrollBy({
-            left: 320,
-            behavior: 'smooth'
-        });
-    });
 });
 
 function loadProducts(type) {
     const productsGrid = document.getElementById('products-grid');
-    productsGrid.innerHTML = '';
+    productsGrid.innerHTML = ''; // Clear existing products
     
-    const products = type === 'bestsellers' 
-        ? [
-            { name: 'Best Product 1' },
-            { name: 'Best Product 2' },
-            { name: 'Best Product 3' }
-          ]
-        : [
-            { name: 'New Arrival 1' },
-            { name: 'New Arrival 2' },
-            { name: 'New Arrival 3' }
-          ];
+    // Show loading state
+    productsGrid.innerHTML = '<div class="loading">Loading...</div>';
     
-    products.forEach(product => {
-        const productCard = document.createElement('div');
-        productCard.classList.add('product-card');
-        productCard.innerHTML = `<h3>${product.name}</h3>`;
-        productsGrid.appendChild(productCard);
-    });
+    fetch(`get_featured_products.php?type=${type}`)
+        .then(response => response.json())
+        .then(products => {
+            productsGrid.innerHTML = ''; // Clear loading state
+            
+            products.forEach(product => {
+                const productCard = document.createElement('div');
+                productCard.classList.add('product-card');
+                
+                productCard.innerHTML = `
+                    <a href="memberProduct.php?id=${product.product_id}" class="product-link">
+                        <div class="product-image">
+                            ${product.image_url ? 
+                                `<img src="${product.image_url}" alt="${product.name}">` :
+                                `<div class="placeholder-image">${product.name[0]}</div>`
+                            }
+                        </div>
+                        <div class="product-info">
+                            <h3>${product.name}</h3>
+                            <p class="price">RM ${parseFloat(product.price).toFixed(2)}</p>
+                            <p class="category">${product.category_name}</p>
+                        </div>
+                    </a>
+                `;
+                
+                productsGrid.appendChild(productCard);
+            });
+        })
+        .catch(error => {
+            productsGrid.innerHTML = '<div class="error">Error loading products</div>';
+            console.error('Error:', error);
+        });
 }
