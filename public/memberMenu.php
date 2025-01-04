@@ -76,12 +76,13 @@ $products = getProducts();
 
     <!-- put content here-->
     <!-- Menu Page -->
+    <!-- Text overlay on the image 
     <div class="header">
         <div class="image-slider">
             <img id="sliderImage" src="../assets/images/menu1.png" alt="Menu Item" class="slider-image">
-            <h1 class="overlay-text">Menu</h1> <!-- Text overlay on the image -->
+            <h1 class="overlay-text">Menu</h1> \
         </div>
-    </div>
+    </div> -->
     
     <div class="menu-container" id="menuPage">
         <div class="product-description">
