@@ -38,4 +38,18 @@ function getProducts($category_id = null) {
     }
     return $products;
 }
+function getProductById($product_id) {
+    global $conn;
+    $sql = "SELECT p.*, pc.name as category_name 
+            FROM Products p 
+            JOIN Product_Categories pc ON p.category_id = pc.category_id 
+            WHERE p.product_id = ?";
+    
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $product_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    return $result->fetch_assoc();
+}
 ?>
