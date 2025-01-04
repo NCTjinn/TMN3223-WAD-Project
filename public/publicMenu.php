@@ -88,14 +88,14 @@ $products = getProducts();
         <!-- Replace your static menu grid with dynamic products -->
         <div class="menu-grid" id="menuGrid">
         <?php foreach($products as $product): ?>
-        <a href="product.php?id=<?php echo $product['product_id']; ?>" class="menu-item" data-category="<?php echo $product['category_id']; ?>">
-            <div class="menu-item-image">
-                <img src="<?php echo htmlspecialchars($product['image_url']); ?>" alt="<?php echo htmlspecialchars($product['name']); ?>">
-            </div>
-            <div class="menu-item-details">
-                <h3 class="menu-item-title"><?php echo htmlspecialchars($product['name']); ?></h3>
-                <p class="menu-item-price">RM <?php echo number_format($product['price'], 2); ?></p>
-            </div>
+        <a href="publicProduct.php?id=<?php echo htmlspecialchars($product['product_id']); ?>" class="menu-item" data-category="<?php echo htmlspecialchars($product['category_id']); ?>">
+        <div class="menu-item-image">
+        <img src="<?php echo htmlspecialchars($product['image_url']); ?>" alt="<?php echo htmlspecialchars($product['name']); ?>">
+        </div>
+        <div class="menu-item-details">
+        <h3 class="menu-item-title"><?php echo htmlspecialchars($product['name']); ?></h3>
+        <p class="menu-item-price">RM <?php echo number_format($product['price'], 2); ?></p>
+        </div>
         </a>
         <?php endforeach; ?>
     </div>
