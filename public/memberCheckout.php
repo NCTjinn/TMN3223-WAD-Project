@@ -1,6 +1,5 @@
 <?php
 session_start();
-
 // Check if user is logged in
 if (!isset($_SESSION['user_id'])) {
     header("Location: publicLogin.html");
@@ -79,22 +78,28 @@ $products = getProducts();
         
         <div class="checkout-grid">
             <div class="checkout-form">
-                <div class="delivery-address">
-                    <h2>Delivery Address</h2>
-                    <form class="delivery-form">
-                        <div class="form-row">
-                            <input type="text" class="form-input" placeholder="First Name*">
-                            <input type="text" class="form-input" placeholder="Last Name*">
-                        </div>
-                        <input type="text" class="form-input" placeholder="Address Line 1*">
-                        <div class="form-row">
-                            <input type="text" class="form-input" placeholder="City*">
-                            <input type="text" class="form-input" placeholder="Postcode*">
-                            <input type="text" class="form-input" placeholder="State*">
-                        </div>
-                        <input type="tel" class="form-input" placeholder="Phone Number*">
-                    </form>
-                </div>
+            <div class="delivery-address">
+            <h2>Delivery Address</h2>
+            <div class="autofill-section">
+            <label>
+            <input type="checkbox" id="autofill-address" onchange="checkout.loadUserDetails()">
+                Use my registered address
+            </label>
+            </div>
+            <form class="delivery-form">
+            <div class="form-row">
+            <input type="text" name="firstName" class="form-input" placeholder="First Name*" required>
+            <input type="text" name="lastName" class="form-input" placeholder="Last Name*" required>
+            </div>
+            <input type="text" name="addressLine1" class="form-input" placeholder="Address Line 1*" required>
+            <div class="form-row">
+            <input type="text" name="city" class="form-input" placeholder="City*" required>
+            <input type="text" name="postcode" class="form-input" placeholder="Postcode*" required>
+            <input type="text" name="state" class="form-input" placeholder="State*" required>
+            </div>
+            <input type="tel" name="phone" class="form-input" placeholder="Phone Number*" required>
+            </form>
+        </div>
     
                 <div class="payment-methods">
                     <h2>Payment Method</h2>
@@ -126,15 +131,12 @@ $products = getProducts();
             </div>
     
             <div class="order-summary">
-                <h2>Order Summary</h2>
-                <div class="voucher-input">
-                    <input type="text" class="form-input" placeholder="Select voucher">
-                    <button class="apply-button">Apply</button>
+            <h2>Order Summary</h2>
+                <div class="summary-items" id="orderItems">
+                <!-- Items will be populated by JavaScript -->
                 </div>
-    
-                <div class="summary-total">
-                    <span>Total</span>
-                    <span>RM XX.XX</span>
+                <div class="summary-details">
+                <!-- Totals will be populated by JavaScript -->
                 </div>
             </div>
         </div>
@@ -189,7 +191,7 @@ $products = getProducts();
     </script>
         <footer class="footer">
             <div class="footer-left">
-                <img src="logo.png" alt="PuffLab Logo" style="max-height: 100px; display: block; margin: auto;">
+                <img src="../assets/images/logo.png" alt="PuffLab Logo" style="max-height: 100px; display: block; margin: auto;">
                 <p>
                     Made with love in Kuching, Sarawak, Puff Lab brings you premium Japanese cream puffs with a local twist! From our pop-up freezers to our cozy spot at Lakeview UNIMAS, we’re here to make every bite special. Whether you’re treating yourself or planning an event, our fresh, flavorful, and affordable pastries are crafted to delight. Join the Puff Lab family today—where gourmet desserts meet everyday joy!
                 </p>
@@ -229,7 +231,8 @@ $products = getProducts();
         </footer>
     
         <script src="script.js"></script>
-        <script src="checkout-js.js"></script>
+        <script src="memberCart.js"></script>
+        <script src="memberCheckout.js"></script>
         
 </body>
 </html>
