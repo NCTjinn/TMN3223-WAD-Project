@@ -124,7 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             
             // Proceed to checkout
-            window.location.href = 'memberCheckout.php';
+            window.location.href = 'memberCheckoutTest.php';
         });
     }
 });
