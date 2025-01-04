@@ -28,33 +28,31 @@ if (!$product) {
     <nav>
         <div class="navbar">
             <div class="logo">
-                <a href="home.html">
+                <a href="publicHome.html">
                     <img src="../assets/images/logo.png" alt="PuffLab Logo" style="height: 50px;">
                 </a>
             </div>
             <ul class="links">
-                <li><a href="home.html">Home</a></li>
+                <li><a href="publicHome.html">Home</a></li>
                 <li class="dropdown">
-                    <a href="menu.html">Menu <i class='bx bxs-chevron-down'></i></a>
+                    <a href="publicMenu.php">Menu <i class='bx bxs-chevron-down'></i></a>
                     <ul class="dropdown-content">
-                        <li><a href="menu.html">Cream Puff</a></li>
-                        <li><a href="menu.html">Petit Gateux</a></li>
-                        <li><a href="menu.html">Shortcakes</a></li>
+                        <li><a href="publicMenu.php">Puffs</a></li>
+                        <li><a href="publicMenu.php">Cakes</a></li>
+                        <li><a href="publicMenu.php">Beverages</a></li>
                     </ul>
                 </li>
                 <li class="dropdown">
-                    <a href="aboutus.html">About Us <i class='bx bxs-chevron-down'></i></a>
+                    <a href="publicAboutUs.html">About Us <i class='bx bxs-chevron-down'></i></a>
                     <ul class="dropdown-content">
-                        <li><a href="ourteam.html">Our Team</a></li>
-                        <li><a href="ourhistory.html">Our History</a></li>
+                        <li><a href="publicAboutUs.html">Our Team</a></li>
+                        <li><a href="publicAboutUs.html">Our History</a></li>
                     </ul>
                 </li>
                 <li class="dropdown">
-                    <a href="myacc.html">My Account <i class='bx bxs-chevron-down'></i></a>
+                    <a href="publicLogin.html">My Account <i class='bx bxs-chevron-down'></i></a>
                     <ul class="dropdown-content">
-                        <li><a href="myacc.html">Dashboard</a></li> <!-- Link to My Account -->
-                        <li><a href="myorders.html">Orders</a></li> <!-- Link to My Orders -->
-                        <li><a href="publichome.html">Log Out</a></li> <!-- Link to LogOut -->
+                        <li><a href="publicLogin.html">Log In</a></li> <!-- Link to Log In -->
                     </ul>
                 </li>
             </ul>
@@ -65,8 +63,7 @@ if (!$product) {
                         <i class='bx bx-search'></i>
                     </a>
                 </div>
-                <a href="favorites.html"><i class='bx bx-heart'></i></a>
-                <a href="cart.html"><i class='bx bx-cart'></i></a>
+                <a href="publicCart.php"><i class='bx bx-cart'></i></a>
             </div>
         </div>
     </nav>
@@ -141,7 +138,6 @@ if (!$product) {
         </div>
         <?php endif; ?>
     </div>
-
     <footer class="footer">
         <div class="footer-left">
             <img src="../assets/images/logo.png" alt="PuffLab Logo" style="max-height: 100px; display: block; margin: auto;">
