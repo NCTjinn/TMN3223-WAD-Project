@@ -33,22 +33,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['payment_method'])) {
     $delivery_address = implode(", ", $address);
 
     // Calculate total amount from Cart
-$cart_query = "SELECT Cart.product_id, Cart.quantity, (Products.price * Cart.quantity) AS total 
-FROM Cart 
-JOIN Products ON Cart.product_id = Products.product_id 
-WHERE Cart.user_id = ?";
-$cart_stmt = $conn->prepare($cart_query);
-$cart_stmt->bind_param("i", $userId);
-$cart_stmt->execute();
-$cart_result = $cart_stmt->get_result();
+    $cart_query = "SELECT Cart.product_id, Cart.quantity, (Products.price * Cart.quantity) AS total 
+    FROM Cart 
+    JOIN Products ON Cart.product_id = Products.product_id 
+    WHERE Cart.user_id = ?";
+    $cart_stmt = $conn->prepare($cart_query);
+    $cart_stmt->bind_param("i", $userId);
+    $cart_stmt->execute();
+    $cart_result = $cart_stmt->get_result();
 
-$total_amount = 0;
-$items = [];
-while ($row = $cart_result->fetch_assoc()) {
-$total_amount += $row['total'];
-$items[] = $row;
-}
-
+    $total_amount = 0;
+    $items = [];
+    while ($row = $cart_result->fetch_assoc()) {
+    $total_amount += $row['total'];
+    $items[] = $row;
+    }
 
     // Insert transaction
     $transaction_sql = "INSERT INTO Transactions (user_id, total_amount, payment_status, delivery_address) VALUES (?, ?, 'successful', ?)";
@@ -64,6 +63,16 @@ $items[] = $row;
         $detail_stmt->bind_param("iiidi", $transaction_id, $item['product_id'], $item['quantity'], $item['product_id'], $item['total']);
         $detail_stmt->execute();
     }
+
+    // Insert into Orders table
+    $tracking_number = uniqid('TRACK_', true);
+    $status = 'processing';
+    $estimated_delivery = date('Y-m-d', strtotime('+7 days')); // Example: estimated delivery in 7 days
+    
+    $orders_sql = "INSERT INTO Orders (transaction_id, tracking_number, status, estimated_delivery) VALUES (?, ?, ?, ?)";
+    $orders_stmt = $conn->prepare($orders_sql);
+    $orders_stmt->bind_param("isss", $transaction_id, $tracking_number, $status, $estimated_delivery);
+    $orders_stmt->execute();
 
     // Update Sales Summary
     $sales_summary_sql = "INSERT INTO Sales_Summary (date, total_orders, gross_sales) VALUES (CURDATE(), 1, ?) ON DUPLICATE KEY UPDATE total_orders = total_orders + 1, gross_sales = gross_sales + VALUES(gross_sales)";
