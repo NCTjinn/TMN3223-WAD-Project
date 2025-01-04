@@ -33,12 +33,12 @@ $products = getProducts();
     <nav>
         <div class="navbar">
             <div class="logo">
-                <a href="memberHome.php">
+                <a href="memberHome.html">
                     <img src="../assets/images/logo.png" alt="PuffLab Logo" style="height: 50px;">
                 </a>
             </div>
             <ul class="links">
-                <li><a href="memberHome.php">Home</a></li>
+                <li><a href="memberHome.html">Home</a></li>
                 <li class="dropdown">
                     <a href="memberMenu.php">Menu <i class='bx bxs-chevron-down'></i></a>
                     <ul class="dropdown-content">
@@ -48,18 +48,18 @@ $products = getProducts();
                     </ul>
                 </li>
                 <li class="dropdown">
-                    <a href="aboutus.html">About Us <i class='bx bxs-chevron-down'></i></a>
+                    <a href="memberAboutUs.html">About Us <i class='bx bxs-chevron-down'></i></a>
                     <ul class="dropdown-content">
-                        <li><a href="ourteam.html">Our Team</a></li>
-                        <li><a href="ourhistory.html">Our History</a></li>
+                        <li><a href="memberAboutUs.html">Our Team</a></li>
+                        <li><a href="memberAboutUs.html">Our History</a></li>
                     </ul>
                 </li>
                 <li class="dropdown">
-                    <a href="myacc.html">My Account <i class='bx bxs-chevron-down'></i></a>
+                    <a href="memberAcc.html">My Account <i class='bx bxs-chevron-down'></i></a>
                     <ul class="dropdown-content">
-                        <li><a href="myacc.html">Dashboard</a></li> <!-- Link to My Account -->
-                        <li><a href="myorders.html">Orders</a></li> <!-- Link to My Orders -->
-                        <li><a href="publichome.html">Log Out</a></li> <!-- Link to LogOut -->
+                        <li><a href="memberAcc.html">Dashboard</a></li> <!-- Link to My Account -->
+                        <li><a href="memberOrders.html">Orders</a></li> <!-- Link to My Orders -->
+                        <li><a href="Logout.php">Logout</a></li> <!-- Link to LogOut -->
                     </ul>
                 </li>
             </ul>
@@ -70,7 +70,6 @@ $products = getProducts();
                         <i class='bx bx-search'></i>
                     </a>
                 </div>
-                <a href="favorites.html"><i class='bx bx-heart'></i></a>
                 <a href="memberCart.php"><i class='bx bx-cart'></i></a>
             </div>
         </div>
