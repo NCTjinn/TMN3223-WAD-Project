@@ -122,7 +122,7 @@ if (!$product) {
                         <input type="number" value="1" min="1" id="quantity">
                         <button class="qty-btn" onclick="updateQuantity(1)">+</button>
                     </div>
-                    <button class="add-cart-btn" onclick="addToCart()">Add To Cart</button>
+                    <button class="add-cart-btn" onclick="addToCart(<?php echo $product['product_id']; ?>)">Add To Cart</button>
                 </div>
             </div>
         </div>
@@ -186,7 +186,7 @@ if (!$product) {
 
 
     <script src="script.js"></script>
-    <script src="memberMenu.js"></script>
+    <script src="memberCart.js"></script>
     <script src="memberProduct.js"></script>
 </body>
 </html>
