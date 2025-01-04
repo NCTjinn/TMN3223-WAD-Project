@@ -1,9 +1,8 @@
 // product-js.js
 // Menu Page functionality
-
 function createMenuItemElement(item) {
     return `
-        <a href="products/${item.id}.html" class="menu-item" data-category="${item.category}">
+        <a href="publicProduct.php?id=${item.product_id}" class="menu-item" data-category="${item.category_id}" data-product-id="${item.product_id}">
             <div class="menu-item-image">
                 <img src="${item.image}" alt="${item.name}">
             </div>
@@ -74,20 +73,20 @@ document.addEventListener('DOMContentLoaded', () => {
             
             const categoryId = e.target.dataset.category;
             const response = await fetch(`get_products.php?category=${categoryId}`);
-            const products = await response.json();
-            
-            const menuGrid = document.getElementById('menuGrid');
-            menuGrid.innerHTML = products.map(product => `
-                <a href="product.php?id=${product.product_id}" class="menu-item" data-category="${product.category_id}">
-                    <div class="menu-item-image">
-                        <img src="${product.image_url}" alt="${product.name}">
-                    </div>
-                    <div class="menu-item-details">
-                        <h3 class="menu-item-title">${product.name}</h3>
-                        <p class="menu-item-price">RM ${parseFloat(product.price).toFixed(2)}</p>
-                    </div>
-                </a>
-            `).join('');
+        const products = await response.json();
+
+        const menuGrid = document.getElementById('menuGrid');
+        menuGrid.innerHTML = products.map(product => `
+            <a href="publicProduct.php?id=${product.product_id}" class="menu-item" data-category="${product.category_id}">
+                <div class="menu-item-image">
+                    <img src="${product.image_url}" alt="${product.name}">
+                </div>
+                <div class="menu-item-details">
+                    <h3 class="menu-item-title">${product.name}</h3>
+                    <p class="menu-item-price">RM ${parseFloat(product.price).toFixed(2)}</p>
+                </div>
+            </a>
+        `).join('');
         }
     });
 
