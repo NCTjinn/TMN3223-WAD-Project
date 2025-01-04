@@ -140,6 +140,7 @@ if (!$product) {
             </div>
         </div>
         <?php endif; ?>
+    </div>
 
     <footer class="footer">
         <div class="footer-left">
