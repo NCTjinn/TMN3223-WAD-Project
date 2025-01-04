@@ -31,35 +31,31 @@ body {
 
 .hero {
     height: 400px;
-    background: #e5e5e5;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 4rem;
+    background: url('../assets/images/catering.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    margin-bottom: 2rem;  /* Reduced margin since we'll have text below */
+    position: relative;
+    z-index: 1;
 }
 
-.hero h1 {
-    font-size: 3rem;
-    font-weight: 700;
+.featured-text {
     text-align: center;
-}
-
-.buy-once-more {
-    padding: 0 2rem;
-    margin-bottom: 4rem;
-}
-
-.buy-once-more h2 {
-    font-size: 2.5rem;
-    font-weight: 600;
+    padding: 2rem 0;
     margin-bottom: 2rem;
 }
 
-.previous-purchases {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 2rem;
-    max-width: 800px;
+.featured-text h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    color: #1F1F1F;  /* Using the charcoal color from your variables */
+}
+
+/* Ensure dropdown menus appear above the hero section */
+.navbar {
+    position: relative;
+    z-index: 2;
 }
 
 .products-section {
@@ -102,49 +98,6 @@ body {
     border-radius: 8px;
 }
 
-.reviews {
-    padding: 2rem;
-    margin-bottom: 4rem;
-    display: flex;
-    flex-direction: column; /* Aligns content vertically */
-    align-items: center;    /* Horizontal centering */
-    justify-content: center; /* Vertical centering */
-    min-height: 100vh;       /* Ensures the section takes full viewport height */
-}
-
-.reviews h2 {
-    font-size: 2rem;
-    margin-bottom: 2rem;
-}
-
-.review-container {
-    position: relative;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-}
-
-.review-cards {
-    display: flex;
-    gap: 2rem;
-    overflow-x: auto;
-    scroll-behavior: smooth;
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-    padding: 1rem 0;
-}
-
-.review-cards::-webkit-scrollbar {
-    display: none;
-}
-
-.review-card {
-    min-width: 300px;
-    height: 200px;
-    background: white;
-    border-radius: 8px;
-    flex-shrink: 0;
-}
 
 .nav-btn {
     background: none;
@@ -154,16 +107,6 @@ body {
     padding: 0.5rem;
 }
 
-.community-section {
-    text-align: center;
-    padding: 2rem;
-    margin-bottom: 2rem;
-}
-
-.community-section h2 {
-    font-size: 2rem;
-    margin-bottom: 1rem;
-}
 
 .divider {
     height: 1px;
