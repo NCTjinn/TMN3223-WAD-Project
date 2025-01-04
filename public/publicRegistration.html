@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PuffLab Home</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="publicRegistration.css">
+    <script src="script.js"></script>
+    <script src="publicRegistration.js"></script>
+</head>
+<body>
+    <nav>
+        <div class="navbar">
+            <div class="logo">
+                <a href="publicHome.html">
+                    <img src="../assets/images/logo.png" alt="PuffLab Logo" style="height: 50px;">
+                </a>
+            </div>
+            <ul class="links">
+                <li><a href="publicHome.html">Home</a></li>
+                <li class="dropdown">
+                    <a href="publicMenu.php">Menu <i class='bx bxs-chevron-down'></i></a>
+                    <ul class="dropdown-content">
+                        <li><a href="publicMenu.php">Puffs</a></li>
+                        <li><a href="publicMenu.php">Cakes</a></li>
+                        <li><a href="publicMenu.php">Beverages</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="publicAboutUs.html">About Us <i class='bx bxs-chevron-down'></i></a>
+                    <ul class="dropdown-content">
+                        <li><a href="publicAboutUs.html">Our Team</a></li>
+                        <li><a href="publicAboutUs.html">Our History</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="publicLogin.html">My Account <i class='bx bxs-chevron-down'></i></a>
+                    <ul class="dropdown-content">
+                        <li><a href="publicLogin.html">Log In</a></li> <!-- Link to Log In -->
+                    </ul>
+                </li>
+            </ul>
+            <div class="icons">
+                <div class="search-box">
+                    <input type="text" class="search-txt" placeholder="Type to search...">
+                    <a href="javascript:void(0);" class="search-btn">
+                        <i class='bx bx-search'></i>
+                    </a>
+                </div>
+                <a href="publicCart.php"><i class='bx bx-cart'></i></a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="registration-container">
+        <form class="registration-form">
+            <h1>Welcome to PuffLab!</h1>
+            <!-- User fields -->
+            <div class="form-group">
+                <label for="username">Username*</label>
+                <input type="text" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="first_name">First Name*</label>
+                <input type="text" name="first_name" required>
+            </div>
+            <div class="form-group">
+                <label for="last_name">Last Name*</label>
+                <input type="text" name="last_name" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email*</label>
+                <input type="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password*</label>
+                <input type="password" name="password" required>
+            </div>
+            <div class="form-group">
+                <label for="confirm_password">Confirm Password*</label>
+                <input type="password" name="confirm_password" required>
+            </div>
+            
+            <!-- Address fields -->
+            <div class="form-group">
+                <label for="address_line_1">Address Line 1*</label>
+                <input type="text" name="address_line_1" required>
+            </div>
+            <div class="form-group">
+                <label for="address_line_2">Address Line 2</label>
+                <input type="text" name="address_line_2">
+            </div>
+            <div class="form-group">
+                <label for="city">City*</label>
+                <input type="text" name="city" required>
+            </div>
+            <div class="form-group">
+                <label for="state">State*</label>
+                <input type="text" name="state" required>
+            </div>
+            <div class="form-group">
+                <label for="postcode">Postcode*</label>
+                <input type="text" name="postcode" required>
+            </div>
+            <div class="form-group">
+                <label for="country">Country*</label>
+                <input type="text" name="country" required>
+            </div>
+            <div class="checkbox-group">
+                <input type="checkbox" id="is_default" name="is_default">
+                <label for="is_default">Set as default address</label>
+            </div>
+
+            <div class="checkbox-group">
+                <input type="checkbox" id="terms" required>
+                <label for="terms">I agree to the <a href="publicTNC.html">terms and conditions</a></label>
+            </div>
+            <button type="submit" class="register-button">Register Now</button>
+            <p>Already have an account? <a href="publicLogin.html">Login here</a></p>
+        </form>
+    </div>
+
+    <!-- Modal HTML -->
+    <div id="loadingModal" class="modal">
+        <div class="modal-content">
+            <p>Processing...</p>
+        </div>
+    </div>
+    <div id="successModal" class="modal">
+        <div class="modal-content">
+            <p>Registration Successful!</p>
+            <p>Redirecting to Login Page.</p>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-left">
+            <img src="../assets/images/logo.png" alt="PuffLab Logo" style="max-height: 100px; display: block; margin: auto;">
+            <p>
+                Made with love in Kuching, Sarawak, Puff Lab brings you premium Japanese cream puffs with a local twist! From our pop-up freezers to our cozy spot at Lakeview UNIMAS, we’re here to make every bite special. Whether you’re treating yourself or planning an event, our fresh, flavorful, and affordable pastries are crafted to delight. Join the Puff Lab family today—where gourmet desserts meet everyday joy!
+            </p>
+        </div>
+        <div class="footer-right">
+            <div class="footer-top">
+                <div class="footer-col2">
+                    <h4>CUSTOMER CARE</h4>
+                    <ul>
+                        <li><a href="tnc.html">Terms & Conditions</a></li>
+                        <li><a href="privacy.html">Privacy Policy</a></li>
+                        <li><a href="faq.html">FAQs</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col3">
+                    <h4>STORE INFORMATION</h4>
+                    <ul>
+                        <li><a href="aboutus.html">About Us</a></li>
+                        <li><a href="contactus.html">Contact Us</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <div class="footer-col4">
+                    <h4>FOLLOW US ON</h4>
+                    <div class="social-icons">
+                        <a href="https://www.facebook.com/PuffLabPLT/" target="_blank"><i class="fab fa-facebook"></i></a>
+                        <a href="https://www.instagram.com/puff.lab/?hl=en" target="_blank"><i class="fab fa-instagram"></i></a>
+                        <a href="https://www.tiktok.com/@pufflabplt" target="_blank"><i class="fab fa-tiktok"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="copyright">
+            Copyright &copy; 2024 PuffLab
+        </div>
+    </footer>
+</body>
+</html>

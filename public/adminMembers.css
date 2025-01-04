@@ -1,0 +1,548 @@
+/* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Header Styling */
+.admin-header {
+    background-color: #C2C9AD; /* Light greenish tone */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: fixed; /* Fixed header */
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000; /* Ensure it stays above other elements */
+    height: 70px; /* Fixed height */
+}
+
+/* Adjust Main Content Background */
+body {
+    background-color: #F2EDD3; /* Matches the content background */
+}
+
+/* Logo Section */
+.admin-header .logo img {
+    height: 40px;
+    width: auto;
+}
+
+/* Utility Icons Section */
+.admin-header .utilities {
+    display: flex;
+    align-items: center;
+    gap: 25px; /* Add space between icons */
+}
+
+/* Icon Styles - Notification & Profile */
+.admin-header .utilities .icon,
+.admin-header .user-dropdown i {
+    font-size: 32px; /* Same size for both icons */
+    color: #1F1F1F; /* Consistent color */
+    cursor: pointer;
+    transition: transform 0.3s, color 0.3s;
+}
+
+.admin-header .utilities .icon:hover,
+.admin-header .user-dropdown i:hover {
+    color: #6c7a5d; /* Hover effect */
+    transform: scale(1.1);
+}
+
+/* User Dropdown */
+.admin-header .user-dropdown {
+    position: relative;
+}
+
+.admin-header .user-dropdown i {
+    font-size: 36px; /* Adjust icon size */
+    color: #1F1F1F; /* Match theme color */
+    cursor: pointer;
+    transition: transform 0.3s, color 0.3s;
+}
+
+.admin-header .user-dropdown i:hover {
+    color: #6c7a5d; /* Hover effect matching the theme */
+    transform: scale(1.1);
+}
+
+/* Fade-in Animation for Dropdown */
+.dropdown-menu {
+    display: none; /* Hidden by default */
+    position: absolute;
+    top: calc(100% + 10px); /* Slightly below the trigger */
+    right: 0;
+    width: 300px;
+    background-color: #fff;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    z-index: 10;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.dropdown-menu.active {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+
+
+/* Active State for Profile Icon */
+.user-dropdown i.active {
+    color: #6c7a5d; /* Active color */
+    transform: scale(1.1); /* Slight enlargement for active state */
+}
+
+/* Dropdown Header */
+.dropdown-header {
+    background-color: #C2C9AD;
+    padding: 10px 15px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #1F1F1F;
+    text-align: center;
+    border-bottom: 1px solid #aab79f;
+}
+
+
+/* Dropdown Items */
+.dropdown-menu a,
+.notification-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    text-decoration: none;
+    color: #1F1F1F;
+    font-size: 14px;
+    border-bottom: 1px solid #f0f0f0;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+
+.dropdown-menu a:last-child {
+    border-bottom: none;
+}
+
+.dropdown-menu a:hover {
+    background-color: #f5f5f5;
+    transform: scale(1.02);
+}
+
+
+
+/* Footer Styling */
+.admin-footer {
+    background-color: #C2C9AD; /* Footer background */
+    text-align: center;
+    padding: 20px 10px;
+    color: #1F1F1F;
+    box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+    position: fixed; /* Fixed footer */
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    height: 50px; /* Fixed height */
+}
+
+/* Layout */
+.admin-layout {
+    display: flex;
+    height: 100%; /* Full height minus header and footer */
+    position: relative;
+    overflow: hidden;
+}
+
+/* Sidebar */
+.admin-sidebar {
+    width: 70px; /* Compact width */
+    background-color: #F9FAEB; /* Sidebar background color */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding-top: 10px;
+    transition: width 0.3s ease; /* Smooth expansion */
+    position: fixed; /* Fixed sidebar */
+    top: 70px; /* Start below the header */
+    left: 0;
+    z-index: 11; /* Ensure it overlays the content */
+    height: calc(100vh - 120px); /* Full height minus header and footer */
+    overflow: hidden;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Remove link styling */
+.admin-sidebar a {
+    text-decoration: none;
+    color: inherit; /* Use the sidebar item color */
+}
+
+
+.admin-sidebar:hover {
+    width: 240px; /* Expand width on hover */
+    box-shadow: 5px 0 10px rgba(0, 0, 0, 0.2); /* Shadow effect */
+}
+
+/* Sidebar Items */
+.sidebar-item {
+    width: 100%;
+    padding: 15px 10px;
+    display: flex;
+    align-items: center;
+    padding-left: 30px;
+    gap: 15px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    color: #1F1F1F;
+}
+
+.sidebar-item.active {
+    background-color: #E5E6D4; /* Highlight active state */
+}
+
+.sidebar-item:hover {
+    background-color: #E5E6D4; /* Slightly darker hover effect */
+    transform: scale(1.05);
+}
+
+/* Sidebar Labels */
+.sidebar-item .sidebar-label {
+    font-size: 14px;
+    opacity: 0; /* Hidden when compact */
+    transition: opacity 0.3s ease, margin-left 0.3s ease;
+}
+
+
+.admin-sidebar:hover .sidebar-label {
+    opacity: 1;
+    margin-left: 10px; /* Add spacing when expanded */
+}
+
+
+
+/* Dimming Effect on Sidebar Hover */
+.admin-sidebar:hover ~ .admin-content {
+    position: relative; /* Ensure .admin-content becomes the reference for the ::before pseudo-element */
+}
+
+.admin-sidebar:hover ~ .admin-content::before {
+    content: '';
+    position: fixed; /* Fixed to span the viewport */
+    top: 70px; /* Match the height of the fixed header */
+    left: 70px; /* Match the width of the sidebar */
+    width: calc(100vw - 70px); /* Cover the rest of the viewport */
+    height: calc(100vh - 70px); /* Cover the viewport below the header */
+    background-color: rgba(0, 0, 0, 0.3); /* Dimming effect */
+    pointer-events: none; /* Allow interaction with the content */
+    z-index: 1; /* Ensure it appears above .admin-content but below sidebar */
+}
+
+
+
+/* Tooltip for Collapsed State */
+.sidebar-item[data-tooltip]::before {
+    content: attr(data-tooltip);
+    position: absolute;
+    left: 90px;
+    background: #1F1F1F;
+    color: white;
+    padding: 5px 10px;
+    font-size: 12px;
+    border-radius: 4px;
+    opacity: 0;
+    white-space: nowrap;
+    transform: translateY(-50%);
+    pointer-events: none;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.sidebar-item:hover[data-tooltip]::before {
+    opacity: 1;
+    transform: translateY(-60%);
+}
+
+
+@media screen and (max-width: 768px) {
+    .admin-sidebar {
+        width: 100%; /* Sidebar takes full width for mobile */
+        position: static; /* Ensure it stacks with content */
+    }
+    .admin-content {
+        margin-left: 0; /* Remove sidebar offset */
+    }
+}
+
+.admin-content {
+    margin-top: 70px; /* Offset for fixed header */
+    margin-left: 70px; /* Offset for fixed sidebar */
+    margin-bottom: 60px; /* This might need adjusting */
+    padding: 20px;
+    background-color: #F2EDD3; /* Content background */
+    height: calc(100vh - 130px); /* Adjusted for header and footer */
+    overflow-y: auto; /* Enable scrolling for content */
+    width: calc(100% - 70px); /* Adjust width if sidebar is visible */
+}
+
+/* Scrollbar Customization */
+.admin-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.admin-content::-webkit-scrollbar-thumb {
+    background: #C2C9AD;
+    border-radius: 5px;
+}
+
+.admin-content::-webkit-scrollbar-thumb:hover {
+    background: #6c7a5d;
+}
+
+.admin-content {
+    flex: 1;
+    margin-left: 70px; /* Match sidebar width */
+    padding: 20px;
+    background-color: #F2EDD3;
+    min-height: calc(100vh - 120px); /* Viewport height minus header and footer */
+    width: calc(100% - 70px);
+    overflow-y: auto;
+}
+
+/* Scrollbar Customization */
+.admin-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.admin-content::-webkit-scrollbar-thumb {
+    background: #C2C9AD;
+    border-radius: 5px;
+}
+
+.admin-content::-webkit-scrollbar-thumb:hover {
+    background: #6c7a5d;
+}
+
+/* Main Content */
+.admin-content h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #1F1F1F; /* Darker text for professional look */
+}
+
+/* Member Management Styling */
+.member-management-actions {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    gap: 20px; /* Add space between elements */
+}
+
+.search-bar {
+    padding: 10px 15px;
+    flex: 1; /* Makes it stretch to full width */
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    color: #1F1F1F;
+}
+
+.filter-actions {
+    position: relative;
+}
+
+/* Fade-in Animation for Dropdown */
+.dropdown-menu {
+    display: none; /* Hidden by default */
+    position: absolute;
+    top: calc(100% + 10px); /* Slightly below the trigger */
+    right: 0;
+    width: 300px;
+    background-color: #fff;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    z-index: 10;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.dropdown-menu.active {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Dropdown Filter Button */
+.filter-actions {
+    position: relative;
+}
+
+.dropdown-btn {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    background-color: #2196F3; /* Bright blue for utility actions */
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+    display: block;
+    width: auto; /* Adjust width as needed or keep it flexible */
+}
+
+.dropdown-btn:hover {
+    background-color: #1E88E5; /* Slightly darker blue for hover */
+    transform: scale(1.05);
+}
+
+/* Filter Dropdown */
+#filterDropdown {
+    display: none;
+    position: absolute;
+    top: 100%; /* Position directly below the button */
+    right: 0; /* Align the dropdown to the right side of the button */
+    width: 100%; /* Stretch to match the width of the filter button */
+    min-width: 200px; /* Minimum width to prevent squeezing */
+    background-color: #FFFFFF;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    overflow: hidden;
+    z-index: 1000; /* Ensure it's on top of other elements */
+}
+
+#filterDropdown.active {
+    display: block;
+}
+
+/* Filter Options */
+.filter-option {
+    padding: 10px;
+    color: #333;
+    text-align: center;
+    display: block;
+    width: 100%; /* Ensure full width */
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.filter-option:hover {
+    background-color: #E6F4F1; /* Light blue for hover effect */
+}
+
+/* Adjust dropdown on smaller screens */
+@media screen and (max-width: 768px) {
+    #filterDropdown {
+        right: 0; /* Adjust for right alignment */
+        left: 0; /* Stretch across on smaller screens */
+        width: 100%; /* Ensure full width on smaller devices */
+    }
+}
+
+/* Slide-Down Animation */
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/* Table Styling */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    background-color: #F9FAEB; /* Matches the professional color scheme */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+/* Table Header Styling */
+thead {
+    background-color: #C2C9AD;
+    color: #1F1F1F;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+/* Table Body Row Alternating Colors */
+tbody tr:nth-child(odd) {
+    background-color: #F9FAEB; /* Light Beige */
+}
+
+tbody tr:nth-child(even) {
+    background-color: #F6EABE; /* Honey Cream */
+}
+
+tbody tr:hover {
+    background-color: #FFF3D4; /* Light hover effect */
+}
+
+/* Pagination Buttons */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.pagination-btn {
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    background-color: #FF9800; /* Vibrant orange for navigation */
+    color: #fff;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s, transform 0.2s;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+}
+
+.pagination-btn:hover {
+    background-color: #FB8C00; /* Slightly darker orange for hover */
+    transform: scale(1.05);
+}
+
+.pagination-btn:disabled {
+    background-color: #DDD;
+    color: #AAA;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+th, td {
+    padding: 12px 15px;
+    text-align: center;
+    border: 1px solid #ddd; /* Subtle border for structure */
+    color: #1F1F1F;
+}
+
+td button {
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: background-color 0.3s, transform 0.2s;
+    color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+

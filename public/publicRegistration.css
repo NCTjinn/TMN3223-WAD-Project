@@ -1,0 +1,118 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    background-color: #f2edd3;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.registration-container {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+    margin-top: 10px;
+    margin-bottom: 50px;
+}
+
+.registration-form {
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+}
+
+.registration-form h1 {
+    margin-bottom: 1rem;
+}
+
+.form-group {
+    margin-bottom: 1.3rem;
+    text-align: left;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px none;
+    border-radius: 4px;
+    background: #f9faeb;
+}
+
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0rem;
+}
+
+.register-button {
+    width: 100%;
+    padding: 0.75rem;
+    background: #f9faeb;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+/* Modal Styles */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+.modal-content {
+    background-color: #f9faeb;
+    margin: 15% auto; /* 15% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 400px; /* Could be more or less, depending on screen size */
+    height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.close-button {
+    align-self: flex-end; /* Align close button to the top right corner */
+    color: #aaa;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.modal-content p {
+    font-size: 24px; /* Make the text bigger */
+    font-weight: bold;
+}
+

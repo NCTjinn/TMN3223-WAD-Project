@@ -1,0 +1,581 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap');
+
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+font-family: 'Poppins', sans-serif;
+}
+
+nav {
+background-color: #C2C9AD;
+width: 100%;
+padding: 10px 0;
+display: flex;
+justify-content: space-between;
+align-items: center;
+box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.navbar {
+display: flex;
+justify-content: space-between;
+align-items: center;
+width: 100%;
+padding: 0 2%;
+position: relative;
+}
+
+.logo img {
+height: auto;
+width: auto;
+max-height: 50px;
+display: block;
+margin: 0 auto;
+}
+
+.links {
+list-style: none;
+display: flex;
+position: absolute;
+left: 50%;
+transform: translateX(-50%);
+}
+
+.links li {
+padding: 0 15px;
+position: relative;
+}
+
+.links a {
+color: #1F1F1F;
+text-decoration: none;
+font-size: 18px;
+display: block;
+}
+
+.dropdown-content {
+display: none;
+position: absolute;
+background-color: #C2C9AD;
+box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+z-index: 1;
+min-width: 100%;
+}
+
+.dropdown-content li {
+list-style: none;
+}
+
+.dropdown-content a {
+color: #1F1F1F;
+padding: 12px 16px;
+text-decoration: none;
+display: block;
+font-size: 14px; /* Reduce font size */
+transition: background-color 0.3s;
+white-space: nowrap; /* Prevents text from wrapping to the next line */
+}
+
+.dropdown-content a:hover {
+background-color: #aab79f;
+}
+
+.dropdown:hover .dropdown-content {
+display: block;
+}
+
+.icons {
+display: flex;
+justify-content: flex-end;
+font-size: 25px;
+}
+
+.icons i {
+color: #1F1F1F;
+padding: 0 10px;
+cursor: pointer;
+transition: transform 0.3s, color 0.3s;
+}
+
+.icons i:hover {
+color: #6c7a5d;
+transform: scale(1.15);
+}
+
+.search-box {
+position: relative;
+}
+
+.search-txt {
+border: 1px solid;
+padding: 5px 10px;
+font-size: 15px;
+border-radius: 10px;
+position: absolute;
+    right: 35px;
+    right: 50px;
+width: 0;
+height: 30px;
+top: 50%;
+transform: translateY(-50%);
+opacity: 0;
+transition: all 0.4s ease-in-out;
+cursor: pointer;
+background-color: #F6EABE ;
+border-color: #F6EABE;
+}
+
+.search-txt:focus {
+width: 140px;
+opacity: 1;
+cursor: text;
+}
+
+
+.search-btn i {
+color: #1F1F1F;
+    font-size: 20px;
+    font-size: 23px;
+}
+
+.footer {
+background-color: #C2C9AD;
+font-size: large;
+padding: 5px 20px;
+color: #1F1F1F;
+display: grid;
+grid-template-columns: 1fr 2fr;
+gap: 20px;
+}
+
+.footer-left p{
+text-align:justify; /* Centers text inside the column */
+}
+
+
+.footer-top {
+margin-top: 20px;
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 20px;
+align-items: start;
+}
+
+
+.footer-col1, .footer-col2, .footer-col3, .footer-col4 {
+padding: 10px;
+background: #C2C9AD; 
+display: flex;
+flex-direction: column;
+align-items: center; 
+justify-content: center; 
+text-align: center; 
+}
+
+.footer-col2 h4, .footer-col3 h4, .footer-col4 h4 {
+font-size: x-large;
+}
+
+.footer-col2 ul, .footer-col3 ul {
+list-style-type: none; 
+line-height: 2.25;
+}
+
+
+.footer-col2 a, .footer-col3 a, .footer-col4 .social-icons a {
+text-decoration: none;
+color: #1F1F1F;
+}
+
+.footer-col2 a:hover, .footer-col3 a:hover, .footer-col4 .social-icons a:hover {
+color: #6c7a5d;
+}
+
+.footer-col4 .social-icons a {
+font-size: 30px;
+margin: 0 20px;
+transition: color 0.3s;
+}
+
+.footer .copyright {
+text-align: center;
+margin-top: 20px;
+grid-column: 1 / -1;
+font-size: 14px;
+font-weight: 400;
+}
+
+/* Container */
+.container {
+    display: block;
+    flex-direction: column;
+    min-height: 100vh;
+    padding: 20px;
+    background-color: #F6EABE;
+}
+
+/* Page Title */
+.page-title {
+    text-align: left;
+    margin-bottom: 20px; /* Add minimal spacing below the title */
+    padding-left: 50px; /* Align with the left padding of the content section */
+    color: #1F1F1F;
+}
+
+.page-title h1 {
+    font-size: 50px;
+    font-weight: bold;
+    margin-bottom: 5px; /* Reduce spacing between title and description */
+}
+
+.page-title p {
+    font-size: 20px; /* Slightly smaller font for description */
+    color: #6c7a5d;
+    margin: 0;
+}
+
+
+/* Content Section */
+.content-section {
+    display: grid;
+    grid-template-columns: 300px auto; /* Adjusted column proportions */
+    gap: 20px;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Left Box */
+.left-box {
+    background-color: #C2C9AD;
+    padding: 15px;
+    margin-left: 30px;
+    border-radius: 10px;
+    max-width: 250px; /* Restricts the width to fit content */
+    height:fit-content;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Adds a subtle shadow */
+}
+
+.left-box ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.left-box a {
+    text-decoration: none;
+    color: #1F1F1F;
+    font-size: 16px;
+    padding: 8px 10px;
+    display: block;
+    border-radius: 8px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.left-box a:hover, .left-box a.active {
+    background-color: #6c7a5d;
+    color: #fff;
+}
+
+/* Right Box */
+.right-box {
+    background-color: #F6EABE;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: 100%; /* Utilizes full available space */
+}
+
+.right-box h2 {
+    font-size: 28px;
+    margin-bottom: 15px;
+    color: #1F1F1F;
+    border-bottom: 2px solid #6c7a5d;
+    padding-bottom: 5px;
+}
+
+.order-list {
+    margin-bottom: 30px;
+}
+
+/* Order Card Styles */
+.order-item {
+    background-color: #ffffff;
+    padding: 25px;
+    margin-bottom: 25px;
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.order-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+.order-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 15px;
+}
+
+.order-header h3 {
+    font-size: 1.4rem;
+    color: #1F1F1F;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.order-header p {
+    margin: 6px 0;
+    font-size: 0.95rem;
+    color: #666;
+    line-height: 1.5;
+}
+
+
+.order-actions button {
+    background-color: #6e7756;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.order-actions button:hover {
+    background-color: #575d4f;
+}
+
+.order-details {
+    margin-top: 15px;
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.order-summary h4 {
+    font-size: 1rem;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.order-summary ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+/* General Button Style */
+button {
+    display: inline-block;
+    width: 140px; /* Consistent width */
+    height: 40px; /* Consistent height */
+    background-color: #f8f9fa; /* Neutral light grey background */
+    color: #333; /* Dark grey text for readability */
+    font-size: 14px; /* Standard text size */
+    font-weight: 500; /* Medium font weight */
+    text-align: center; /* Center-align text */
+    border: 1px solid #dcdcdc; /* Light border for structure */
+    border-radius: 6px; /* Rounded corners for a modern look */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    cursor: pointer; /* Pointer cursor for buttons */
+    transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease; /* Smooth interactions */
+    margin: 5px; /* Standard spacing between buttons */
+}
+
+/* Hover State */
+button:hover {
+    background-color: #e6e6e6; /* Slightly darker grey on hover */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15); /* Enhanced shadow on hover */
+    transform: translateY(-2px); /* Lift the button slightly */
+}
+
+/* Active State */
+button:active {
+    background-color: #dcdcdc; /* Slightly darker for active state */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Restore to original shadow */
+    transform: translateY(0); /* Button returns to default position */
+}
+
+/* Right Box Buttons */
+.order-buttons button,
+.order-actions button {
+    width: 140px; /* Matches general button size */
+    height: 40px; /* Matches general button height */
+}
+
+/* Special Buttons (Optional for Highlighting Primary Actions) */
+button.primary {
+    background-color: #6e7756; /* Muted green for primary action buttons */
+    color: #fff; /* White text for contrast */
+    border: 1px solid #5a6b48; /* Match with background */
+}
+
+button.primary:hover {
+    background-color: #5a6b48; /* Darker green for hover */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15); /* Consistent hover shadow */
+    transform: translateY(-2px); /* Lift effect */
+}
+
+
+/* Status badges */
+.status {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-transform: capitalize;
+}
+
+.status-processing {
+    background-color: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeeba;
+}
+
+.status-shipped {
+    background-color: #cce5ff;
+    color: #004085;
+    border: 1px solid #b8daff;
+}
+
+.status-delivered {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.status-cancelled {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+/* Order Details Section */
+.order-details {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 30px;
+    margin-top: 20px;
+}
+
+.order-summary {
+    padding-right: 20px;
+}
+
+.order-summary h4 {
+    font-size: 1.1rem;
+    color: #1F1F1F;
+    margin-bottom: 12px;
+    font-weight: 500;
+}
+
+.order-items-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 20px 0;
+}
+
+.order-items-list li {
+    padding: 8px 0;
+    border-bottom: 1px solid #f0f0f0;
+    color: #444;
+    font-size: 0.95rem;
+}
+
+.order-totals {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 15px;
+}
+
+.order-totals p {
+    display: flex;
+    justify-content: space-between;
+    margin: 8px 0;
+    font-size: 0.95rem;
+    color: #555;
+}
+
+.order-totals p.total {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 2px solid #ddd;
+    font-size: 1.1rem;
+    color: #1F1F1F;
+    font-weight: 600;
+}
+
+/* Order Buttons */
+.order-buttons {
+    display: flex;
+    justify-content: flex-start; /* Align buttons to the left */
+    gap: 15px; /* Add consistent spacing between buttons */
+    margin-top: 20px; /* Maintain spacing above the buttons */
+    flex-wrap: wrap; /* Ensure buttons wrap properly on smaller screens */
+}
+
+.shop-btn, .support-btn {
+    padding: 5px 15px;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    text-align: center;
+    min-width: 140px;
+    flex-grow: 1; /* Ensure buttons take equal space */
+    max-width: 200px; /* Prevent buttons from becoming too large */
+}
+
+.shop-btn {
+    background-color: #6c7a5d;
+    color: white;
+    border: none;
+}
+
+.shop-btn:hover {
+    background-color: #5a6548;
+}
+
+.support-btn {
+    background-color: #fff;
+    color: #6c7a5d;
+    border: 1px solid #6c7a5d;
+}
+
+.support-btn:hover {
+    background-color: #f8f9fa;
+}
+
+/* Adjustments for small screens */
+@media (max-width: 768px) {
+    .order-buttons {
+        justify-content: center; /* Center buttons on small screens */
+    }
+
+    .shop-btn, .support-btn {
+        width: 100%; /* Full-width buttons on small screens */
+        max-width: none; /* Remove max-width restriction */
+    }
+}
+
+@media (max-width: 768px) {
+.footer {
+grid-template-columns: 1fr;
+}
+
+.footer-right, .footer-top, .footer-bottom {
+grid-column: 1;
+}
+}
+
