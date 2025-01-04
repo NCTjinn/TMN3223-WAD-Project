@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
 async function fetchOrders() {
     try {
         // Add error handling for the response
-        const response = await fetch('../api/memberOrders.php');
+        const response = await fetch('../api/member_Orders.php');
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
