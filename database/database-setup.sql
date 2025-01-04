@@ -17,9 +17,7 @@ DROP TABLE IF EXISTS Orders;
 DROP TABLE IF EXISTS FAQ_Categories;
 DROP TABLE IF EXISTS FAQs;
 DROP TABLE IF EXISTS Addresses;
-DROP TABLE IF EXISTS Reviews;
 DROP TABLE IF EXISTS Community_Posts;
-DROP TABLE IF EXISTS User_Favorites;
 DROP TABLE IF EXISTS Sales_Summary;
 
 -- Users table for storing user information
@@ -154,29 +152,6 @@ CREATE TABLE Addresses (
     FOREIGN KEY (user_id) REFERENCES Users(user_id)
 );
 
--- Reviews table for product reviews
-CREATE TABLE Reviews (
-    review_id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT NOT NULL,
-    product_id INT NOT NULL,
-    rating INT NOT NULL CHECK (rating BETWEEN 1 AND 5),
-    comment TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES Users(user_id),
-    FOREIGN KEY (product_id) REFERENCES Products(product_id)
-);
-
--- User favorites table
-CREATE TABLE User_Favorites (
-    favorite_id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT NOT NULL,
-    product_id INT NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES Users(user_id),
-    FOREIGN KEY (product_id) REFERENCES Products(product_id),
-    UNIQUE KEY unique_favorite (user_id, product_id)
-);
-
 -- Sales summary table for analytics
 CREATE TABLE Sales_Summary (
     summary_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -208,14 +183,9 @@ CREATE INDEX idx_transaction_total ON Transactions(total_amount);
 
 -- Cart and favorites indexes
 CREATE INDEX idx_cart_user ON Cart(user_id, added_at);
-CREATE INDEX idx_user_favorites ON User_Favorites(user_id, product_id);
 
 -- Address indexes
 CREATE INDEX idx_address_user ON Addresses(user_id, is_default);
-
--- Review indexes
-CREATE INDEX idx_review_product ON Reviews(product_id);
-CREATE INDEX idx_review_rating ON Reviews(rating);
 
 -- FAQ indexes
 CREATE INDEX idx_faq_category ON FAQs(category_id);
@@ -490,21 +460,6 @@ INSERT INTO Addresses (user_id, address_line_1, city, state, postcode, country, 
 (4, '123 Main St #01-01', 'Singapore', 'Singapore', '123456', 'Singapore', true),
 (5, '456 Orchard Rd', 'Singapore', 'Singapore', '234567', 'Singapore', true),
 (6, '789 Cecil St', 'Singapore', 'Singapore', '345678', 'Singapore', true);
-
--- Reviews
-INSERT INTO Reviews (user_id, product_id, rating, comment, created_at) VALUES
-(4, 1, 5, 'Perfect cream puff! Just the right amount of cream.', '2024-01-02'),
-(5, 2, 4, 'Rich chocolate filling, very satisfying.', '2024-01-03'),
-(6, 3, 5, 'Best matcha puff in town!', '2024-01-04'),
-(7, 4, 5, 'Moist and decadent chocolate cake.', '2024-01-05'),
-(8, 5, 4, 'Authentic New York cheesecake taste.', '2024-01-06'),
-(9, 6, 5, 'Beautiful red velvet cake, not too sweet.', '2024-01-07'),
-(10, 7, 4, 'Perfect bubble tea pearls.', '2024-01-08'),
-(11, 8, 5, 'Smooth and rich matcha latte.', '2024-01-09');
-
--- User Favorites
-INSERT INTO User_Favorites (user_id, product_id) VALUES
-(4, 1), (4, 2), (5, 3), (6, 4), (7, 5), (8, 6);
 
 -- Sales Summary
 INSERT INTO Sales_Summary (date, total_orders, gross_sales, returns, net_sales, delivery_fee, tax) VALUES

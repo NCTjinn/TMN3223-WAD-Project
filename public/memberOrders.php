@@ -1,47 +1,65 @@
+<?php
+session_start();
+
+// Check if user is logged in
+if (!isset($_SESSION['user_id'])) {
+    header("Location: publicLogin.html");
+    exit();
+}
+
+// Check user's role if needed
+if ($_SESSION['role'] !== 'member') {
+    header("Location: publicLogin.html");
+    exit();
+}
+
+// Your protected content here
+echo "Welcome to the member section!";
+?>
+
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
-    <title>PuffLab</title>
+    <title>My Orders - PuffLab</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css">
-    <link rel="stylesheet" href="memberAcc.css">
+    <link rel="stylesheet" href="memberOrders.css">
     <script src="script.js"></script>
-    <script src="memberAcc.js"></script>
+    <script src="memberOrders.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
-
 <body>
     <nav>
-        <div class="navbar"> 
+        <div class="navbar">
             <div class="logo">
-                <a href="memberHome.html">
+                <a href="memberHome.php">
                     <img src="../assets/images/logo.png" alt="PuffLab Logo" style="height: 50px;">
                 </a>
             </div>
             <ul class="links">
-                <li><a href="memberHome.html">Home</a></li>
+                <li><a href="memberHome.php">Home</a></li>
                 <li class="dropdown">
-                    <a href="publicMenu.html">Menu <i class='bx bxs-chevron-down'></i></a>
+                    <a href="memberMenu.php">Menu <i class='bx bxs-chevron-down'></i></a>
                     <ul class="dropdown-content">
-                        <li><a href="publicMenu.html">Cream Puff</a></li>
-                        <li><a href="publicMenu.html">Petit Gateux</a></li>
-                        <li><a href="publicMenu.html">Shortcakes</a></li>
+                        <li><a href="memberMenu.php">Cream Puff</a></li>
+                        <li><a href="memberMenu.php">Petit Gateux</a></li>
+                        <li><a href="memberMenu.php">Shortcakes</a></li>
                     </ul>
                 </li>
                 <li class="dropdown">
-                    <a href="publicAboutUs.html">About Us <i class='bx bxs-chevron-down'></i></a>
+                    <a href="memberAboutUs.php">About Us <i class='bx bxs-chevron-down'></i></a>
                     <ul class="dropdown-content">
-                        <li><a href="publicAboutUs.html">Our Team</a></li>
-                        <li><a href="publicAboutUs.html">Our History</a></li>
+                        <li><a href="memberAboutUs.php">Our Team</a></li>
+                        <li><a href="memberAboutUs.php">Our History</a></li>
                     </ul>
                 </li>
                 <li class="dropdown">
-                    <a href="memberAcc.html">My Account <i class='bx bxs-chevron-down'></i></a>
+                    <a href="memberAcc.php">My Account <i class='bx bxs-chevron-down'></i></a>
                     <ul class="dropdown-content">
-                        <li><a href="memberAcc.html">Dashboard</a></li> <!-- Link to My Account -->
-                        <li><a href="memberOrders.html">Orders</a></li> <!-- Link to My Orders -->
-                        <li><a href="publicHome.html">Log Out</a></li> <!-- Link to LogOut -->
+                        <li><a href="memberAcc.php">Dashboard</a></li> <!-- Link to My Account -->
+                        <li><a href="memberOrders.php">Orders</a></li> <!-- Link to My Orders -->
+                        <li><a href="Logout.php">Log Out</a></li> <!-- Link to LogOut -->
                     </ul>
                 </li>
             </ul>
@@ -52,13 +70,13 @@
                         <i class='bx bx-search'></i>
                     </a>
                 </div>
-                <a href="memberCart.html"><i class='bx bx-cart'></i></a>
+                <a href="memberCart.php"><i class='bx bx-cart'></i></a>
             </div>
         </div>
     </nav>
 
-    <!-- My Account Page -->
-    <div class="container">
+    <!-- Orders Section -->
+    <div class="container orders-container">
         <!-- Page Title -->
         <div class="page-title">
             <h1>My Account</h1>
@@ -67,41 +85,31 @@
 
         <!-- Content Section -->
         <div class="content-section">
-            <!-- Options Selector (Left Box) -->
+            <!-- Left Box -->
             <div class="left-box">
                 <ul>
-                    <li><a href="memberAcc.html" class="active">Dashboard</a></li> <!-- Link to My Account -->
-                    <li><a href="memberOrders.html">Orders</a></li> <!-- Link to My Orders -->
-                    <li><a href="memberAddresses.html">Addresses</a></li> <!-- Link to My Rewards -->
-                    <li><a href="memberAccount.html">Account Details</a></li> <!-- Link to My Account Details -->
-                    <li><a href="publicHome.html">Log Out</a></li> <!-- Link to LogOut -->
+                    <li><a href="memberAcc.php">Dashboard</a></li> <!-- Link to My Account -->
+                    <li><a href="memberOrders.php" class="active">Orders</a></li> <!-- Link to My Orders -->
+                    <li><a href="memberAddresses.php">Addresses</a></li> <!-- Link to My Rewards -->
+                    <li><a href="memberAccount.php">Account Details</a></li> <!-- Link to My Account Details -->
+                    <li><a href="Logout.php">Log Out</a></li> <!-- Link to LogOut -->
                 </ul>
             </div>
 
-            <!-- Dashboard Details (Right Box) -->
+            <!-- Main Orders Content -->
             <div class="right-box">
-                <h2>Dashboard</h2>
-                <p>This is your account dashboard. Use the navigation on the left to manage your orders, addresses, and account settings.</p>
-                
-                <h3>Quick Overview:</h3>
-                <div class="overview-grid">
-                    <div class="overview-item" id="orders-overview">
-                        <h4>Total Orders</h4>
-                        <p>Loading...</p>
-                    </div>
-                    <div class="overview-item" id="addresses-overview">
-                        <h4>Saved Addresses</h4>
-                        <p>Loading...</p>
-                    </div>
-                    <div class="overview-item" id="status-overview">
-                        <h4>Account Status</h4>
-                        <p>Loading...</p>
-                    </div>
+                <h2>Current Orders</h2>
+                <div class="order-list" id="current-orders-list">
+                    <!-- Current orders will be dynamically inserted here -->
                 </div>
 
+                <h2>Past Orders</h2>
+                <div class="order-list" id="past-orders-list">
+                    <!-- Past orders will be dynamically inserted here -->
                 </div>
             </div>
         </div>
+    </div>
 
     <footer class="footer">
         <div class="footer-left">
@@ -115,16 +123,16 @@
                 <div class="footer-col2">
                     <h4>CUSTOMER CARE</h4>
                     <ul>
-                        <li><a href="publicTNC.html">Terms & Conditions</a></li>
-                        <li><a href="publicPrivacyPolicy.html">Privacy Policy</a></li>
-                        <li><a href="publicFaqs.html">FAQs</a></li>
+                        <li><a href="memberTNC.php">Terms & Conditions</a></li>
+                        <li><a href="memberPrivacyPolicy.php">Privacy Policy</a></li>
+                        <li><a href="memberFaqs.php">FAQs</a></li>
                     </ul>
                 </div>
                 <div class="footer-col3">
                     <h4>STORE INFORMATION</h4>
                     <ul>
-                        <li><a href="publicAboutUs.html">About Us</a></li>
-                        <li><a href="publicContactUs.html">Contact Us</a></li>
+                        <li><a href="memberAboutUs.php">About Us</a></li>
+                        <li><a href="memberContactUs.php">Contact Us</a></li>
                     </ul>
                 </div>
             </div>
@@ -143,5 +151,7 @@
             Copyright &copy; 2024 PuffLab
         </div>
     </footer>
+
+
 </body>
 </html>
