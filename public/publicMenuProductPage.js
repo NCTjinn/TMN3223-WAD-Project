@@ -1,5 +1,4 @@
-// product-page.js
-
+localStorage.setItem('cart', JSON.stringify(cart));
 // Tab switching functionality
 document.querySelectorAll('.tab-btn').forEach(button => {
     button.addEventListener('click', () => {
