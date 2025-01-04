@@ -1,5 +1,3 @@
-// product-page.js
-
 // Tab switching functionality
 document.querySelectorAll('.tab-btn').forEach(button => {
     button.addEventListener('click', () => {
@@ -23,31 +21,19 @@ function updateQuantity(change) {
     }
 }
 
-// Add item to the cart
-function addToCart(productId, productName, productPrice) {
-    const quantity = document.getElementById('quantity').value;
-    const note = document.querySelector('.note-box textarea').value;
-    
-    // Create cart item object
-    const cartItem = {
-        id: productId,
-        name: productName,
-        price: productPrice,
-        quantity: parseInt(quantity),
-        note: note
-    };
-    
-    // Get the existing cart or create a new one if it doesn't exist
-    let cart = JSON.parse(localStorage.getItem('cart') || '[]');
-    
-    // Add new item to the cart
-    cart.push(cartItem);
-    
-    // Save the updated cart back to localStorage
-    localStorage.setItem('cart', JSON.stringify(cart));
-    
-    // Show confirmation alert
-    alert('Item added to cart!');
+// Update the addToCart function
+function addToCart(productId) {
+    const quantity = parseInt(document.getElementById('quantity').value);
+    // Make sure cart.js is loaded
+    if (typeof cart !== 'undefined') {
+        cart.addItem(productId, quantity).then(success => {
+            if (success) {
+                alert('Item added to cart!');
+            }
+        });
+    } else {
+        console.error('Cart functionality not loaded');
+    }
 }
 
 // Handle thumbnail image switching
