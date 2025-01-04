@@ -1,21 +1,4 @@
 // product-page.js
-const products = {
-    'classic-cream-puff': {
-        name: 'Classic Cream Puff',
-        price: 'RM 4.99',
-        ingredients: 'Fresh choux pastry, vanilla custard cream, powdered sugar',
-        servingTips: 'Best served chilled. Consume within 24 hours for optimal freshness.',
-        images: {
-            main: 'products/classic-cream-puff/main.jpg',
-            thumbnails: [
-                'products/classic-cream-puff/thumb1.jpg',
-                'products/classic-cream-puff/thumb2.jpg',
-                'products/classic-cream-puff/thumb3.jpg'
-            ]
-        }
-    },
-    // Add more products...
-};
 
 // Tab switching functionality
 document.querySelectorAll('.tab-btn').forEach(button => {
@@ -31,7 +14,7 @@ document.querySelectorAll('.tab-btn').forEach(button => {
     });
 });
 
-// Quantity control
+// Quantity control functionality
 function updateQuantity(change) {
     const input = document.getElementById('quantity');
     const newValue = parseInt(input.value) + change;
@@ -40,58 +23,41 @@ function updateQuantity(change) {
     }
 }
 
-// Add to cart functionality
-function addToCart() {
+// Add item to the cart
+function addToCart(productId, productName, productPrice) {
     const quantity = document.getElementById('quantity').value;
     const note = document.querySelector('.note-box textarea').value;
     
-    // Get product info from URL
-    const productId = window.location.pathname.split('/').pop().replace('.html', '');
-    const product = products[productId];
-    
-    // Create cart item
+    // Create cart item object
     const cartItem = {
         id: productId,
-        name: product.name,
-        price: product.price,
+        name: productName,
+        price: productPrice,
         quantity: parseInt(quantity),
         note: note
     };
     
-    // Get existing cart or create new one
+    // Get the existing cart or create a new one if it doesn't exist
     let cart = JSON.parse(localStorage.getItem('cart') || '[]');
     
-    // Add item to cart
+    // Add new item to the cart
     cart.push(cartItem);
     
-    // Save cart
+    // Save the updated cart back to localStorage
     localStorage.setItem('cart', JSON.stringify(cart));
     
-    // Show confirmation
+    // Show confirmation alert
     alert('Item added to cart!');
 }
 
-// Load product data
-function loadProductData() {
-    const productId = window.location.pathname.split('/').pop().replace('.html', '');
-    const product = products[productId];
-    
-    if (product) {
-        document.querySelector('.product-info h1').textContent = product.name;
-        document.querySelector('.price').textContent = product.price;
-        document.querySelector('#ingredients').textContent = product.ingredients;
-        document.querySelector('#serving').textContent = product.servingTips;
-        
-        // Load images
-        document.querySelector('.main-image img').src = product.images.main;
-        const thumbnails = document.querySelectorAll('.thumbnail');
-        product.images.thumbnails.forEach((src, index) => {
-            if (thumbnails[index]) {
-                thumbnails[index].src = src;
-            }
+// Handle thumbnail image switching
+document.addEventListener('DOMContentLoaded', function() {
+    // Add thumbnail click handlers if needed
+    const thumbnails = document.querySelectorAll('.thumbnail');
+    thumbnails.forEach(thumbnail => {
+        thumbnail.addEventListener('click', function() {
+            const mainImage = document.querySelector('.main-image img');
+            mainImage.src = this.src;  // Change main image to the clicked thumbnail
         });
-    }
-}
-
-// Initialize page
-document.addEventListener('DOMContentLoaded', loadProductData);
+    });
+});
