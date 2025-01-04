@@ -1,12 +1,21 @@
 <?php
-// Conditional redirection based on authentication
-function isAuthenticated() {
-    // Implement your authentication check logic here
-    return false;
-}
+session_start();
 
-if (!isAuthenticated()) {
-    header("Location: publichome.html");
+// Check if user is logged in and redirect accordingly
+if (!isset($_SESSION['user_id'])) {
+    header("Location: publicHome.html");
+    exit();
+} 
+
+// Redirect based on user's role
+if ($_SESSION['role'] === 'member') {
+    header("Location: memberHome.html");
+    exit();
+} elseif ($_SESSION['role'] === 'admin') {
+    header("Location: adminDashboard.php");
+    exit();
+} else {
+    header("Location: publicHome.html");
     exit();
 }
 
@@ -26,36 +35,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 $request = explode('/', trim($_SERVER['PATH_INFO'], '/'));
 $endpoint = array_shift($request);
 
-// Authentication middleware
-function authenticateRequest() {
-    $headers = getallheaders();
-    if (!isset($headers['Authorization'])) {
-        http_response_code(401);
-        echo json_encode(['error' => 'No authorization token provided']);
-        exit();
-    }
-
-    $token = str_replace('Bearer ', '', $headers['Authorization']);
-    // Implement your JWT verification here
-    return ['user_id' => 1, 'role' => 'admin'];
-}
-
 // Handle the request based on endpoint
 try {
     switch($endpoint) {
         case 'adminDashboard':
             require 'adminDashboard.php';
-            exit();
-            
+            break;
         case 'adminTransactions':
             require 'adminTransactions.php';
-            exit();
-
+            break;
         default:
             throw new Exception('Invalid endpoint');
     }
-
 } catch (Exception $e) {
     http_response_code(500);
     echo json_encode(['error' => $e->getMessage()]);
 }
+?>
