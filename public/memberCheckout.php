@@ -74,32 +74,30 @@ $products = getProducts();
     <!-- Checkout Page -->
     <div class="container">
         <h1>Checkout</h1>
-        
         <div class="checkout-grid">
             <div class="checkout-form">
-            <div class="delivery-address">
-            <h2>Delivery Address</h2>
-            <div class="autofill-section">
-            <label>
-            <input type="checkbox" id="autofill-address" onchange="checkout.loadUserDetails()">
-                Use my registered address
-            </label>
-            </div>
-            <form class="delivery-form">
-            <div class="form-row">
-            <input type="text" name="firstName" class="form-input" placeholder="First Name*" required>
-            <input type="text" name="lastName" class="form-input" placeholder="Last Name*" required>
-            </div>
-            <input type="text" name="addressLine1" class="form-input" placeholder="Address Line 1*" required>
-            <div class="form-row">
-            <input type="text" name="city" class="form-input" placeholder="City*" required>
-            <input type="text" name="postcode" class="form-input" placeholder="Postcode*" required>
-            <input type="text" name="state" class="form-input" placeholder="State*" required>
-            </div>
-            <input type="tel" name="phone" class="form-input" placeholder="Phone Number*" required>
-            </form>
-        </div>
-    
+                <div class="delivery-address">
+                    <h2>Delivery Address</h2>
+                    <div class="autofill-section">
+                        <label>
+                            <input type="checkbox" id="autofill-address" onchange="checkout.loadUserDetails()">
+                            Use my registered address
+                        </label>
+                    </div>
+                    <form class="delivery-form">
+                        <div class="form-row">
+                            <input type="text" name="firstName" class="form-input" placeholder="First Name*" required>
+                            <input type="text" name="lastName" class="form-input" placeholder="Last Name*" required>
+                        </div>
+                        <input type="text" name="addressLine1" class="form-input" placeholder="Address Line 1*" required>
+                        <div class="form-row">
+                            <input type="text" name="city" class="form-input" placeholder="City*" required>
+                            <input type="text" name="postcode" class="form-input" placeholder="Postcode*" required>
+                            <input type="text" name="state" class="form-input" placeholder="State*" required>
+                        </div>
+                        <input type="tel" name="phone" class="form-input" placeholder="Phone Number*" required>
+                    </form>
+                </div>
                 <div class="payment-methods">
                     <h2>Payment Method</h2>
                     <div class="payment-options">
@@ -124,71 +122,17 @@ $products = getProducts();
                             <span>Cash</span>
                         </label>
                     </div>
-                    <!-- Replace the existing continue-button -->
-                    <button class="continue-button" onclick="validateCheckout()">Continue</button>
+                    <button class="continue-button" onclick="checkout.validateCheckout()">Continue</button>
                 </div>
             </div>
-    
             <div class="order-summary">
-            <h2>Order Summary</h2>
-                <div class="summary-items" id="orderItems">
-                <!-- Items will be populated by JavaScript -->
-                </div>
-                <div class="summary-details">
-                <!-- Totals will be populated by JavaScript -->
-                </div>
+                <h2>Order Summary</h2>
+                <div class="summary-items" id="orderItems"></div>
+                <div class="summary-details"></div>
             </div>
         </div>
     </div>
-    
-    <script>
-        function validateCheckout(event) {
-            event.preventDefault(); // Prevent default form submission
-
-            // Retrieve form values
-            const firstName = document.getElementById("firstName").value.trim();
-            const lastName = document.getElementById("lastName").value.trim();
-            const addressLine1 = document.getElementById("addressLine1").value.trim();
-            const city = document.getElementById("city").value.trim();
-            const postcode = document.getElementById("postcode").value.trim();
-            const state = document.getElementById("state").value.trim();
-            const phone = document.getElementById("phone").value.trim();
-
-            // Check if a payment method is selected
-            const paymentMethods = document.getElementsByName("payment");
-            let paymentSelected = false;
-            for (const method of paymentMethods) {
-                if (method.checked) {
-                    paymentSelected = true;
-                    break;
-                }
-            }
-
-            // Check if all required fields are filled
-            //if (!firstName || !lastName || !addressLine1 || !city || !postcode || !state || !phone || !paymentSelected) {
-            //    alert("Please fill in all required fields and select a payment method.");
-            //    return;
-            //}
-
-            // Additional checks for Credit/Debit Card inputs if selected
-            const cardInputs = document.querySelector('input[name="payment"][value="card"]:checked');
-            if (cardInputs) {
-                const cardNumber = document.getElementById("cardNumber").value.trim();
-                const cardExpiry = document.getElementById("cardExpiry").value.trim();
-                const cardCVC = document.getElementById("cardCVC").value.trim();
-
-                if (!cardNumber || !cardExpiry || !cardCVC) {
-                    alert("Please fill in all required Credit/Debit Card details.");
-                    return;
-                }
-            }
-
-            // If validation passes, proceed to the next page
-            alert("Order placed successfully!");
-            window.location.href = "memberTrack.php";
-        }
-    </script>
-        <footer class="footer">
+    <footer class="footer">
         <div class="footer-left">
             <img src="../assets/images/logo.png" alt="PuffLab Logo" style="max-height: 100px; display: block; margin: auto;">
             <p>

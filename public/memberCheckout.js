@@ -115,6 +115,7 @@ const checkout = {
             `;
         }
     },
+
     async processCheckout() {
         try {
             const formData = new FormData(document.querySelector('.delivery-form'));
@@ -154,6 +155,46 @@ const checkout = {
             console.error('Error processing checkout:', error);
             alert('Failed to process checkout. Please try again.');
         }
+    },
+    
+    validateCheckout() {
+        // Get all required form fields
+        const requiredFields = {
+            firstName: document.querySelector('input[placeholder="First Name*"]'),
+            lastName: document.querySelector('input[placeholder="Last Name*"]'),
+            address: document.querySelector('input[placeholder="Address Line 1*"]'),
+            city: document.querySelector('input[placeholder="City*"]'),
+            postcode: document.querySelector('input[placeholder="Postcode*"]'),
+            state: document.querySelector('input[placeholder="State*"]'),
+            phone: document.querySelector('input[placeholder="Phone Number*"]')
+        };
+    
+        // Check if any required field is empty
+        let isValid = true;
+        let emptyFields = [];
+    
+        for (const [fieldName, field] of Object.entries(requiredFields)) {
+            if (!field || !field.value.trim()) {
+                isValid = false;
+                emptyFields.push(fieldName.replace(/([A-Z])/g, ' $1').toLowerCase());
+            }
+        }
+    
+        if (!isValid) {
+            alert(`Please fill in all required fields: ${emptyFields.join(', ')}`);
+            return;
+        }
+    
+        // Check if a payment method is selected
+        const paymentSelected = document.querySelector('input[name="payment"]:checked');
+        if (!paymentSelected) {
+            alert('Please select a payment method');
+            return;
+        }
+    
+        // Proceed with checkout
+        alert('Order placed successfully!');
+        window.location.href = 'memberTrack.php';
     }
 };
 
