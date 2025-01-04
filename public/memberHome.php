@@ -12,9 +12,28 @@ if ($_SESSION['role'] !== 'member') {
     header("Location: publicLogin.html");
     exit();
 }
+// Database connection
+$conn = new mysqli("localhost", "root", "", "PuffLab");
+
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+// Fetch user's first name
+$userId = $_SESSION['user_id'];
+$sql = "SELECT first_name FROM Users WHERE user_id = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $userId);
+$stmt->execute();
+$result = $stmt->get_result();
+$user = $result->fetch_assoc();
+$firstName = $user['first_name'];
+
+$stmt->close();
+$conn->close();
 ?>
 
-<!--  (Registered User Home Page) -->
+<!-- home.html (Registered User Home Page) -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -75,10 +94,12 @@ if ($_SESSION['role'] !== 'member') {
     </nav>
 
     <div class="welcome-header">
-        <h1>WELCOME BACK, (USER'S NAME)!</h1>
+        <h1>WELCOME BACK, <?php echo htmlspecialchars(strtoupper($firstName)); ?>!</h1>
     </div>
 
-    <div class="hero">
+    <div class="hero"></div>
+
+    <div class="featured-text">
         <h1>ONE BITE IS NEVER ENOUGH</h1>
     </div>
     <!-- later 
@@ -143,5 +164,7 @@ if ($_SESSION['role'] !== 'member') {
             Copyright &copy; 2024 PuffLab
         </div>
     </footer>
+
+
 </body>
 </html>
