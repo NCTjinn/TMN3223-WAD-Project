@@ -32,18 +32,18 @@ if ($_SESSION['role'] !== 'member') {
     <nav>
         <div class="navbar">
             <div class="logo">
-                <a href="memberHome.html">
+                <a href="memberHome.php">
                     <img src="../assets/images/logo.png" alt="PuffLab Logo" style="height: 50px;">
                 </a>
             </div>
             <ul class="links">
-                <li><a href="memberHome.html">Home</a></li>
+                <li><a href="memberHome.php">Home</a></li>
                 <li class="dropdown">
                     <a href="memberMenu.php">Menu <i class='bx bxs-chevron-down'></i></a>
                     <ul class="dropdown-content">
-                        <li><a href="memberMenu.php">Cream Puff</a></li>
-                        <li><a href="memberMenu.php">Petit Gateux</a></li>
-                        <li><a href="memberMenu.php">Shortcakes</a></li>
+                        <li><a href="memberMenu.php">Puffs</a></li>
+                        <li><a href="memberMenu.php">Cakes</a></li>
+                        <li><a href="memberMenu.php">Beverages</a></li>
                     </ul>
                 </li>
                 <li class="dropdown">
