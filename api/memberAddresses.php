@@ -46,7 +46,7 @@ try {
         } else {
             // Use HTTP response codes to indicate errors
             http_response_code(500); // Internal Server Error
-            throw new Exception("Error updating address: " . $stmt->error);
+            echo json_encode(['success' => false, 'message' => 'Failed to update address']);
         }
         
     }

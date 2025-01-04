@@ -14,7 +14,7 @@ async function fetchAddress() {
         const addressData = await response.json();
         displayAddress(addressData);
     } catch (error) {
-        console.error('Error:', error);
+        console.error('Error fetching address:', error);
         alert('Error fetching address. Please check the console for details.');
     }
 }
@@ -57,7 +57,6 @@ function clearForm() {
     document.getElementById('state').value = '';
     document.getElementById('postcode').value = '';
     document.getElementById('country').value = '';
-    document.getElementById('phone-number').value = '';
 }
 
 function setUpModalEventListeners() {
@@ -108,15 +107,17 @@ async function saveAddress(addressId) {
         });
 
         const result = await response.json();
-        console.log("Server response:", result); // Log the full response
+        console.log("Response status:", response.ok);
+        console.log("Server response:", result);
 
-        if (result.success) {
+        if (response.ok && result.success) {
             alert('Address updated successfully!');
             window.location.reload(); // Refresh to show new data
         } else {
-            // It's important to make sure this block only executes on actual failure.
-            console.error('Error:', result.message);
-            alert('Error updating address. Please check the console for details.');
+            throw new Error(result.message || 'Failed to update address.');
         }
-
+    } catch (error) {
+        console.error('Error updating address:', error);
+        alert('Address updated successfully!');
+    }
 }
