@@ -145,7 +145,7 @@ $products = getProducts();
     
     <footer class="footer">
         <div class="footer-left">
-            <img src="logo.png" alt="PuffLab Logo" style="max-height: 100px; display: block; margin: auto;">
+            <img src="../assets/images/logo.png" alt="PuffLab Logo" style="max-height: 100px; display: block; margin: auto;">
             <p>
                 Made with love in Kuching, Sarawak, Puff Lab brings you premium Japanese cream puffs with a local twist! From our pop-up freezers to our cozy spot at Lakeview UNIMAS, we’re here to make every bite special. Whether you’re treating yourself or planning an event, our fresh, flavorful, and affordable pastries are crafted to delight. Join the Puff Lab family today—where gourmet desserts meet everyday joy!
             </p>
