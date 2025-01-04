@@ -283,16 +283,15 @@ body {
     }
 }
 
-/* Main Content */
 .admin-content {
     margin-top: 70px; /* Offset for fixed header */
     margin-left: 70px; /* Offset for fixed sidebar */
-    margin-bottom: 60px;
+    margin-bottom: 60px; /* This might need adjusting */
     padding: 20px;
     background-color: #F2EDD3; /* Content background */
-    height: 100%; /* Full height minus header */
+    height: calc(100vh - 130px); /* Adjusted for header and footer */
     overflow-y: auto; /* Enable scrolling for content */
-    width: 100%;
+    width: calc(100% - 70px); /* Adjust width if sidebar is visible */
 }
 
 /* Scrollbar Customization */
