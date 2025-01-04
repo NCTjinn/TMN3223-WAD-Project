@@ -1,7 +1,7 @@
 // Constants and Configuration
 const baseUrl = window.location.hostname === 'localhost' 
     ? 'http://localhost/TMN3223-WAD-Project' 
-    : 'https://your-production-domain.com';
+    : 'http://puff-lab.free.nf/';
 
 const API_CONFIG = {
     baseUrl: baseUrl,

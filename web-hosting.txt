@@ -10,6 +10,11 @@ MySQL Database Name if0_37979402_pufflab
 MySQL Hostname sql112.infinityfree.com 
 MySQL Port (optional) 3306
 
+private $host = "sql112.infinityfree.com";
+private $db_name = "if0_37979402_pufflab";
+private $username = "if0_37979402";
+private $password = "tmn3223ncnhcds";
+
 for XAMPP shell
 mysql -u root -p < C:\xampp\htdocs\TMN3223-WAD-Project\database\database-setup.sql
 

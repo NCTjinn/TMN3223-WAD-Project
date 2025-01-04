@@ -3,10 +3,10 @@ session_start();
 
 // config.php - Database connection and core configuration
 class Database {
-    private $host = "localhost";
-    private $db_name = "PuffLab";
-    private $username = "root";  // Change as per your configuration
-    private $password = "";      // Change as per your configuration
+    private $host = "sql112.infinityfree.com";
+    private $db_name = "if0_37979402_pufflab";
+    private $username = "if0_37979402";
+    private $password = "tmn3223ncnhcds";
     private $conn = null;
 
     public function getConnection() {

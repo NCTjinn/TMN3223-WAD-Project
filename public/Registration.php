@@ -15,10 +15,10 @@ use PHPMailer\PHPMailer\Exception;
 // Create a new PHPMailer instance
 $mail = new PHPMailer(true);
 
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "PuffLab";
+$servername = "sql112.infinityfree.com";
+$username = "if0_37979402";
+$password = "tmn3223ncnhcds";
+$dbname = "if0_37979402_pufflab";
 
 $conn = new mysqli($servername, $username, $password, $dbname);
 

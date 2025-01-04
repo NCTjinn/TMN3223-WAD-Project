@@ -5,10 +5,10 @@ header('Content-Type: application/json');
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "PuffLab";
+$servername = "sql112.infinityfree.com";
+$username = "if0_37979402";
+$password = "tmn3223ncnhcds";
+$dbname = "if0_37979402_pufflab";
 
 try {
     $conn = new mysqli($servername, $username, $password, $dbname);

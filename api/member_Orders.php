@@ -9,10 +9,10 @@ header('Cache-Control: no-cache, must-revalidate');
 
 // Database configuration
 $config = [
-    'host' => 'localhost',
-    'username' => 'root',
-    'password' => '',
-    'database' => 'pufflab'
+    'host' => 'sql112.infinityfree.com',
+    'username' => 'if0_37979402',
+    'password' => 'tmn3223ncnhcds',
+    'database' => 'if0_37979402_pufflab'
 ];
 
 try {

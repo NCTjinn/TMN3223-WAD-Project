@@ -1,10 +1,10 @@
 <?php
 header('Content-Type: application/json');
 
-$servername = "localhost";
-$username = "root"; // Update if needed
-$password = ""; // Update if needed
-$dbname = "pufflab";
+$servername = "sql112.infinityfree.com";
+$username = "if0_37979402";
+$password = "tmn3223ncnhcds";
+$dbname = "if0_37979402_pufflab";
 
 // Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);

@@ -1,5 +1,4 @@
 <?php
-// Admin.php - Admin dashboard and management functionality
 require_once 'config.php';
 
 class Admin {
