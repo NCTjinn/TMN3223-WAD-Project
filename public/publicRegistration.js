@@ -71,6 +71,9 @@ document.addEventListener('DOMContentLoaded', function() {
             // Validate form
             validateForm(jsonData);
 
+            // Show loading modal
+            loadingModal.style.display = "block"
+
             // Send data to server
             const response = await fetch('Registration.php?action=register', {
                 method: 'POST',
@@ -82,6 +85,9 @@ document.addEventListener('DOMContentLoaded', function() {
             });
 
             const result = await response.json();
+
+            // Hide loading modal
+            loadingModal.style.display = "none"
 
             if (result.success) {
                 // Show modal
@@ -98,6 +104,8 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
         } catch (error) {
+            // Hide loading modal in case of error
+            loadingModal.style.display = "none"
             alert(error.message);
         }
     });

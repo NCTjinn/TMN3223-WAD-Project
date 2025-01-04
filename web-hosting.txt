@@ -15,11 +15,3 @@ mysql -u root -p < C:\xampp\htdocs\TMN3223-WAD-Project\database\database-setup.s
 
 PHPMailer
 https://github.com/PHPMailer/PHPMailer
-
-email: ncnhcdspufflab@outlook.com
-password: TMF3113PuffLab
-SMTP server name: smtp-mail.outlook.com
-SMTP Port: 587
-SMTP Encryption: STARTTLS
-SMTP Username: ncnhcdspufflab@outlook.com
-SMTP Password: TMF3113PuffLab
