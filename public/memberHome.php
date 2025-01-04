@@ -14,7 +14,7 @@ if ($_SESSION['role'] !== 'member') {
 }
 ?>
 
-<!-- home.html (Registered User Home Page) -->
+<!--  (Registered User Home Page) -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -81,14 +81,14 @@ if ($_SESSION['role'] !== 'member') {
     <div class="hero">
         <h1>ONE BITE IS NEVER ENOUGH</h1>
     </div>
-
+    <!-- later 
     <div class="buy-once-more">
         <h2>BUY ONCE MORE</h2>
         <div class="previous-purchases">
             <div class="product-card"></div>
             <div class="product-card"></div>
         </div>
-    </div>
+    </div> -->
 
     <div class="products-section">
         <div class="tab-buttons">
@@ -102,24 +102,6 @@ if ($_SESSION['role'] !== 'member') {
             <div class="product-card"></div>
         </div>
     </div>
-
-    <section class="reviews">
-        <h2>Reviews</h2>
-        <div class="review-container">
-            <button class="nav-btn prev-btn">&lt;</button>
-            <div class="review-cards">
-                <div class="review-card"></div>
-                <div class="review-card"></div>
-                <div class="review-card"></div>
-            </div>
-            <button class="nav-btn next-btn">&gt;</button>
-        </div>
-    </section>
-
-    <section class="community-section">
-        <h2>Join our community!</h2>
-        <div class="divider"></div>
-    </section>
 
     <footer class="footer">
         <div class="footer-left">
@@ -161,7 +143,5 @@ if ($_SESSION['role'] !== 'member') {
             Copyright &copy; 2024 PuffLab
         </div>
     </footer>
-
-
 </body>
 </html>
