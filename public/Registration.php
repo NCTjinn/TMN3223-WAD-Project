@@ -2,6 +2,19 @@
 session_start();
 header('Content-Type: application/json');
 
+// Include PHPMailer files
+require '../PHPMailer/src/PHPMailer.php';
+require '../PHPMailer/src/SMTP.php';
+require '../PHPMailer/src/Exception.php';
+
+// Use PHPMailer namespaces
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
+use PHPMailer\PHPMailer\Exception;
+
+// Create a new PHPMailer instance
+$mail = new PHPMailer(true);
+
 $servername = "localhost";
 $username = "root";
 $password = "";
@@ -108,6 +121,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Commit transaction
         $conn->commit();
+
+        try {
+            // Server settings
+            $mail->SMTPDebug = 0; // Disable debug output
+            $mail->isSMTP(); // Send using SMTP
+            $mail->Host       = 'smtp-mail.outlook.com'; // Set the SMTP server to send through
+            $mail->SMTPAuth   = true; // Enable SMTP authentication
+            $mail->Username   = 'ncnhcdspufflab@outlook.com'; // SMTP username
+            $mail->Password   = 'TMF3113PuffLab'; // SMTP password
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS; // Enable TLS encryption
+            $mail->Port       = 587; // TCP port to connect to
+
+            // Recipients
+            $mail->setFrom('ncnhcdspufflab@outlook.com', 'PuffLab Team');
+            $mail->addAddress($email);
+
+            // Content
+            $mail->isHTML(true); // Set email format to HTML
+            $mail->Subject = "Welcome to PuffLab, " . htmlspecialchars($firstName) . "!";
+            $mail->Body    = "<h1>Welcome to PuffLab!</h1><p>Thank you for registering, " . htmlspecialchars($firstName) . " " . htmlspecialchars($lastName) . ". We are excited to have you on board.</p>";
+
+            $mail->send();
+
+        } catch (Exception $e) {
+            // Log email sending error but continue with transaction
+            error_log("Email could not be sent. Mailer Error: {$mail->ErrorInfo}");
+        }
 
         // Success response
         echo json_encode(['success' => true, 'message' => 'Registration successful']);
