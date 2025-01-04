@@ -1,3 +1,22 @@
+<?php
+session_start();
+
+// Check if user is logged in
+if (!isset($_SESSION['user_id'])) {
+    header("Location: publicLogin.html");
+    exit();
+}
+
+// Check user's role if needed
+if ($_SESSION['role'] !== 'member') {
+    header("Location: publicLogin.html");
+    exit();
+}
+
+// Your protected content here
+echo "Welcome to the member section!";
+?>
+
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
 <head>
@@ -13,12 +32,12 @@
      <nav>
         <div class="navbar">
             <div class="logo">
-                <a href="memberHome.html">
+                <a href="memberHome.php">
                     <img src="../assets/images/logo.png" alt="PuffLab Logo" style="height: 50px;">
                 </a>
             </div>
             <ul class="links">
-                <li><a href="memberHome.html">Home</a></li>
+                <li><a href="memberHome.php">Home</a></li>
                 <li class="dropdown">
                     <a href="memberMenu.php">Menu <i class='bx bxs-chevron-down'></i></a>
                     <ul class="dropdown-content">
@@ -28,17 +47,17 @@
                     </ul>
                 </li>
                 <li class="dropdown">
-                    <a href="memberAboutUs.html">About Us <i class='bx bxs-chevron-down'></i></a>
+                    <a href="memberAboutUs.php">About Us <i class='bx bxs-chevron-down'></i></a>
                     <ul class="dropdown-content">
-                        <li><a href="memberAboutUs.html">Our Team</a></li>
-                        <li><a href="memberAboutUs.html">Our History</a></li>
+                        <li><a href="memberAboutUs.php">Our Team</a></li>
+                        <li><a href="memberAboutUs.php">Our History</a></li>
                     </ul>
                 </li>
                 <li class="dropdown">
-                    <a href="memberAcc.html">My Account <i class='bx bxs-chevron-down'></i></a>
+                    <a href="memberAcc.php">My Account <i class='bx bxs-chevron-down'></i></a>
                     <ul class="dropdown-content">
-                        <li><a href="memberAcc.html">Dashboard</a></li> <!-- Link to My Account -->
-                        <li><a href="memberOrders.html">Orders</a></li> <!-- Link to My Orders -->
+                        <li><a href="memberAcc.php">Dashboard</a></li> <!-- Link to My Account -->
+                        <li><a href="memberOrders.php">Orders</a></li> <!-- Link to My Orders -->
                         <li><a href="Logout.php">Logout</a></li> <!-- Link to LogOut -->
                     </ul>
                 </li>
@@ -84,16 +103,16 @@
                 <div class="footer-col2">
                     <h4>CUSTOMER CARE</h4>
                     <ul>
-                        <li><a href="memberTNC.html">Terms & Conditions</a></li>
-                        <li><a href="memberPrivacyPolicy.html">Privacy Policy</a></li>
-                        <li><a href="memberFaqs.html">FAQs</a></li>
+                        <li><a href="memberTNC.php">Terms & Conditions</a></li>
+                        <li><a href="memberPrivacyPolicy.php">Privacy Policy</a></li>
+                        <li><a href="memberFaqs.php">FAQs</a></li>
                     </ul>
                 </div>
                 <div class="footer-col3">
                     <h4>STORE INFORMATION</h4>
                     <ul>
-                        <li><a href="memberAboutUs.html">About Us</a></li>
-                        <li><a href="memberContactUs.html">Contact Us</a></li>
+                        <li><a href="memberAboutUs.php">About Us</a></li>
+                        <li><a href="memberContactUs.php">Contact Us</a></li>
                     </ul>
                 </div>
             </div>

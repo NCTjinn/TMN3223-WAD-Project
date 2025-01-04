@@ -30,12 +30,12 @@ $products = getProducts();
     <nav>
         <div class="navbar">
             <div class="logo">
-                <a href="memberHome.html">
+                <a href="memberHome.php">
                     <img src="../assets/images/logo.png" alt="PuffLab Logo" style="height: 50px;">
                 </a>
             </div>
             <ul class="links">
-                <li><a href="memberHome.html">Home</a></li>
+                <li><a href="memberHome.php">Home</a></li>
                 <li class="dropdown">
                     <a href="memberMenu.php">Menu <i class='bx bxs-chevron-down'></i></a>
                     <ul class="dropdown-content">
@@ -45,17 +45,17 @@ $products = getProducts();
                     </ul>
                 </li>
                 <li class="dropdown">
-                    <a href="memberAboutUs.html">About Us <i class='bx bxs-chevron-down'></i></a>
+                    <a href="memberAboutUs.php">About Us <i class='bx bxs-chevron-down'></i></a>
                     <ul class="dropdown-content">
-                        <li><a href="memberAboutUs.html">Our Team</a></li>
-                        <li><a href="memberAboutUs.html">Our History</a></li>
+                        <li><a href="memberAboutUs.php">Our Team</a></li>
+                        <li><a href="memberAboutUs.php">Our History</a></li>
                     </ul>
                 </li>
                 <li class="dropdown">
-                    <a href="memberAcc.html">My Account <i class='bx bxs-chevron-down'></i></a>
+                    <a href="memberAcc.php">My Account <i class='bx bxs-chevron-down'></i></a>
                     <ul class="dropdown-content">
-                        <li><a href="memberAcc.html">Dashboard</a></li> <!-- Link to My Account -->
-                        <li><a href="memberOrders.html">Orders</a></li> <!-- Link to My Orders -->
+                        <li><a href="memberAcc.php">Dashboard</a></li> <!-- Link to My Account -->
+                        <li><a href="memberOrders.php">Orders</a></li> <!-- Link to My Orders -->
                         <li><a href="Logout.php">Logout</a></li> <!-- Link to LogOut -->
                     </ul>
                 </li>
@@ -185,49 +185,49 @@ $products = getProducts();
 
             // If validation passes, proceed to the next page
             alert("Order placed successfully!");
-            window.location.href = "track-order.html";
+            window.location.href = "memberTrack.php";
         }
     </script>
         <footer class="footer">
-            <div class="footer-left">
-                <img src="../assets/images/logo.png" alt="PuffLab Logo" style="max-height: 100px; display: block; margin: auto;">
-                <p>
-                    Made with love in Kuching, Sarawak, Puff Lab brings you premium Japanese cream puffs with a local twist! From our pop-up freezers to our cozy spot at Lakeview UNIMAS, we’re here to make every bite special. Whether you’re treating yourself or planning an event, our fresh, flavorful, and affordable pastries are crafted to delight. Join the Puff Lab family today—where gourmet desserts meet everyday joy!
-                </p>
-            </div>
-            <div class="footer-right">
-                <div class="footer-top">
-                    <div class="footer-col2">
-                        <h4>CUSTOMER CARE</h4>
-                        <ul>
-                            <li><a href="tnc.html">Terms & Conditions</a></li>
-                            <li><a href="privacy.html">Privacy Policy</a></li>
-                            <li><a href="faq.html">FAQs</a></li>
-                        </ul>
-                    </div>
-                    <div class="footer-col3">
-                        <h4>STORE INFORMATION</h4>
-                        <ul>
-                            <li><a href="aboutus.html">About Us</a></li>
-                            <li><a href="contactus.html">Contact Us</a></li>
-                        </ul>
-                    </div>
+        <div class="footer-left">
+            <img src="../assets/images/logo.png" alt="PuffLab Logo" style="max-height: 100px; display: block; margin: auto;">
+            <p>
+                Made with love in Kuching, Sarawak, Puff Lab brings you premium Japanese cream puffs with a local twist! From our pop-up freezers to our cozy spot at Lakeview UNIMAS, we’re here to make every bite special. Whether you’re treating yourself or planning an event, our fresh, flavorful, and affordable pastries are crafted to delight. Join the Puff Lab family today—where gourmet desserts meet everyday joy!
+            </p>
+        </div>
+        <div class="footer-right">
+            <div class="footer-top">
+                <div class="footer-col2">
+                    <h4>CUSTOMER CARE</h4>
+                    <ul>
+                        <li><a href="memberTNC.php">Terms & Conditions</a></li>
+                        <li><a href="memberPrivacyPolicy.php">Privacy Policy</a></li>
+                        <li><a href="memberFaqs.php">FAQs</a></li>
+                    </ul>
                 </div>
-                <div class="footer-bottom">
-                    <div class="footer-col4">
-                        <h4>FOLLOW US ON</h4>
-                        <div class="social-icons">
-                            <a href="https://www.facebook.com/PuffLabPLT/" target="_blank"><i class="fab fa-facebook"></i></a>
-                            <a href="https://www.instagram.com/puff.lab/?hl=en" target="_blank"><i class="fab fa-instagram"></i></a>
-                            <a href="https://www.tiktok.com/@pufflabplt" target="_blank"><i class="fab fa-tiktok"></i></a>
-                        </div>
-                    </div>
+                <div class="footer-col3">
+                    <h4>STORE INFORMATION</h4>
+                    <ul>
+                        <li><a href="memberAboutUs.php">About Us</a></li>
+                        <li><a href="memberContactUs.php">Contact Us</a></li>
+                    </ul>
                 </div>
             </div>
-            <div class="copyright">
-                Copyright &copy; 2024 PuffLab
+            <div class="footer-bottom">
+                <div class="footer-col4">
+                    <h4>FOLLOW US ON</h4>
+                    <div class="social-icons">
+                        <a href="https://www.facebook.com/PuffLabPLT/" target="_blank"><i class="fab fa-facebook"></i></a>
+                        <a href="https://www.instagram.com/puff.lab/?hl=en" target="_blank"><i class="fab fa-instagram"></i></a>
+                        <a href="https://www.tiktok.com/@pufflabplt" target="_blank"><i class="fab fa-tiktok"></i></a>
+                    </div>
+                </div>
             </div>
-        </footer>
+        </div>
+        <div class="copyright">
+            Copyright &copy; 2024 PuffLab
+        </div>
+    </footer>
     
         <script src="script.js"></script>
         <script src="memberCart.js"></script>

@@ -1,3 +1,22 @@
+<?php
+session_start();
+
+// Check if user is logged in
+if (!isset($_SESSION['user_id'])) {
+    header("Location: publicLogin.html");
+    exit();
+}
+
+// Check user's role if needed
+if ($_SESSION['role'] !== 'member') {
+    header("Location: publicLogin.html");
+    exit();
+}
+
+// Your protected content here
+echo "Welcome to the member section!";
+?>
+
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
 <head>
@@ -29,18 +48,25 @@
                     </ul>
                 </li>
                 <li class="dropdown">
+<<<<<<< HEAD:public/memberOrders.html
                     <a href="memberAboutUs.html">About Us <i class='bx bxs-chevron-down'></i></a>
                     <ul class="dropdown-content">
                         <li><a href="memberAboutUs.html">Our Team</a></li>
                         <li><a href="memberAboutUs.html">Our History</a></li>
+=======
+                    <a href="memberAboutUs.php">About Us <i class='bx bxs-chevron-down'></i></a>
+                    <ul class="dropdown-content">
+                        <li><a href="memberAboutUs.php">Our Team</a></li>
+                        <li><a href="memberAboutUs.php">Our History</a></li>
+>>>>>>> 1c31fb2b36d4d5fbc39ff581fa325e87b35875ab:public/memberOrders.php
                     </ul>
                 </li>
                 <li class="dropdown">
-                    <a href="memberAcc.html">My Account <i class='bx bxs-chevron-down'></i></a>
+                    <a href="memberAcc.php">My Account <i class='bx bxs-chevron-down'></i></a>
                     <ul class="dropdown-content">
-                        <li><a href="memberAcc.html">Dashboard</a></li> <!-- Link to My Account -->
-                        <li><a href="memberOrders.html">Orders</a></li> <!-- Link to My Orders -->
-                        <li><a href="publicHome.html">Log Out</a></li> <!-- Link to LogOut -->
+                        <li><a href="memberAcc.php">Dashboard</a></li> <!-- Link to My Account -->
+                        <li><a href="memberOrders.php">Orders</a></li> <!-- Link to My Orders -->
+                        <li><a href="Logout.php">Log Out</a></li> <!-- Link to LogOut -->
                     </ul>
                 </li>
             </ul>
@@ -51,7 +77,7 @@
                         <i class='bx bx-search'></i>
                     </a>
                 </div>
-                <a href="memberCart.html"><i class='bx bx-cart'></i></a>
+                <a href="memberCart.php"><i class='bx bx-cart'></i></a>
             </div>
         </div>
     </nav>
@@ -69,11 +95,11 @@
             <!-- Left Box -->
             <div class="left-box">
                 <ul>
-                    <li><a href="memberAcc.html">Dashboard</a></li> <!-- Link to My Account -->
-                    <li><a href="memberOrders.html" class="active">Orders</a></li> <!-- Link to My Orders -->
-                    <li><a href="memberAddresses.html">Addresses</a></li> <!-- Link to My Rewards -->
-                    <li><a href="memberAccount.html">Account Details</a></li> <!-- Link to My Account Details -->
-                    <li><a href="publicHome.html">Log Out</a></li> <!-- Link to LogOut -->
+                    <li><a href="memberAcc.php">Dashboard</a></li> <!-- Link to My Account -->
+                    <li><a href="memberOrders.php" class="active">Orders</a></li> <!-- Link to My Orders -->
+                    <li><a href="memberAddresses.php">Addresses</a></li> <!-- Link to My Rewards -->
+                    <li><a href="memberAccount.php">Account Details</a></li> <!-- Link to My Account Details -->
+                    <li><a href="Logout.php">Log Out</a></li> <!-- Link to LogOut -->
                 </ul>
             </div>
 
@@ -104,16 +130,16 @@
                 <div class="footer-col2">
                     <h4>CUSTOMER CARE</h4>
                     <ul>
-                        <li><a href="publicTNC.html">Terms & Conditions</a></li>
-                        <li><a href="publicPrivacyPolicy.html">Privacy Policy</a></li>
-                        <li><a href="publicFaqs.html">FAQs</a></li>
+                        <li><a href="memberTNC.php">Terms & Conditions</a></li>
+                        <li><a href="memberPrivacyPolicy.php">Privacy Policy</a></li>
+                        <li><a href="memberFaqs.php">FAQs</a></li>
                     </ul>
                 </div>
                 <div class="footer-col3">
                     <h4>STORE INFORMATION</h4>
                     <ul>
-                        <li><a href="publicAboutUs.html">About Us</a></li>
-                        <li><a href="publicContactUs.html">Contact Us</a></li>
+                        <li><a href="memberAboutUs.php">About Us</a></li>
+                        <li><a href="memberContactUs.php">Contact Us</a></li>
                     </ul>
                 </div>
             </div>

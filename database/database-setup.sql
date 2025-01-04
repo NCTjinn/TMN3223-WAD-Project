@@ -17,9 +17,6 @@ DROP TABLE IF EXISTS Orders;
 DROP TABLE IF EXISTS FAQ_Categories;
 DROP TABLE IF EXISTS FAQs;
 DROP TABLE IF EXISTS Addresses;
-DROP TABLE IF EXISTS Reviews;
-DROP TABLE IF EXISTS Community_Posts;
-DROP TABLE IF EXISTS User_Favorites;
 DROP TABLE IF EXISTS Sales_Summary;
 
 -- Users table for storing user information
@@ -154,29 +151,6 @@ CREATE TABLE Addresses (
     FOREIGN KEY (user_id) REFERENCES Users(user_id)
 );
 
--- Reviews table for product reviews
-CREATE TABLE Reviews (
-    review_id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT NOT NULL,
-    product_id INT NOT NULL,
-    rating INT NOT NULL CHECK (rating BETWEEN 1 AND 5),
-    comment TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES Users(user_id),
-    FOREIGN KEY (product_id) REFERENCES Products(product_id)
-);
-
--- User favorites table
-CREATE TABLE User_Favorites (
-    favorite_id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT NOT NULL,
-    product_id INT NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES Users(user_id),
-    FOREIGN KEY (product_id) REFERENCES Products(product_id),
-    UNIQUE KEY unique_favorite (user_id, product_id)
-);
-
 -- Sales summary table for analytics
 CREATE TABLE Sales_Summary (
     summary_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -208,14 +182,9 @@ CREATE INDEX idx_transaction_total ON Transactions(total_amount);
 
 -- Cart and favorites indexes
 CREATE INDEX idx_cart_user ON Cart(user_id, added_at);
-CREATE INDEX idx_user_favorites ON User_Favorites(user_id, product_id);
 
 -- Address indexes
 CREATE INDEX idx_address_user ON Addresses(user_id, is_default);
-
--- Review indexes
-CREATE INDEX idx_review_product ON Reviews(product_id);
-CREATE INDEX idx_review_rating ON Reviews(rating);
 
 -- FAQ indexes
 CREATE INDEX idx_faq_category ON FAQs(category_id);
@@ -263,15 +232,23 @@ INSERT INTO Product_Categories (name, description) VALUES
 
 -- Products
 INSERT INTO Products (name, category_id, description, price, stock_quantity) VALUES
-('Classic Cream Puff', 1, 'Original cream puff filled with vanilla custard', 3.50, 100),
-('Chocolate Puff', 1, 'Cream puff with rich chocolate filling', 4.00, 80),
-('Matcha Puff', 1, 'Green tea flavored cream puff', 4.00, 80),
-('Chocolate Cake', 2, 'Rich chocolate cake with ganache', 28.00, 20),
-('Vanilla Cheesecake', 2, 'Classic New York style cheesecake', 32.00, 15),
-('Red Velvet Cake', 2, 'Red velvet cake with cream cheese frosting', 30.00, 18),
-('Classic Milk Tea', 3, 'Traditional milk tea with pearls', 5.50, 150),
-('Matcha Latte', 3, 'Green tea latte with milk', 6.00, 120),
-('Coffee', 3, 'Freshly brewed coffee', 4.50, 200);
+('Vanilla Cream Puff', 1, 'Original cream puff filled with vanilla custard', 3.00, 100, 'assets/images/vanillapuff.jpg'),
+('Chocolate Cream Puff', 1, 'Signature cream puff with chocolate cream filling', 3.00, 100, 'assets/images/chocopuff.jpg'),
+('Matcha Cream Puff', 1, 'Signature premium cream puff with matcha cream filling', 4.00, 100, 'assets/images/matchapuff.jpg'),
+('Earl Grey Cream Puff', 1, 'Signature premium cream puff with Earl Grey cream filling', 4.00, 100, 'assets/images/earlgreypuff.j[g'),
+('Lotus Biscoff Cream Puff', 1, 'Signature luxury cream puff with lotus biscoff cream filling', 5.00, 100, 'assets/images/biscoffpuff.png'),
+('Tiramisu', 2, 'Classic Italian dessert with layers of coffee-soaked cake and mascarpone', 13.00, 30, 'assets/images/tiramisu.png'),
+('Cheese Cake', 2, 'Deliciously creamy cheesecake with a buttery crust', 13.00, 30, 'assets/images/cheesecake.png'),
+('Brownies', 2, 'Rich, fudgy brownies with a perfect balance of sweetness', 8.00, 30, 'assets/images/brownies.png'),
+('Coffee Latte', 3, 'A rich, aromatic coffee with steamed milk', 6.00, 50, 'assets/images/coffeelatte.png'),
+('Chocolate Latte', 3, 'Smooth chocolate latte made with rich cocoa and milk', 8.00, 50, 'assets/images/chocolatte.png'),
+('Matcha Latte', 3, 'Creamy matcha latte made with premium matcha powder', 10.00, 50, 'assets/images/matchalatte.png'),
+('Americano', 3, 'Strong black coffee made with espresso', 5.00, 50, 'assets/images/americano.png'),
+('Strawberry Latte', 3, 'Refreshing strawberry-flavored latte', 7.00, 50, 'assets/images/strawberrylatte.png'),
+('Yam Latte', 3, 'Sweet and creamy yam-flavored latte', 7.00, 50, 'assets/images/yamlatte.png'),
+('Thai Milk Tea', 3, 'Sweet Thai milk tea with a unique blend of spices', 7.00, 50, 'assets/images/thaimilktea.png'),
+('Thai Green Tea', 3, 'Fragrant Thai green tea with a creamy twist', 7.00, 50, 'assets/images/thaigreentea.png'),
+('Honey Lemon', 3, 'Refreshing honey lemon drink', 6.00, 50, 'assets/images/honeylemon.png');
 
 -- Vouchers
 INSERT INTO Vouchers (voucher_code, discount_percentage, expiry_date) VALUES
@@ -490,21 +467,6 @@ INSERT INTO Addresses (user_id, address_line_1, city, state, postcode, country, 
 (4, '123 Main St #01-01', 'Singapore', 'Singapore', '123456', 'Singapore', true),
 (5, '456 Orchard Rd', 'Singapore', 'Singapore', '234567', 'Singapore', true),
 (6, '789 Cecil St', 'Singapore', 'Singapore', '345678', 'Singapore', true);
-
--- Reviews
-INSERT INTO Reviews (user_id, product_id, rating, comment, created_at) VALUES
-(4, 1, 5, 'Perfect cream puff! Just the right amount of cream.', '2024-01-02'),
-(5, 2, 4, 'Rich chocolate filling, very satisfying.', '2024-01-03'),
-(6, 3, 5, 'Best matcha puff in town!', '2024-01-04'),
-(7, 4, 5, 'Moist and decadent chocolate cake.', '2024-01-05'),
-(8, 5, 4, 'Authentic New York cheesecake taste.', '2024-01-06'),
-(9, 6, 5, 'Beautiful red velvet cake, not too sweet.', '2024-01-07'),
-(10, 7, 4, 'Perfect bubble tea pearls.', '2024-01-08'),
-(11, 8, 5, 'Smooth and rich matcha latte.', '2024-01-09');
-
--- User Favorites
-INSERT INTO User_Favorites (user_id, product_id) VALUES
-(4, 1), (4, 2), (5, 3), (6, 4), (7, 5), (8, 6);
 
 -- Sales Summary
 INSERT INTO Sales_Summary (date, total_orders, gross_sales, returns, net_sales, delivery_fee, tax) VALUES
