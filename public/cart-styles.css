@@ -42,6 +42,26 @@
     border-bottom: 1px solid #eee;
 }
 
+
+.product-info {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+}
+
+.cart-item-image {
+    width: 80px;
+    height: 80px;
+    flex-shrink: 0;
+}
+
+.cart-item-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
 .item-details {
     display: flex;
     flex-direction: column;
@@ -53,14 +73,3 @@
     margin-top: 4px;
 }
 
-.remove-item {
-    background: none;
-    border: none;
-    color: #ff4444;
-    cursor: pointer;
-    padding: 4px;
-}
-
-.remove-item:hover {
-    color: #cc0000;
-}
