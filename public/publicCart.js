@@ -1,4 +1,4 @@
-// guest-cart-manager.js
+// publicCart.js
 
 class GuestCartManager {
     constructor() {
@@ -8,16 +8,18 @@ class GuestCartManager {
     }
 
     async initializeCart() {
+        // Check and initialize the cart if necessary
         if (!localStorage.getItem(this.STORAGE_KEY)) {
             this.saveCart({
                 items: [],
                 lastUpdated: new Date().toISOString()
             });
         }
-        await this.updateCartDisplay(); // Make this async
+    
+        // Update cart display and count
         this.updateCartCount();
+        await this.updateCartDisplay(); // Make this async only if fetching external data
     }
-
     // Set up all event listeners
     setupEventListeners() {
         // Product page add to cart button
@@ -256,4 +258,3 @@ class GuestCartManager {
 
 // Initialize cart manager
 const cartManager = new GuestCartManager();
-export default cartManager;
