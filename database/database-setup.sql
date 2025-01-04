@@ -64,7 +64,7 @@ CREATE TABLE Cart (
     quantity INT NOT NULL,
     added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES Users(user_id),
-    FOREIGN KEY (product_id) REFERENCES Products(product_id)
+    FOREIGN KEY (product_id) REFERENCES Products(product_id) ON DELETE CASCADE
 );
 
 -- Vouchers table for managing discount codes
@@ -98,12 +98,12 @@ CREATE TABLE Transactions (
 CREATE TABLE Transaction_Details (
     transaction_detail_id INT AUTO_INCREMENT PRIMARY KEY,
     transaction_id INT NOT NULL,
-    product_id INT NOT NULL,
+    product_id INT,
     quantity INT NOT NULL,
     price_per_item DECIMAL(10,2) NOT NULL,
     subtotal DECIMAL(10,2) NOT NULL,
     FOREIGN KEY (transaction_id) REFERENCES Transactions(transaction_id),
-    FOREIGN KEY (product_id) REFERENCES Products(product_id)
+    FOREIGN KEY (product_id) REFERENCES Products(product_id) ON DELETE SET NULL
 );
 
 -- Orders table for tracking order status
