@@ -17,7 +17,6 @@ DROP TABLE IF EXISTS Orders;
 DROP TABLE IF EXISTS FAQ_Categories;
 DROP TABLE IF EXISTS FAQs;
 DROP TABLE IF EXISTS Addresses;
-DROP TABLE IF EXISTS Community_Posts;
 DROP TABLE IF EXISTS Sales_Summary;
 
 -- Users table for storing user information
