@@ -1,147 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
-    const profileIcon = document.getElementById('profile-icon');
-    const profileDropdown = document.getElementById('dropdown-menu');
-    const notificationIcon = document.querySelector('.fa-bell');
-    const notificationDropdown = document.createElement('div');
-
-    // Dynamically create notification dropdown
-    notificationDropdown.className = 'dropdown-menu';
-    notificationDropdown.id = 'notification-dropdown';
-
-    // Notifications data
-    const notifications = [
-        { message: "New user registered", isRead: false },
-        { message: "System backup completed", isRead: true },
-        { message: "New comment on blog post", isRead: false },
-    ];
-
-    // Render notifications
-    function renderNotifications() {
-        notificationDropdown.innerHTML = `
-            <div class="dropdown-header">Notifications</div>
-            <button class="mark-all-btn">Mark All as Read</button>
-        `;
-
-        notifications.forEach((notification, index) => {
-            const unreadClass = notification.isRead
-                ? ''
-                : `<span class="unread-indicator"></span>`;
-            notificationDropdown.innerHTML += `
-                <div class="notification-item" data-index="${index}">
-                    ${unreadClass}
-                    <div class="notification-text">
-                        <span class="notification-title">${notification.message}</span>
-                        <span class="notification-time">5 mins ago</span>
-                    </div>
-                </div>
-            `;
-        });
-
-        const markAllBtn = notificationDropdown.querySelector('.mark-all-btn');
-        markAllBtn.addEventListener('click', () => {
-            notifications.forEach((n) => (n.isRead = true));
-            renderNotifications();
-        });
-
-        const notificationItems = notificationDropdown.querySelectorAll('.notification-item');
-        notificationItems.forEach((item) => {
-            item.addEventListener('click', (e) => {
-                const index = e.currentTarget.getAttribute('data-index');
-                notifications[index].isRead = true;
-                renderNotifications();
-            });
-        });
-    }
-
-    // Append notification dropdown to the body
-    document.body.appendChild(notificationDropdown);
-
-    // Position notification dropdown
-    function positionNotificationDropdown() {
-        const rect = notificationIcon.getBoundingClientRect();
-        let dropdownTop = rect.bottom + window.scrollY + 10; // Add spacing
-        let dropdownLeft = rect.left;
-
-        if (dropdownTop + 300 > window.innerHeight + window.scrollY) {
-            dropdownTop = rect.top + window.scrollY - 300 - 10;
-        }
-        if (dropdownLeft + 300 > window.innerWidth) {
-            dropdownLeft = window.innerWidth - 310;
-        }
-
-        notificationDropdown.style.position = 'absolute';
-        notificationDropdown.style.top = `${dropdownTop}px`;
-        notificationDropdown.style.left = `${dropdownLeft}px`;
-    }
-
-    // Toggle notification dropdown
-    notificationIcon.addEventListener('click', function (e) {
-        e.stopPropagation();
-        const isActive = notificationDropdown.classList.contains('active');
-        closeAllDropdowns();
-        if (!isActive) {
-            positionNotificationDropdown();
-            notificationDropdown.classList.add('active');
-        }
-    });
-
-    // Toggle profile dropdown
-    profileIcon.addEventListener('click', function (e) {
-        e.stopPropagation();
-        const isActive = profileDropdown.classList.contains('active');
-        closeAllDropdowns();
-        if (!isActive) {
-            profileDropdown.classList.add('active');
-        }
-    });
-
-    // Close all dropdowns when clicking outside
-    document.addEventListener('click', function (e) {
-        if (
-            !e.target.closest('.user-dropdown') &&
-            !e.target.closest('.icon') &&
-            !e.target.closest('#notification-dropdown')
-        ) {
-            closeAllDropdowns();
-        }
-    });
-
-    // Helper function to close all dropdowns
-    function closeAllDropdowns() {
-        notificationDropdown.classList.remove('active');
-        profileDropdown.classList.remove('active');
-    }
-
-    // Update notification badge
-    function updateNotificationBadge(count) {
-        const badge = document.getElementById('notification-badge');
-        
-        if (count > 0) {
-            badge.textContent = count; // Update badge number
-            badge.style.visibility = 'visible'; // Show the badge
-        } else {
-            badge.style.visibility = 'hidden'; // Hide the badge
-        }
-    }
-    
-    // Simulate fetching unread notifications
-    function fetchNotifications() {
-        // Replace this with your actual API call
-        fetch('/api/notifications/unread')
-            .then((response) => response.json())
-            .then((data) => {
-                const unreadCount = data.unreadCount || 0; // Default to 0 if no unreadCount is present
-                updateNotificationBadge(unreadCount);
-            })
-            .catch(console.error);
-    }
-    
-    // Call the function periodically or on page load
-    fetchNotifications();
-    setInterval(fetchNotifications, 60000); // Check every 60 seconds
-
-    // Initial render of notifications
-    renderNotifications();
+    let products = []; // Initialize products array
 
     const addProductBtn = document.getElementById('addProductBtn');
     const productModal = document.getElementById('productModal');
@@ -153,36 +11,103 @@ document.addEventListener('DOMContentLoaded', function () {
     const uploadArea = document.getElementById('uploadArea');
     const imagePreview = document.getElementById('imagePreview');
     const modalTitle = document.getElementById('modalTitle');
-    const historyLogBtn = document.getElementById('historyLogBtn');
-    const historyModal = document.getElementById('historyModal');
-    const historyTableBody = document.getElementById('historyTableBody');
-    const closeHistoryModal = document.getElementById('closeHistoryModal');
 
-    let editIndex = null; // Tracks product being edited
-    let tempImage = ''; // Temporary image URL for new uploads
+    let editIndex = null;
+    let tempImage = '';
 
-    // Dummy products for initial rendering
-    const products = [
-        {
-            id: 1,
-            image: 'https://via.placeholder.com/50',
-            name: 'Sample Product 1',
-            price: 10.99,
-            stock: 20,
-            description: 'A description of Sample Product 1.',
-        },
-        {
-            id: 2,
-            image: 'https://via.placeholder.com/50',
-            name: 'Sample Product 2',
-            price: 15.49,
-            stock: 0,
-            description: 'A description of Sample Product 2.',
-        },
-    ];
-    const history = []; // Track deleted products
+    // Add validation message container after each form field
+    function addValidationMessage(inputElement) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'validation-message';
+        messageDiv.style.color = '#d9534f';
+        messageDiv.style.fontSize = '12px';
+        messageDiv.style.marginTop = '5px';
+        messageDiv.style.display = 'none';
+        inputElement.parentNode.appendChild(messageDiv);
+    }
 
-    // Show confirmation message
+    // Initialize validation messages
+    function initializeValidationMessages() {
+        const inputs = productForm.querySelectorAll('input, textarea');
+        inputs.forEach(input => {
+            addValidationMessage(input);
+            
+            // Add input event listener to hide message when user starts typing
+            input.addEventListener('input', () => {
+                const messageDiv = input.parentNode.querySelector('.validation-message');
+                messageDiv.style.display = 'none';
+            });
+        });
+    }
+
+    // Show validation message for a specific field
+    function showValidationMessage(inputElement, message) {
+        const messageDiv = inputElement.parentNode.querySelector('.validation-message');
+        messageDiv.textContent = message;
+        messageDiv.style.display = 'block';
+
+        // Highlight the input field
+        inputElement.style.borderColor = '#d9534f';
+        
+        // Remove highlight when user starts typing
+        inputElement.addEventListener('input', function removeHighlight() {
+            inputElement.style.borderColor = '';
+            inputElement.removeEventListener('input', removeHighlight);
+        }, { once: true });
+    }
+
+    function validateForm() {
+        let isValid = true;
+        const requiredFields = {
+            'productName': 'Product name is required',
+            'productPrice': 'Price is required',
+            'productStock': 'Stock quantity is required',
+            'productDescription': 'Description is required'
+        };
+    
+        // Clear all previous validation messages
+        document.querySelectorAll('.validation-message').forEach(msg => {
+            msg.style.display = 'none';
+        });
+    
+        // Check each required field
+        for (const [fieldId, message] of Object.entries(requiredFields)) {
+            const field = document.getElementById(fieldId);
+            if (!field.value.trim()) {
+                showValidationMessage(field, message);
+                isValid = false;
+            }
+        }
+    
+        // Validate price is positive
+        const priceField = document.getElementById('productPrice');
+        if (parseFloat(priceField.value) <= 0) {
+            showValidationMessage(priceField, 'Price must be greater than 0');
+            isValid = false;
+        }
+    
+        // Validate stock is non-negative
+        const stockField = document.getElementById('productStock');
+        if (parseInt(stockField.value) < 0) {
+            showValidationMessage(stockField, 'Stock cannot be negative');
+            isValid = false;
+        }
+    
+        // Validate image (only required for new products)
+        if (!editIndex && !tempImage) {
+            const imageMessage = uploadArea.querySelector('.validation-message') || 
+                                   (addValidationMessage(uploadArea), uploadArea.querySelector('.validation-message'));
+            imageMessage.textContent = 'Product image is required';
+            imageMessage.style.display = 'block';
+            isValid = false;
+    
+            // Add a popup warning (alert)
+            alert('Product image is required!');
+        }
+    
+        return isValid;
+    }
+
     function showConfirmationMessage(message, type = 'success') {
         confirmationMessage.textContent = message;
         confirmationMessage.className = `confirmation-message ${type}`;
@@ -190,7 +115,6 @@ document.addEventListener('DOMContentLoaded', function () {
         setTimeout(() => confirmationMessage.classList.add('hidden'), 3000);
     }
 
-    // Render the products table
     function renderProducts() {
         productTableBody.innerHTML = '';
         if (products.length === 0) {
@@ -200,109 +124,173 @@ document.addEventListener('DOMContentLoaded', function () {
         products.forEach((product, index) => {
             const row = document.createElement('tr');
             row.innerHTML = `
-                <td><img src="${product.image}" alt="Product Image"></td>
+                <td><img src="${product.image_url || 'https://via.placeholder.com/50'}" alt="Product Image"></td>
                 <td>${product.name}</td>
-                <td>${product.price.toFixed(2)}</td>
-                <td>${product.stock}</td>
+                <td>$${parseFloat(product.price).toFixed(2)}</td>
+                <td>${product.stock_quantity}</td>
                 <td>${product.description}</td>
                 <td>
-                    <button class="action-btn edit-btn" data-index="${index}">Edit</button>
-                    <button class="action-btn delete-btn" data-index="${index}">Delete</button>
+                    <button class="action-btn edit-btn" data-index="${index}">
+                        <i class="fas fa-edit"></i> Edit
+                    </button>
+                    <button class="action-btn delete-btn" data-index="${index}">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
                 </td>
             `;
             productTableBody.appendChild(row);
         });
     }
 
-    // Render the history log
-    function renderHistory() {
-        historyTableBody.innerHTML = '';
-        if (history.length === 0) {
-            historyTableBody.innerHTML = '<tr><td colspan="4">No history available.</td></tr>';
-            return;
-        }
-        history.forEach((entry, index) => {
-            const [date, time] = entry.deletedAt.split(' ');
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${date}</td>
-                <td>${time}</td>
-                <td>${entry.product.name}</td>
-                <td>
-                    <button class="action-btn restore-btn" data-index="${index}">Restore</button>
-                </td>
-            `;
-            historyTableBody.appendChild(row);
-        });
-    }
-
-    // Open modal for adding or editing products
-    function openModal(title = 'Add New Product', editing = false, product = null) {
-        modalTitle.textContent = title;
-        productModal.classList.add('active');
-
-        if (editing && product) {
-            productForm.productName.value = product.name;
-            productForm.productPrice.value = product.price.toFixed(2);
-            productForm.productStock.value = product.stock;
-            productForm.productDescription.value = product.description;
-            tempImage = product.image; // Ensure existing image is stored in tempImage if editing
-            imagePreview.src = tempImage;
-            imagePreview.classList.remove('hidden');
-        } else {
-            productForm.reset();
-            imagePreview.classList.add('hidden');
-            tempImage = ''; // Clear tempImage if not editing
+    async function fetchProducts() {
+        try {
+            const response = await fetch('productmanagement.php?action=fetch');
+            if (!response.ok) throw new Error('Network response was not ok');
+            const data = await response.json();
+            products = data;
+            renderProducts();
+        } catch (error) {
+            console.error('Error fetching products:', error);
+            showConfirmationMessage('Error loading products', 'error');
         }
     }
 
-    
-
-    // Close modal
-    function closeModal() {
-        productModal.classList.remove('active');
-        productImageInput.value = '';
-        imagePreview.src = '';
-        imagePreview.classList.add('hidden');
-        editIndex = null; // Reset editIndex
-    }
-
-    // Open the history modal
-    function openHistoryModal() {
-        renderHistory();
-        historyModal.classList.add('active');
-    }
-
-    // Close the history modal
-    function closeHistoryModalHandler() {
-        historyModal.classList.remove('active');
-    }
-
-    // Handle File Selection via Click or Drag-and-Drop
     function handleFile(file) {
-        if (file && file.type.startsWith('image/')) { // Ensure it's an image
+        if (file && file.type.startsWith('image/')) {
             const reader = new FileReader();
             reader.onload = function () {
-                tempImage = reader.result; // Store the uploaded image as Base64
-                imagePreview.src = tempImage; // Update the preview image source
-                imagePreview.classList.remove('hidden'); // Show the preview
+                tempImage = reader.result;
+                imagePreview.src = tempImage;
+                imagePreview.classList.remove('hidden');
             };
-            reader.readAsDataURL(file); // Read the file as a data URL
+            reader.readAsDataURL(file);
         } else {
             alert('Please upload a valid image file.');
         }
     }
-    // Handle File Input Change
-    productImageInput.addEventListener('change', (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            handleFile(file);
+
+    function openModal(title = 'Add New Product', editing = false, product = null) {
+        modalTitle.textContent = title;
+        productModal.classList.add('active');
+        
+        if (editing && product) {
+            productForm.productName.value = product.name;
+            productForm.productPrice.value = parseFloat(product.price).toFixed(2);
+            productForm.productStock.value = product.stock_quantity;
+            productForm.productDescription.value = product.description;
+            tempImage = product.image_url;
+            if (tempImage) {
+                imagePreview.src = tempImage;
+                imagePreview.classList.remove('hidden');
+            }
+        } else {
+            productForm.reset();
+            imagePreview.classList.add('hidden');
+            tempImage = '';
+        }
+    }
+
+    function closeModal() {
+        productModal.classList.remove('active');
+        productForm.reset();
+        imagePreview.src = '';
+        imagePreview.classList.add('hidden');
+        editIndex = null;
+    }
+
+    async function saveProduct(formData) {
+        const action = editIndex !== null ? 'update' : 'add';
+        try {
+            const response = await fetch(`productmanagement.php?action=${action}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            });
+    
+            const data = await response.json();
+            if (!response.ok) {
+                throw new Error(data.error || 'Failed to save product');
+            }
+    
+            if (data.success) {
+                showConfirmationMessage(data.message);
+                await fetchProducts(); // Refresh the product list
+                closeModal();
+                return true;
+            } else {
+                throw new Error(data.error || 'Failed to save product');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showConfirmationMessage(`Error: ${error.message}`, 'error');
+            throw error;
+        }
+    }
+
+    async function deleteProduct(productId) {
+        try {
+            const response = await fetch(`productmanagement.php?action=delete`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ product_id: productId })
+            });
+
+            const data = await response.json();
+            if (!response.ok) {
+                throw new Error(data.error || 'Failed to delete product');
+            }
+
+            if (data.success) {
+                await fetchProducts();
+                showConfirmationMessage(data.message);
+            } else {
+                throw new Error(data.error || 'Failed to delete product');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showConfirmationMessage(`Error: ${error.message}`, 'error');
+        }
+    }
+
+    // Event Listeners
+    addProductBtn.addEventListener('click', () => openModal('Add New Product'));
+    cancelModal.addEventListener('click', closeModal);
+
+    productForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+    
+        const formData = {
+            name: productForm.productName.value.trim(),
+            price: parseFloat(productForm.productPrice.value),
+            stock_quantity: parseInt(productForm.productStock.value),
+            description: productForm.productDescription.value.trim(),
+            image_url: tempImage || 'https://via.placeholder.com/50',
+            category_id: 1 // Default category
+        };
+    
+        if (editIndex !== null) {
+            formData.product_id = products[editIndex].product_id;
+        }
+    
+        try {
+            await saveProduct(formData);
+        } catch (error) {
+            console.error('Error saving product:', error);
         }
     });
 
-    // Drag-and-Drop Support
+    // Image upload events
+    productImageInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) handleFile(file);
+    });
+
     uploadArea.addEventListener('dragover', (e) => {
-        e.preventDefault(); // Prevent default behavior to allow drop
+        e.preventDefault();
         uploadArea.classList.add('drag-over');
     });
 
@@ -311,127 +299,35 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     uploadArea.addEventListener('drop', (e) => {
-        e.preventDefault(); // Prevent default behavior
+        e.preventDefault();
         uploadArea.classList.remove('drag-over');
         const file = e.dataTransfer.files[0];
-        if (file) {
-            handleFile(file);
-        }
+        if (file) handleFile(file);
     });
 
-    // Click Event to Trigger File Input
     uploadArea.addEventListener('click', () => {
         productImageInput.click();
     });
-    
-
-    // Save product (Add or Edit)
-    productForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-
-        const newProduct = {
-            id: editIndex !== null ? products[editIndex].id : Date.now(),
-            image: tempImage || (editIndex !== null && products[editIndex].image ? products[editIndex].image : 'https://via.placeholder.com/50'),
-            name: productForm.productName.value,
-            price: parseFloat(productForm.productPrice.value),
-            stock: parseInt(productForm.productStock.value, 10),
-            description: productForm.productDescription.value,
-        };
-
-        const method = editIndex !== null ? 'PUT' : 'POST';
-        const url = editIndex !== null ? `/api/products/${newProduct.id}` : '/api/products';
-
-        fetch(url, {
-            method: method,
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(newProduct)
-        })
-        .then(response => response.json())
-        .then(() => {
-            fetchProducts();
-            showConfirmationMessage(editIndex !== null ? 'Product updated successfully!' : 'Product added successfully!');
-            closeModal();
-        })
-        .catch(console.error);
-    });
-
-    // Fetch products from the backend
-    function fetchProducts() {
-        fetch('/api/admin/products')
-            .then(response => response.json())
-            .then(data => {
-                products.length = 0; // Clear existing products
-                products.push(...data); // Add fetched products
-                renderProducts();
-            })
-            .catch(console.error);
-    }
-
-    // Fetch history from the backend
-    function fetchHistory() {
-        fetch('/api/admin/products/history')
-            .then(response => response.json())
-            .then(data => {
-                history.length = 0; // Clear existing history
-                history.push(...data); // Add fetched history
-                renderHistory();
-            })
-            .catch(console.error);
-    }
 
     // Handle product actions (Edit/Delete)
-    productTableBody.addEventListener('click', (e) => {
-        const index = e.target.getAttribute('data-index');
+    productTableBody.addEventListener('click', async (e) => {
+        const button = e.target.closest('.action-btn');
+        if (!button) return;
 
-        if (e.target.classList.contains('edit-btn')) {
-            const product = products[parseInt(index, 10)];
-            editIndex = parseInt(index, 10); // Set the edit index
+        const index = parseInt(button.dataset.index);
+        const product = products[index];
 
+        if (button.classList.contains('edit-btn')) {
+            editIndex = index;
             openModal('Edit Product', true, product);
-        } else if (e.target.classList.contains('delete-btn')) {
+        } else if (button.classList.contains('delete-btn')) {
             if (confirm('Are you sure you want to delete this product?')) {
-                const productId = products[index].id;
-                fetch(`/api/products/${productId}`, {
-                    method: 'DELETE'
-                })
-                .then(() => {
-                    fetchProducts();
-                    showConfirmationMessage('Product deleted successfully!', 'error');
-                })
-                .catch(console.error);
+                await deleteProduct(product.product_id);
             }
         }
     });
-
-    // Handle history actions (Restore)
-    historyTableBody.addEventListener('click', (e) => {
-        const index = e.target.getAttribute('data-index');
-        if (e.target.classList.contains('restore-btn')) {
-            const restoredProduct = history[index].product;
-            fetch(`/api/products/restore/${restoredProduct.id}`, {
-                method: 'POST'
-            })
-            .then(() => {
-                fetchProducts();
-                fetchHistory();
-                showConfirmationMessage('Product restored successfully!');
-            })
-            .catch(console.error);
-        }
-    });
-
-    // Event listeners
-    addProductBtn.addEventListener('click', () => openModal());
-    cancelModal.addEventListener('click', closeModal);
-    historyLogBtn.addEventListener('click', openHistoryModal);
-    closeHistoryModal.addEventListener('click', closeHistoryModalHandler);
-
-    // Initial fetch of products and history
+    // Initialize validation messages when the page loads
+    initializeValidationMessages();
+    // Initialize products table
     fetchProducts();
-    fetchHistory();
-
-    // Initial render
-    renderProducts();
 });
