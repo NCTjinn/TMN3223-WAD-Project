@@ -383,9 +383,7 @@ button.mark-all-btn:hover {
     align-items: center;
     margin-bottom: 20px;
     padding: 20px;
-    background: linear-gradient(to right, #6c7a5d, #a8b78a);
-    color: white;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    color: #1F1F1F;
 }
 
 .product-management-header h1 {
@@ -471,12 +469,12 @@ button.mark-all-btn:hover {
 }
 
 .edit-btn {
-    background: #f0ad4e;
+    background: #a49b6d;
     color: white;
 }
 
 .edit-btn:hover {
-    background: #ec971f;
+    background: #a49b6d;
     transform: scale(1.05);
 }
 
@@ -735,8 +733,8 @@ textarea {
 
 .add-product-btn,
 .history-log-btn {
-    background: #5cb85c;
-    color: white;
+    background: #C2C9AD;
+    color: rgb(0, 0, 0);
     padding: 12px 20px;
     font-size: 1rem;
     border: none;
@@ -748,7 +746,7 @@ textarea {
 
 .add-product-btn:hover,
 .history-log-btn:hover {
-    background: #4cae4c;
+    background: #C2C9AD;
     transform: scale(1.05);
 }
 
@@ -793,7 +791,7 @@ textarea {
 }
 
 #cancelModal {
-    background: #d9534f;
+    background: #bf433f;
 }
 
 #saveProduct {
@@ -805,7 +803,7 @@ textarea {
 }
 
 #saveProduct:hover {
-    background: #4cae4c;
+    background: #1F1F1F;
 }
 
 /* Adjusted Spacing */
@@ -813,5 +811,11 @@ textarea {
     margin-bottom: 30px;
 }
 
-
+:root {
+    --sage-green: #C2C9AD;
+    --cream-light: #F9FAEB;
+    --cream-medium: #F6EABE;
+    --cream-dark: #F2EDD3;
+    --charcoal: #1F1F1F;
+}
 
