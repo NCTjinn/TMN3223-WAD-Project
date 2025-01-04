@@ -42,12 +42,17 @@ document.addEventListener('DOMContentLoaded', function () {
     const searchBar = document.getElementById("searchBar");
     const filterDropdown = document.getElementById("filterDropdown");
     const filterOptions = document.querySelectorAll(".filter-option");
+    const errorMessage = document.getElementById('error-message');
+
+    if (!memberTableBody || !pageNumbers || !prevPageBtn || !nextPageBtn || !searchBar || !filterDropdown) {
+        console.error("Required DOM elements not found");
+        return;
+    }
  
 
     let currentFilter = "all";
 
-    function fetchMembers(attempts = 5) {
-        console.log(`Fetching members, attempt: ${6 - attempts}`);
+    function fetchMembers() {
         fetch('./fetchMembers.php')
             .then(response => {
                 if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
@@ -65,22 +70,18 @@ document.addEventListener('DOMContentLoaded', function () {
             })
             .catch(error => {
                 console.error("Error fetching members:", error);
-                if (attempts > 1) {
-                    setTimeout(() => fetchMembers(attempts - 1), 3000);
-                } else {
-                    document.getElementById('error-message').innerText = "Failed to load members. Click to retry.";
-                    document.getElementById('error-message').onclick = () => fetchMembers(5);
-                }
+                document.getElementById('error-message').innerText = "Failed to load members. Click to retry.";
+                document.getElementById('error-message').onclick = () => fetchMembers();
             });
     }
     
 
     // Render table
     function renderTable() {
-        memberTableBody.innerHTML = ''; // Clear existing rows
+        memberTableBody.innerHTML = '';
         const start = (currentPage - 1) * rowsPerPage;
         const end = start + rowsPerPage;
-        const pageData = filteredMembers.slice(start, end); // Use dynamically filtered data
+        const pageData = filteredMembers.slice(start, end);
     
         pageData.forEach((member, index) => {
             const row = `
@@ -88,7 +89,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     <td>${member.id}</td>
                     <td>${member.username}</td>
                     <td>${member.creationDate}</td>
-                    <td>${member.points}</td>
                     <td>$${member.totalSpent}</td>
                     <td>${member.lastTransaction}</td>
                 </tr>
@@ -97,7 +97,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     
         updatePagination();
-        attachRowListeners();
+        // Removed attachRowListeners() call since it's not defined
     }
     
 

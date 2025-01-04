@@ -25,7 +25,7 @@ echo "Welcome to the admin section!";
     <title>Member Management</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="adminMembers.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js" integrity="sha512-ElRFoEQdI5Ht6kZvyzXhYG9NqjtkmlkfYk0wr6wHxU9JEHakS7UJZNeml5ALk+8IKlU6jDgMabC3vkumRokgJA==" crossorigin="anonymous" referrer-policy="no-referrer"></script>
 </head>
 <body>
     <!-- Header Section -->
@@ -73,6 +73,8 @@ echo "Welcome to the admin section!";
         <main class="admin-content">
             <h1>Member Management</h1>
             <!-- Filters -->
+             <!-- Add this somewhere in your main content -->
+            <div id="error-message" class="error-message"></div>
             <div class="member-management-actions">
                 <input type="text" id="searchBar" placeholder="Search by Username or ID" class="search-bar" />
                 <div class="filter-actions">
@@ -95,7 +97,6 @@ echo "Welcome to the admin section!";
                         <th>Member ID</th>
                         <th>Username</th>
                         <th>Account Creation Date</th>
-                        <th>Points</th>
                         <th>Total Spent</th>
                         <th>Last Transaction</th>
                     </tr>
