@@ -231,7 +231,7 @@ INSERT INTO Product_Categories (name, description) VALUES
 ('Beverages', 'Refreshing drinks to complement your treats');
 
 -- Products
-INSERT INTO Products (name, category_id, description, price, stock_quantity) VALUES
+INSERT INTO Products (name, category_id, description, price, stock_quantity, image_url) VALUES
 ('Vanilla Cream Puff', 1, 'Original cream puff filled with vanilla custard', 3.00, 100, 'assets/images/vanillapuff.jpg'),
 ('Chocolate Cream Puff', 1, 'Signature cream puff with chocolate cream filling', 3.00, 100, 'assets/images/chocopuff.jpg'),
 ('Matcha Cream Puff', 1, 'Signature premium cream puff with matcha cream filling', 4.00, 100, 'assets/images/matchapuff.jpg'),
