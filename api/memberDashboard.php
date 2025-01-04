@@ -24,7 +24,6 @@ try {
         exit;
     }
 
-    $_SESSION['user_id'] = 4; // Setting user_id for testing purposes
 
     $user_id = $_SESSION['user_id'];
     $dashboard = [];

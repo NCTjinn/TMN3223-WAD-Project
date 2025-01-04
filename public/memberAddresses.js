@@ -114,10 +114,9 @@ async function saveAddress(addressId) {
             alert('Address updated successfully!');
             window.location.reload(); // Refresh to show new data
         } else {
-            throw new Error(result.message || 'Failed to update address.');
+            // It's important to make sure this block only executes on actual failure.
+            console.error('Error:', result.message);
+            alert('Error updating address. Please check the console for details.');
         }
-    } catch (error) {
-        console.error('Error:', error);
-        alert('Error updating address. Please check the console for details.');
-    }
+
 }
