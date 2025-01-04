@@ -308,16 +308,14 @@ body {
     background: #6c7a5d;
 }
 
-/* Main Content */
 .admin-content {
-    margin-top: 70px; /* Offset for fixed header */
-    margin-left: 70px; /* Offset for fixed sidebar */
-    margin-bottom: 60px;
+    flex: 1;
+    margin-left: 70px; /* Match sidebar width */
     padding: 20px;
-    background-color: #F2EDD3; /* Content background */
-    height: 100%; /* Full height minus header */
-    overflow-y: auto; /* Enable scrolling for content */
-    width: 100%;
+    background-color: #F2EDD3;
+    min-height: calc(100vh - 120px); /* Viewport height minus header and footer */
+    width: calc(100% - 70px);
+    overflow-y: auto;
 }
 
 /* Scrollbar Customization */
