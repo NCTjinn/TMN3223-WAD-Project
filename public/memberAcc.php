@@ -41,18 +41,18 @@ echo "Welcome to the member section!";
             <ul class="links">
                 <li><a href="memberHome.php">Home</a></li>
                 <li class="dropdown">
-                    <a href="publicMenu.html">Menu <i class='bx bxs-chevron-down'></i></a>
+                    <a href="memberMenu.html">Menu <i class='bx bxs-chevron-down'></i></a>
                     <ul class="dropdown-content">
-                        <li><a href="publicMenu.html">Cream Puff</a></li>
-                        <li><a href="publicMenu.html">Petit Gateux</a></li>
-                        <li><a href="publicMenu.html">Shortcakes</a></li>
+                        <li><a href="memberMenu.html">Cream Puff</a></li>
+                        <li><a href="memberMenu.html">Petit Gateux</a></li>
+                        <li><a href="memberMenu.html">Shortcakes</a></li>
                     </ul>
                 </li>
                 <li class="dropdown">
-                    <a href="publicAboutUs.html">About Us <i class='bx bxs-chevron-down'></i></a>
+                    <a href="memberAboutUs.html">About Us <i class='bx bxs-chevron-down'></i></a>
                     <ul class="dropdown-content">
-                        <li><a href="publicAboutUs.html">Our Team</a></li>
-                        <li><a href="publicAboutUs.html">Our History</a></li>
+                        <li><a href="memberAboutUs.html">Our Team</a></li>
+                        <li><a href="memberAboutUs.html">Our History</a></li>
                     </ul>
                 </li>
                 <li class="dropdown">
@@ -60,7 +60,7 @@ echo "Welcome to the member section!";
                     <ul class="dropdown-content">
                         <li><a href="memberAcc.php">Dashboard</a></li> <!-- Link to My Account -->
                         <li><a href="memberOrders.php">Orders</a></li> <!-- Link to My Orders -->
-                        <li><a href="publicHome.html">Log Out</a></li> <!-- Link to LogOut -->
+                        <li><a href="Logout.php">Log Out</a></li> <!-- Link to LogOut -->
                     </ul>
                 </li>
             </ul>
