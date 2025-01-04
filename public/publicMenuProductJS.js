@@ -1,18 +1,5 @@
 // product-js.js
 // Menu Page functionality
-const menuItems = [
-    { id: 1, name: 'Classic Cream Puff', price: 'RM 4.99', category: 'CREAM PUFF' },
-    { id: 2, name: 'Iced Coffee', price: 'RM 3.99', category: 'DRINK' },
-    { id: 3, name: 'Gift Box', price: 'RM 24.99', category: 'GIFTING' },
-    { id: 4, name: 'Party Platter', price: 'RM 49.99', category: 'CATERING' }
-];
-
-const relatedProducts = [
-    { id: 1, name: 'Chocolate Puff', price: 'RM 2.50' },
-    { id: 2, name: 'Matcha Puff', price: 'RM 2.50' },
-    { id: 3, name: 'Coffee Puff', price: 'RM 2.50' },
-    { id: 4, name: 'Strawberry Puff', price: 'RM 2.50' }
-];
 
 function createMenuItemElement(item) {
     return `
@@ -26,35 +13,6 @@ function createMenuItemElement(item) {
             </div>
         </a>
     `;
-}
-
-// Add all the new functions here
-let currentProduct = null;
-
-function showMenuPage() {
-    document.getElementById('menuPage').style.display = 'block';
-    document.getElementById('productPage').style.display = 'none';
-}
-
-function showProductPage() {
-    document.getElementById('menuPage').style.display = 'none';
-    document.getElementById('productPage').style.display = 'block';
-}
-
-// Function to update product page content
-function updateProductPage(product) {
-    currentProduct = product;
-    const productPage = document.getElementById('productPage');
-    
-    // Update product details
-    productPage.querySelector('h1').textContent = product.name;
-    productPage.querySelector('.price').textContent = product.price;
-    
-    // Reset quantity
-    productPage.querySelector('.quantity-control input').value = 1;
-    
-    // Show the product page
-    showProductPage();
 }
 
 function displayMenuItems(category = 'ALL') {
@@ -95,18 +53,41 @@ function initializeProductPage() {
     `).join('');
 }
 
-// Modify your existing DOMContentLoaded event listener to include the new functionality
+let menuItems = [];  // Store menu items fetched from server
+
 document.addEventListener('DOMContentLoaded', () => {
-    displayMenuItems();
-    initializeProductPage();
+    // Fetch products and update the global menuItems variable
+    fetch('get_products.php')
+        .then(response => response.json())
+        .then(products => {
+            menuItems = products;  // Assign the fetched products to the variable
+            displayMenuItems();
+            initializeProductPage();
+        });
+
     
-    // Your existing filter functionality
-    document.querySelector('.filter-container').addEventListener('click', (e) => {
+    document.querySelector('.filter-container').addEventListener('click', async (e) => {
         if (e.target.classList.contains('filter-btn')) {
-            document.querySelectorAll('.filter-btn').forEach(btn => 
-                btn.classList.remove('active'));
+            const buttons = document.querySelectorAll('.filter-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
             e.target.classList.add('active');
-            displayMenuItems(e.target.dataset.category);
+            
+            const categoryId = e.target.dataset.category;
+            const response = await fetch(`get_products.php?category=${categoryId}`);
+            const products = await response.json();
+            
+            const menuGrid = document.getElementById('menuGrid');
+            menuGrid.innerHTML = products.map(product => `
+                <a href="product.php?id=${product.product_id}" class="menu-item" data-category="${product.category_id}">
+                    <div class="menu-item-image">
+                        <img src="${product.image_url}" alt="${product.name}">
+                    </div>
+                    <div class="menu-item-details">
+                        <h3 class="menu-item-title">${product.name}</h3>
+                        <p class="menu-item-price">RM ${parseFloat(product.price).toFixed(2)}</p>
+                    </div>
+                </a>
+            `).join('');
         }
     });
 
