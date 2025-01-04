@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (result.role === 'admin') {
                     window.location.href = 'adminDashboard.php';
                 } else if (result.role === 'member') {
-                    window.location.href = 'memberHome.html';
+                    window.location.href = 'memberHome.php';
                 }
             } else {
                 throw new Error(result.message);
