@@ -12,9 +12,6 @@ if ($_SESSION['role'] !== 'member') {
     header("Location: publicLogin.html");
     exit();
 }
-
-// Your protected content here
-echo "Welcome to the member section!";
 ?>
 
 <!DOCTYPE html>
@@ -78,7 +75,6 @@ echo "Welcome to the member section!";
         <!-- Page Title -->
         <div class="page-title">
             <h1>My Account</h1>
-            <p>Welcome to your account dashboard! Here you can manage your orders, saved addresses, and personal details.</p>
         </div>
 
         <!-- Content Section -->

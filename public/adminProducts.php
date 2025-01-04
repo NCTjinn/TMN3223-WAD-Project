@@ -12,8 +12,6 @@ if ($_SESSION['role'] !== 'admin') {
     echo "Access denied";
     exit();
 }
-// Your protected content here
-echo "Welcome to the admin section!";
 ?>
 
 <!DOCTYPE html>

@@ -12,9 +12,6 @@ if ($_SESSION['role'] !== 'member') {
     header("Location: publicLogin.html");
     exit();
 }
-
-// Your protected content here
-echo "Welcome to the member section!";
 ?>
 
 <!DOCTYPE html>

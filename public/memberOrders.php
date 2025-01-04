@@ -12,9 +12,6 @@ if ($_SESSION['role'] !== 'member') {
     header("Location: publicLogin.html");
     exit();
 }
-
-// Your protected content here
-echo "Welcome to the member section!";
 ?>
 
 <!DOCTYPE html>
@@ -48,17 +45,10 @@ echo "Welcome to the member section!";
                     </ul>
                 </li>
                 <li class="dropdown">
-<<<<<<< HEAD:public/memberOrders.html
-                    <a href="memberAboutUs.html">About Us <i class='bx bxs-chevron-down'></i></a>
-                    <ul class="dropdown-content">
-                        <li><a href="memberAboutUs.html">Our Team</a></li>
-                        <li><a href="memberAboutUs.html">Our History</a></li>
-=======
                     <a href="memberAboutUs.php">About Us <i class='bx bxs-chevron-down'></i></a>
                     <ul class="dropdown-content">
                         <li><a href="memberAboutUs.php">Our Team</a></li>
                         <li><a href="memberAboutUs.php">Our History</a></li>
->>>>>>> 1c31fb2b36d4d5fbc39ff581fa325e87b35875ab:public/memberOrders.php
                     </ul>
                 </li>
                 <li class="dropdown">
@@ -87,7 +77,6 @@ echo "Welcome to the member section!";
         <!-- Page Title -->
         <div class="page-title">
             <h1>My Account</h1>
-            <p>Welcome to your account dashboard! Here you can manage your orders, saved addresses, and personal details.</p>
         </div>
 
         <!-- Content Section -->
