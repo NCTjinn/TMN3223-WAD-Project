@@ -55,7 +55,7 @@ echo "Welcome to the admin section!";
                 <i class="fas fa-users"></i>
                 <span class="sidebar-label">Members</span>
             </a>
-            <a href="adminProducts.html" class="sidebar-item" data-tooltip="Product Management">
+            <a href="adminProducts.php" class="sidebar-item" data-tooltip="Product Management">
                 <i class="fas fa-boxes"></i>
                 <span class="sidebar-label">Products</span>
             </a>

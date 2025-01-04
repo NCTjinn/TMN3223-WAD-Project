@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css">
     <link rel="stylesheet" href="memberOrders.css">
     <script src="script.js"></script>
+    <script src="memberOrders.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
@@ -79,69 +80,13 @@
             <!-- Main Orders Content -->
             <div class="right-box">
                 <h2>Current Orders</h2>
-                <div class="order-list">
-                    <!-- Example Current Order -->
-                    <div class="order-item">
-                        <div class="order-header">
-                            <div>
-                                <h3>Order #56789</h3>
-                                <p>Placed on: 20th December 2023</p>
-                                <p>Status: <span class="status status-processing">Processing</span></p>
-                            </div>
-                            <div class="order-actions">
-                                <button class="track-btn">Track Order</button>
-                                <button class="modify-btn">Modify Order</button>
-                            </div>
-                        </div>
-                        <div class="order-details">
-                            <div class="order-summary">
-                                <h4>Items Ordered:</h4>
-                                <ul>
-                                    <li>Product A - $25</li>
-                                    <li>Product B - $30</li>
-                                </ul>
-                                <p><strong>Total: $55</strong></p>
-                            </div>
-                            <div class="order-buttons">
-                                <button class="reorder-btn">Reorder</button>
-                                <button class="shop-btn">Go Shop</button>
-                                <button class="feedback-btn">Provide Feedback</button>
-                                <button class="support-btn">Contact Support</button>
-                            </div>
-                        </div>
-                    </div>
+                <div class="order-list" id="current-orders-list">
+                    <!-- Current orders will be dynamically inserted here -->
                 </div>
 
                 <h2>Past Orders</h2>
-                <div class="order-list">
-                    <!-- Example Past Order -->
-                    <div class="order-item">
-                        <div class="order-header">
-                            <div>
-                                <h3>Order #12345</h3>
-                                <p>Placed on: 5th December 2023</p>
-                                <p>Status: <span class="status status-delivered">Delivered</span></p>
-                            </div>
-                            <div class="order-actions">
-                                <button class="reorder-btn">Reorder</button>
-                            </div>
-                        </div>
-                        <div class="order-details">
-                            <div class="order-summary">
-                                <h4>Items Ordered:</h4>
-                                <ul>
-                                    <li>Product X - $15</li>
-                                    <li>Product Y - $20</li>
-                                </ul>
-                                <p><strong>Total: $35</strong></p>
-                            </div>
-                            <div class="order-buttons">
-                                <button class="shop-btn">Go Shop</button>
-                                <button class="feedback-btn">Provide Feedback</button>
-                                <button class="support-btn">Contact Support</button>
-                            </div>
-                        </div>
-                    </div>
+                <div class="order-list" id="past-orders-list">
+                    <!-- Past orders will be dynamically inserted here -->
                 </div>
             </div>
         </div>

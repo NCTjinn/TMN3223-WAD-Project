@@ -413,18 +413,30 @@ button.primary:hover {
 
 
 .status {
-    font-weight: bold;
-    font-size: 0.9rem;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.9em;
 }
 
 .status-processing {
-    color: #e8a52e; /* Orange for processing */
+    background-color: #fef3c7;
+    color: #92400e;
+}
+
+.status-shipped {
+    background-color: #dbeafe;
+    color: #1e40af;
 }
 
 .status-delivered {
-    color: #3c9d59; /* Green for delivered */
+    background-color: #dcfce7;
+    color: #166534;
 }
 
+.status-cancelled {
+    background-color: #fee2e2;
+    color: #991b1b;
+}
 
 
 @media (max-width: 768px) {
