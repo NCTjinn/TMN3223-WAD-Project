@@ -1,80 +1,182 @@
 <?php
 header('Content-Type: application/json');
 
+// Database credentials (these should be secured in a config file or environment variables)
 $servername = "sql112.infinityfree.com";
 $username = "if0_37979402";
 $password = "tmn3223ncnhcds";
 $dbname = "if0_37979402_pufflab";
 
-$conn = new mysqli($servername, $username, $password, $dbname);
+// Establishing connection with the database
+$mysqli = new mysqli($servername, $username, $password, $dbname);
 
-if ($conn->connect_error) {
-    die(json_encode(["error" => "Connection failed: " . $conn->connect_error]));
+// Check the connection
+if ($mysqli->connect_error) {
+    error_log("Database connection failed: " . $mysqli->connect_error); // Log the error
+    die(json_encode(["error" => "Database connection failed"])); // Return error in JSON
 }
 
-$action = $_GET['action'] ?? '';
-$data = json_decode(file_get_contents("php://input"), true);
+class FAQ {
+    private $db;
 
-switch ($action) {
-    case 'getMaxId':
-        $sql = "SELECT MAX(faq_id) as maxId FROM FAQs";
-        $result = $conn->query($sql);
-        $row = $result->fetch_assoc();
-        $maxId = $row['maxId'] ?? 0;
-        echo json_encode(["maxId" => $maxId + 1]);
-        break;
+    // Constructor to inject the database connection
+    public function __construct($db) {
+        $this->db = $db;
+    }
 
-    case 'fetch':
-        $sql = "SELECT * FROM FAQs ORDER BY created_at DESC";
-        $result = $conn->query($sql);
-        
-        $faqs = [];
-        while ($row = $result->fetch_assoc()) {
-            $faqs[] = $row;
+    // Method to get the maximum FAQ ID (for creating new FAQ)
+    public function getMaxId() {
+        try {
+            $query = "SELECT MAX(faq_id) as maxId FROM FAQs";
+            $stmt = $this->db->prepare($query);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $row = $result->fetch_assoc();
+            $maxId = $row['maxId'] ?? 0;
+            return $maxId + 1;
+        } catch (Exception $e) {
+            return ['status' => 'error', 'message' => $e->getMessage()];
         }
-        echo json_encode($faqs);
-        break;
+    }
 
-    case 'add':
-        $question = $conn->real_escape_string($data['question']);
-        $answer = $conn->real_escape_string($data['answer']);
-        $faqId = $conn->real_escape_string($data['faq_id']);
-        
-        $sql = "INSERT INTO FAQs (faq_id, question, answer) VALUES ($faqId, '$question', '$answer')";
-        if ($conn->query($sql)) {
-            echo json_encode(["success" => true, "message" => "FAQ added successfully"]);
-        } else {
-            echo json_encode(["error" => $conn->error]);
+    // Method to fetch all FAQs
+    public function fetchFAQs() {
+        try {
+            $query = "SELECT * FROM FAQs ORDER BY created_at DESC";
+            $stmt = $this->db->prepare($query);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            return $result->fetch_all(MYSQLI_ASSOC);
+        } catch (Exception $e) {
+            return ['status' => 'error', 'message' => $e->getMessage()];
         }
-        break;
+    }
 
-    case 'update':
-        $id = $conn->real_escape_string($data['faq_id']);
-        $question = $conn->real_escape_string($data['question']);
-        $answer = $conn->real_escape_string($data['answer']);
-        
-        $sql = "UPDATE FAQs SET question = '$question', answer = '$answer' WHERE faq_id = '$id'";
-        if ($conn->query($sql)) {
-            echo json_encode(["success" => true, "message" => "FAQ updated successfully"]);
-        } else {
-            echo json_encode(["error" => $conn->error]);
+    // Method to add a new FAQ
+    public function addFAQ($faqId, $question, $answer) {
+        try {
+            $query = "INSERT INTO FAQs (faq_id, question, answer) VALUES (?, ?, ?)";
+            $stmt = $this->db->prepare($query);
+            $stmt->bind_param("iss", $faqId, $question, $answer);
+            $stmt->execute();
+            return ['status' => 'success', 'message' => 'FAQ added successfully'];
+        } catch (Exception $e) {
+            return ['status' => 'error', 'message' => $e->getMessage()];
         }
-        break;
+    }
 
-    case 'delete':
-        $id = $conn->real_escape_string($data['faq_id']);
-        
-        $sql = "DELETE FROM FAQs WHERE faq_id = '$id'";
-        if ($conn->query($sql)) {
-            echo json_encode(["success" => true, "message" => "FAQ deleted successfully"]);
-        } else {
-            echo json_encode(["error" => $conn->error]);
+    // Method to update an existing FAQ
+    public function updateFAQ($faqId, $question, $answer) {
+        try {
+            $query = "UPDATE FAQs SET question = ?, answer = ? WHERE faq_id = ?";
+            $stmt = $this->db->prepare($query);
+            $stmt->bind_param("ssi", $question, $answer, $faqId);
+            $stmt->execute();
+            return ['status' => 'success', 'message' => 'FAQ updated successfully'];
+        } catch (Exception $e) {
+            return ['status' => 'error', 'message' => $e->getMessage()];
         }
-        break;
+    }
 
-    default:
-        echo json_encode(["error" => "Invalid action"]);
+    // Method to delete an FAQ
+    public function deleteFAQ($faqId) {
+        try {
+            $query = "DELETE FROM FAQs WHERE faq_id = ?";
+            $stmt = $this->db->prepare($query);
+            $stmt->bind_param("i", $faqId);
+            $stmt->execute();
+            return ['status' => 'success', 'message' => 'FAQ deleted successfully'];
+        } catch (Exception $e) {
+            return ['status' => 'error', 'message' => $e->getMessage()];
+        }
+    }
+
+    // Static method to handle the incoming HTTP requests
+    public static function handleRequest($db) {
+        try {
+            if ($_SERVER['REQUEST_METHOD'] !== 'GET' && $_SERVER['REQUEST_METHOD'] !== 'POST') {
+                http_response_code(405); // Method Not Allowed
+                echo json_encode(['status' => 'error', 'message' => 'Invalid request method']);
+                return;
+            }
+
+            $faq = new FAQ($db);
+
+            // Handle GET request to fetch FAQ data
+            if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+                $action = isset($_GET['action']) ? $_GET['action'] : '';
+                switch ($action) {
+                    case 'getMaxId':
+                        $maxId = $faq->getMaxId();
+                        echo json_encode(['status' => 'success', 'data' => ['maxId' => $maxId]]);
+                        break;
+
+                    case 'fetch':
+                        $faqs = $faq->fetchFAQs();
+                        echo json_encode(['status' => 'success', 'data' => $faqs]);
+                        break;
+
+                    default:
+                        echo json_encode(['status' => 'error', 'message' => 'Invalid action']);
+                        break;
+                }
+            }
+
+            // Handle POST request to add/update/delete FAQ
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                $data = json_decode(file_get_contents("php://input"), true);
+
+                $action = isset($data['action']) ? $data['action'] : '';
+
+                switch ($action) {
+                    case 'add':
+                        $faqId = isset($data['faq_id']) ? $data['faq_id'] : null;
+                        $question = isset($data['question']) ? $data['question'] : '';
+                        $answer = isset($data['answer']) ? $data['answer'] : '';
+                        if ($faqId && $question && $answer) {
+                            $result = $faq->addFAQ($faqId, $question, $answer);
+                            echo json_encode($result);
+                        } else {
+                            echo json_encode(['status' => 'error', 'message' => 'Missing data']);
+                        }
+                        break;
+
+                    case 'update':
+                        $faqId = isset($data['faq_id']) ? $data['faq_id'] : null;
+                        $question = isset($data['question']) ? $data['question'] : '';
+                        $answer = isset($data['answer']) ? $data['answer'] : '';
+                        if ($faqId && $question && $answer) {
+                            $result = $faq->updateFAQ($faqId, $question, $answer);
+                            echo json_encode($result);
+                        } else {
+                            echo json_encode(['status' => 'error', 'message' => 'Missing data']);
+                        }
+                        break;
+
+                    case 'delete':
+                        $faqId = isset($data['faq_id']) ? $data['faq_id'] : null;
+                        if ($faqId) {
+                            $result = $faq->deleteFAQ($faqId);
+                            echo json_encode($result);
+                        } else {
+                            echo json_encode(['status' => 'error', 'message' => 'Missing FAQ ID']);
+                        }
+                        break;
+
+                    default:
+                        echo json_encode(['status' => 'error', 'message' => 'Invalid action']);
+                        break;
+                }
+            }
+        } catch (Exception $e) {
+            // Catch any errors and log them
+            error_log('Request Handling Error: ' . $e->getMessage());
+            http_response_code(500); // Internal Server Error
+            echo json_encode(['status' => 'error', 'message' => 'An internal error occurred']);
+        }
+    }
 }
 
-$conn->close();
+// Handle the request
+FAQ::handleRequest($mysqli);
 ?>

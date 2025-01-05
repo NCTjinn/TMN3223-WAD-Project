@@ -30,8 +30,12 @@ document.addEventListener("DOMContentLoaded", function () {
         fetch("faqsmanagement.php?action=getMaxId")
             .then(response => response.json())
             .then(data => {
-                newFaqId = data.maxId;
-                faqModal.classList.add("active");
+                if (data.status === 'success') {
+                    newFaqId = data.data.maxId;
+                    faqModal.classList.add("active");
+                } else {
+                    alert(data.message || "Error fetching max FAQ ID");
+                }
             })
             .catch(error => console.error("Error fetching max FAQ ID:", error));
     });
@@ -49,30 +53,32 @@ document.addEventListener("DOMContentLoaded", function () {
         
         const formData = {
             question: document.getElementById("faqQuestion").value,
-            answer: document.getElementById("faqAnswer").value
+            answer: document.getElementById("faqAnswer").value,
+            faq_id: currentFaqId ? currentFaqId : newFaqId
         };
 
-        if (currentFaqId) {
-            formData.faq_id = currentFaqId;
-        } else {
-            formData.faq_id = newFaqId;
-        }
+        const action = currentFaqId ? 'update' : 'add';
 
-        fetch(`faqsmanagement.php?action=${currentFaqId ? 'update' : 'add'}`, {
+        fetch(`faqsmanagement.php`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify(formData)
+            body: JSON.stringify({
+                action: action,
+                faq_id: formData.faq_id,
+                question: formData.question,
+                answer: formData.answer
+            })
         })
         .then(response => response.json())
         .then(data => {
-            if (data.success) {
+            if (data.status === 'success') {
                 faqModal.classList.remove("active");
                 newFaqId = null;
                 fetchFAQs();
             } else {
-                alert(data.error || "An error occurred");
+                alert(data.message || "An error occurred");
             }
         })
         .catch(error => console.error("Error:", error));
@@ -83,27 +89,34 @@ document.addEventListener("DOMContentLoaded", function () {
         fetch("faqsmanagement.php?action=fetch")
             .then(response => response.json())
             .then(data => {
-                faqContainer.innerHTML = data.map(faq => `
-                    <div class="faq-item">
-                        <div class="faq-content">
-                            <div class="faq-question">${faq.question}</div>
-                            <div class="faq-answer">${faq.answer}</div>
+                if (data.status === 'success') {
+                    faqContainer.innerHTML = data.data.map(faq => `
+                        <div class="faq-item">
+                            <div class="faq-content">
+                                <div class="faq-question">${faq.question}</div>
+                                <div class="faq-answer">${faq.answer}</div>
+                            </div>
+                            <div class="faq-actions">
+                                <button class="edit-btn" data-id="${faq.faq_id}">
+                                    <i class="fas fa-edit"></i> Edit
+                                </button>
+                                <button class="delete-btn" data-id="${faq.faq_id}">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </div>
                         </div>
-                        <div class="faq-actions">
-                            <button class="edit-btn" data-id="${faq.faq_id}">
-                                <i class="fas fa-edit"></i> Edit
-                            </button>
-                            <button class="delete-btn" data-id="${faq.faq_id}">
-                                <i class="fas fa-trash"></i> Delete
-                            </button>
-                        </div>
-                    </div>
-                `).join('');
-                attachEventListeners();
+                    `).join('');
+                    attachEventListeners();
+                } else {
+                    alert(data.message || "Error fetching FAQs");
+                }
             })
-            .catch(error => console.error("Error:", error));
+            .catch(error => {
+                console.error("Error fetching FAQs:", error);
+                alert("There was an error fetching the FAQs. Please try again later.");
+            });
     }
-
+    
     function attachEventListeners() {
         document.querySelectorAll(".edit-btn").forEach(btn => {
             btn.addEventListener("click", (e) => {
@@ -121,19 +134,22 @@ document.addEventListener("DOMContentLoaded", function () {
         document.querySelectorAll(".delete-btn").forEach(btn => {
             btn.addEventListener("click", () => {
                 if (confirm("Are you sure you want to delete this FAQ?")) {
-                    fetch("faqsmanagement.php?action=delete", {
+                    fetch("faqsmanagement.php", {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json"
                         },
-                        body: JSON.stringify({ faq_id: btn.dataset.id })
+                        body: JSON.stringify({
+                            action: 'delete',
+                            faq_id: btn.dataset.id
+                        })
                     })
                     .then(response => response.json())
                     .then(data => {
-                        if (data.success) {
+                        if (data.status === 'success') {
                             fetchFAQs();
                         } else {
-                            alert(data.error || "An error occurred");
+                            alert(data.message || "An error occurred");
                         }
                     })
                     .catch(error => console.error("Error:", error));
@@ -145,5 +161,3 @@ document.addEventListener("DOMContentLoaded", function () {
     // Initial fetch
     fetchFAQs();
 });
-
-

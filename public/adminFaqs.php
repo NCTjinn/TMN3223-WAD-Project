@@ -104,7 +104,7 @@ if ($_SESSION['role'] !== 'admin') {
             </div>
             <div class="modal-actions">
                 <button type="button" class="cancel-btn">Cancel</button>
-                <button type="submit" class="save-btn">Save Changes</button>
+                <button type="submit" class="save-btn" form="faqForm">Save Changes</button> <!-- Added 'form' attribute -->
             </div>
         </div>
     </div>
@@ -117,5 +117,5 @@ if ($_SESSION['role'] !== 'admin') {
     <!--script-->
     <script src="adminFaqs.js"></script>
 
-    </body>
+</body>
 </html>
