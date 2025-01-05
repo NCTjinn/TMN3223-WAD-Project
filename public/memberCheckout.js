@@ -2,7 +2,7 @@
 const checkout = {
     items: [],
     deliveryOption: null,
-    deliveryFee: 1.99,
+    deliveryFee: 5.00,
 
     async loadUserDetails() {
         try {
@@ -219,6 +219,7 @@ document.addEventListener('DOMContentLoaded', function() {
             checkout.updateCheckoutDisplay();
         });
     });
+});
 
     // Handle address input for delivery fee calculation
     const addressInput = document.querySelector('input[placeholder="Address Line 1*"]');
