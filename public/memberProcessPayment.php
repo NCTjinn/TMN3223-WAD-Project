@@ -108,8 +108,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['payment_method'])) {
         }
 
         // Insert transaction
-        $transaction_sql = "INSERT INTO Transactions (user_id, total_amount, payment_method, payment_status, delivery_address) 
-                          VALUES (?, ?, ?, 'successful', ?)";
+        $transaction_sql = "INSERT INTO Transactions (user_id, total_amount, payment_status, delivery_address) 
+                          VALUES (?, ?, 'successful', ?)";
         $transaction_stmt = $conn->prepare($transaction_sql);
         if (!$transaction_stmt) {
             throw new Exception("Transaction prepare failed: " . $conn->error);
