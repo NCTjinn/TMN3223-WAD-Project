@@ -657,7 +657,6 @@ grid-column: 1;
     border-radius: 4px;
 }
 
-<<<<<<< HEAD
 .continue-button button {
     background-color: #f04e30; /* Change color to match your theme */
     color: white;
@@ -672,7 +671,7 @@ grid-column: 1;
 .continue-button button:hover {
     background-color: #c03d24; /* Darker shade for hover effect */
 }
-=======
+
 .footer {
     background-color: #C2C9AD;
     font-size: large;
@@ -749,4 +748,3 @@ grid-column: 1;
     grid-column: 1;
     }
     }
->>>>>>> d05d3a5b782243113e488d76f31c89b28242c5fe
