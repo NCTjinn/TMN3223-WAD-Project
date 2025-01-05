@@ -90,21 +90,20 @@ function renderTable() {
 
 // Event Handlers
 function attachEventListeners() {
-    // User Dropdown Toggle
+    // Profile dropdown functionality
     const profileIcon = document.getElementById('profile-icon');
-    const dropdownMenu = document.getElementById('dropdown-menu');
-    
-    if (profileIcon && dropdownMenu) {
-        profileIcon.addEventListener('click', (e) => {
-            e.stopPropagation();
-            dropdownMenu.classList.toggle('active');
-        });
+    const profileDropdown = document.getElementById('dropdown-menu');
 
-        // Close dropdown when clicking outside
-        document.addEventListener('click', () => {
-            dropdownMenu.classList.remove('active');
-        });
-    }
+    profileIcon.addEventListener('click', (e) => {
+        e.stopPropagation();
+        profileDropdown.classList.toggle('active');
+    });
+
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.user-dropdown')) {
+            profileDropdown.classList.remove('active');
+        }
+    });
 
     // Apply Filters
     document.getElementById('apply-filters').addEventListener('click', fetchTransactions);

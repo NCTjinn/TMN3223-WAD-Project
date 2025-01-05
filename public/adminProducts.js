@@ -12,6 +12,21 @@ document.addEventListener('DOMContentLoaded', function () {
     const imagePreview = document.getElementById('imagePreview');
     const modalTitle = document.getElementById('modalTitle');
 
+    // Profile dropdown functionality
+    const profileIcon = document.getElementById('profile-icon');
+    const profileDropdown = document.getElementById('dropdown-menu');
+
+    profileIcon.addEventListener('click', (e) => {
+        e.stopPropagation();
+        profileDropdown.classList.toggle('active');
+    });
+
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.user-dropdown')) {
+            profileDropdown.classList.remove('active');
+        }
+    });
+
     let editIndex = null;
     let tempImage = '';
 

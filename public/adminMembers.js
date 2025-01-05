@@ -1,14 +1,17 @@
 document.addEventListener('DOMContentLoaded', function () {
+
+    // Profile dropdown functionality
     const profileIcon = document.getElementById('profile-icon');
     const profileDropdown = document.getElementById('dropdown-menu');
 
-    // Toggle profile dropdown
-    profileIcon.addEventListener('click', function (e) {
+    profileIcon.addEventListener('click', (e) => {
         e.stopPropagation();
-        const isActive = profileDropdown.classList.contains('active');
-        closeAllDropdowns();
-        if (!isActive) {
-            profileDropdown.classList.add('active');
+        profileDropdown.classList.toggle('active');
+    });
+
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.user-dropdown')) {
+            profileDropdown.classList.remove('active');
         }
     });
 
