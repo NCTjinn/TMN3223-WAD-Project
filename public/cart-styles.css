@@ -124,7 +124,7 @@
 }
 
 .quantity-control input {
-    width: 40px; /* Make input narrower */
+    width: 60px; /* Make input narrower */
     height: 24px; /* Make input shorter */
     text-align: center;
     border: 1px solid #ddd;
@@ -147,4 +147,109 @@
     border: none;
     border-radius: 4px;
     cursor: pointer;
+}
+
+.remove-item {
+        margin-top: 20px;
+        cursor: pointer;
+        width: 25px;
+        height: 25px;
+        padding: 0;  /* Ensure no extra padding inside the button */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border: 2px;  /* Optional: remove border if not needed */
+        border-radius: 4px;
+        background-color: #f44336;;  /* Optional: to make background transparent */
+    }
+
+    .remove-item i {
+        font-size: 20px;  /* Adjust icon size as necessary */
+        color: #f5f5f5;  /* Optional: set color */
+    }
+
+.cart-item {
+    display: grid;
+    grid-template-columns: 3fr 1fr 1fr 1fr auto; /* 3 columns for product info, price, quantity, and subtotal */
+    gap: 16px;
+    align-items: center;
+    padding: 16px;
+    border-bottom: 1px solid #eee;
+}
+
+.product-info {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    text-align: left; /* Product info aligned to the left */
+}
+
+.item-price,
+.quantity-control,
+.item-subtotal {
+    text-align: left; /* Align price, quantity, and subtotal to the left */
+}
+
+.quantity-control {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: flex-start; /* Align quantity control to the left */
+}
+
+.item-price {
+    justify-self: start; /* Align item price to the left */
+}
+
+.item-subtotal {
+    text-align: right; /* Align subtotal to the left */
+}
+
+.cart-total {
+    text-align: right;
+    padding: 1rem 0;
+    font-weight: bold;
+    margin-left: auto;
+    width: 25%; /* Ensure the total aligns with the last column */
+}
+
+.remove-item {
+    margin-top: 20px;
+    cursor: pointer;
+    width: 25px;
+    height: 25px;
+    padding: 0;  /* Ensure no extra padding inside the button */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid #ccc;  /* Optional: add border */
+    border-radius: 4px;
+    background-color: #f44336;  /* Optional: background color */
+}
+
+.remove-item i {
+    font-size: 20px;  /* Adjust icon size as necessary */
+    color: #fff;  /* Optional: set color */
+}
+
+.cart-table-header {
+    display: grid;
+    grid-template-columns: 3fr 1fr 1fr 1fr; /* Aligning header columns to match cart items */
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--sage-green);
+    text-align: left; /* Align all header items to the left */
+}
+
+.cart-table-header span:first-child {
+    text-align: left; /* Keep "Product" aligned left */
+}
+
+.cart-table-header span:nth-child(2),
+.cart-table-header span:nth-child(3),
+.cart-table-header span:nth-child(4) {
+    text-align: left; /* Align "Price", "Quantity", and "Subtotal" to the left */
+}
+
+.cart-table-header span:nth-child(4) {
+    text-align: right; /* Align "Price", "Quantity", and "Subtotal" to the left */
 }
