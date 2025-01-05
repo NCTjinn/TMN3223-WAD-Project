@@ -173,14 +173,41 @@ document.addEventListener('DOMContentLoaded', function () {
     function handleFile(file) {
         if (file && file.type.startsWith('image/')) {
             const reader = new FileReader();
-            reader.onload = function () {
+            reader.onload = async function () {
                 tempImage = reader.result;
                 imagePreview.src = tempImage;
                 imagePreview.classList.remove('hidden');
+                
+                // Send the image to the server for saving
+                await saveImageToServer(file);
             };
             reader.readAsDataURL(file);
         } else {
             alert('Please upload a valid image file.');
+        }
+    }
+
+    async function saveImageToServer(file) {
+        const formData = new FormData();
+        formData.append('image', file);
+    
+        try {
+            const response = await fetch('productmanagement.php?action=uploadImage', {
+                method: 'POST',
+                body: formData
+            });
+    
+            const data = await response.json();
+            if (response.ok && data.success) {
+                // Save the image URL returned by the server
+                tempImage = data.imageUrl;
+                imagePreview.src = tempImage;  // Update image preview
+            } else {
+                alert('Failed to upload image!');
+            }
+        } catch (error) {
+            console.error('Error uploading image:', error);
+            alert('Error uploading image!');
         }
     }
 
@@ -242,7 +269,7 @@ document.addEventListener('DOMContentLoaded', function () {
             showConfirmationMessage(`Error: ${error.message}`, 'error');
             throw error;
         }
-    }
+    }    
 
     async function deleteProduct(productId) {
         try {

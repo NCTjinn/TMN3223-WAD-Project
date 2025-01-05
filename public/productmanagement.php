@@ -10,6 +10,9 @@ $username = "if0_37979402";
 $password = "tmn3223ncnhcds";
 $dbname = "if0_37979402_pufflab";
 
+// Directory to store uploaded images
+$uploadDir = '../assets/images/';
+
 try {
     $conn = new mysqli($servername, $username, $password, $dbname);
 
@@ -96,68 +99,104 @@ try {
             echo json_encode(["success" => true, "message" => "Product updated successfully"]);
             break;
 
-            case 'delete':
-                if (!isset($data['product_id'])) {
-                    throw new Exception("Product ID is required");
-                }
+        case 'delete':
+            if (!isset($data['product_id'])) {
+                throw new Exception("Product ID is required");
+            }
             
-                $id = $conn->real_escape_string($data['product_id']);
+            $id = $conn->real_escape_string($data['product_id']);
             
-                // Delete reviews first
-                $sql = "DELETE FROM reviews WHERE product_id = ?";
-                $stmt = $conn->prepare($sql);
-                if (!$stmt) {
-                    throw new Exception("Prepare failed: " . $conn->error);
-                }
-            
-                $stmt->bind_param("i", $id);
-            
-                if (!$stmt->execute()) {
-                    throw new Exception("Execute failed: " . $stmt->error);
-                }
-                // Delete related user_favorites entries first
-                $sql = "DELETE FROM user_favorites WHERE product_id = ?";
-                 $stmt = $conn->prepare($sql);
-                if (!$stmt) {
+            // Delete reviews first
+            $sql = "DELETE FROM reviews WHERE product_id = ?";
+            $stmt = $conn->prepare($sql);
+            if (!$stmt) {
                 throw new Exception("Prepare failed: " . $conn->error);
-                }
-
-                $stmt->bind_param("i", $id);
-
-                if (!$stmt->execute()) {
+            }
+            
+            $stmt->bind_param("i", $id);
+            
+            if (!$stmt->execute()) {
                 throw new Exception("Execute failed: " . $stmt->error);
+            }
+            
+            // Delete related user_favorites entries first
+            $sql = "DELETE FROM user_favorites WHERE product_id = ?";
+            $stmt = $conn->prepare($sql);
+            if (!$stmt) {
+                throw new Exception("Prepare failed: " . $conn->error);
+            }
+            
+            $stmt->bind_param("i", $id);
+            
+            if (!$stmt->execute()) {
+                throw new Exception("Execute failed: " . $stmt->error);
+            }
+            
+            // Delete related transaction details first
+            $sql = "DELETE FROM transaction_details WHERE product_id = ?";
+            $stmt = $conn->prepare($sql);
+            if (!$stmt) {
+                throw new Exception("Prepare failed: " . $conn->error);
+            }
+            
+            $stmt->bind_param("i", $id);
+            
+            if (!$stmt->execute()) {
+                throw new Exception("Execute failed: " . $stmt->error);
+            }
+
+            // Now delete the product
+            $sql = "DELETE FROM Products WHERE product_id = ?";
+            $stmt = $conn->prepare($sql);
+            
+            if (!$stmt) {
+                throw new Exception("Prepare failed: " . $conn->error);
+            }
+            
+            $stmt->bind_param("i", $id);
+            
+            if (!$stmt->execute()) {
+                throw new Exception("Execute failed: " . $stmt->error);
+            }
+            
+            echo json_encode(["success" => true, "message" => "Product and related reviews deleted successfully"]);
+            break;
+
+        case 'uploadImage':
+            if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+                $fileTmpPath = $_FILES['image']['tmp_name'];
+                $fileName = $_FILES['image']['name'];
+                $fileSize = $_FILES['image']['size'];
+                $fileType = $_FILES['image']['type'];
+                
+                // Validate image file type (optional)
+                $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+                if (!in_array($fileType, $allowedTypes)) {
+                    throw new Exception('Invalid image file type.');
                 }
                 
-                // Delete related transaction details first
-                $sql = "DELETE FROM transaction_details WHERE product_id = ?";
-                $stmt = $conn->prepare($sql);
-                if (!$stmt) {
-                throw new Exception("Prepare failed: " . $conn->error);
-                }
+                // Generate a unique name for the image to prevent conflicts
+                $fileExtension = pathinfo($fileName, PATHINFO_EXTENSION);
+                $newFileName = uniqid('img_', true) . '.' . $fileExtension;
+                $destination = $uploadDir . $newFileName;
+                
+                if (move_uploaded_file($fileTmpPath, $destination)) {
+                    // Return the image URL
+                    $imageUrl = '/assets/images/' . $newFileName;
 
-                $stmt->bind_param("i", $id);
-
-                if (!$stmt->execute()) {
-                throw new Exception("Execute failed: " . $stmt->error);
+                    // Encode the image as a base64 string to save it in the database (if required)
+                    $imageData = file_get_contents($destination);
+                    $base64Image = 'data:' . $fileType . ';base64,' . base64_encode($imageData);
+                    
+                    // Respond with the image URL for front-end use
+                    echo json_encode(['success' => true, 'imageUrl' => $imageUrl, 'base64Image' => $base64Image]);
+                } else {
+                    throw new Exception('Error moving the uploaded file.');
                 }
-
-                // Now delete the product
-                $sql = "DELETE FROM Products WHERE product_id = ?";
-                $stmt = $conn->prepare($sql);
-            
-                if (!$stmt) {
-                    throw new Exception("Prepare failed: " . $conn->error);
-                }
-            
-                $stmt->bind_param("i", $id);
-            
-                if (!$stmt->execute()) {
-                    throw new Exception("Execute failed: " . $stmt->error);
-                }
-            
-                echo json_encode(["success" => true, "message" => "Product and related reviews deleted successfully"]);
-                break;
-            
+            } else {
+                throw new Exception('No image uploaded or there was an error with the upload.');
+            }
+            break;
 
         default:
             throw new Exception("Invalid action");
@@ -174,4 +213,3 @@ try {
         $conn->close();
     }
 }
-?>
