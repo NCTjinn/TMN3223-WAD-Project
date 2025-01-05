@@ -232,23 +232,23 @@ INSERT INTO Product_Categories (name, description) VALUES
 
 -- Products
 INSERT INTO Products (name, category_id, description, price, stock_quantity, image_url) VALUES
-('Vanilla Cream Puff', 1, 'Original cream puff filled with vanilla custard', 3.00, 100, 'assets/images/vanillapuff.jpg'),
-('Chocolate Cream Puff', 1, 'Signature cream puff with chocolate cream filling', 3.00, 100, 'assets/images/chocopuff.jpg'),
-('Matcha Cream Puff', 1, 'Signature premium cream puff with matcha cream filling', 4.00, 100, 'assets/images/matchapuff.jpg'),
-('Earl Grey Cream Puff', 1, 'Signature premium cream puff with Earl Grey cream filling', 4.00, 100, 'assets/images/earlgreypuff.j[g'),
-('Lotus Biscoff Cream Puff', 1, 'Signature luxury cream puff with lotus biscoff cream filling', 5.00, 100, 'assets/images/biscoffpuff.png'),
-('Tiramisu', 2, 'Classic Italian dessert with layers of coffee-soaked cake and mascarpone', 13.00, 30, 'assets/images/tiramisu.png'),
-('Cheese Cake', 2, 'Deliciously creamy cheesecake with a buttery crust', 13.00, 30, 'assets/images/cheesecake.png'),
-('Brownies', 2, 'Rich, fudgy brownies with a perfect balance of sweetness', 8.00, 30, 'assets/images/brownies.png'),
-('Coffee Latte', 3, 'A rich, aromatic coffee with steamed milk', 6.00, 50, 'assets/images/coffeelatte.png'),
-('Chocolate Latte', 3, 'Smooth chocolate latte made with rich cocoa and milk', 8.00, 50, 'assets/images/chocolatte.png'),
-('Matcha Latte', 3, 'Creamy matcha latte made with premium matcha powder', 10.00, 50, 'assets/images/matchalatte.png'),
-('Americano', 3, 'Strong black coffee made with espresso', 5.00, 50, 'assets/images/americano.png'),
-('Strawberry Latte', 3, 'Refreshing strawberry-flavored latte', 7.00, 50, 'assets/images/strawberrylatte.png'),
-('Yam Latte', 3, 'Sweet and creamy yam-flavored latte', 7.00, 50, 'assets/images/yamlatte.png'),
-('Thai Milk Tea', 3, 'Sweet Thai milk tea with a unique blend of spices', 7.00, 50, 'assets/images/thaimilktea.png'),
-('Thai Green Tea', 3, 'Fragrant Thai green tea with a creamy twist', 7.00, 50, 'assets/images/thaigreentea.png'),
-('Honey Lemon', 3, 'Refreshing honey lemon drink', 6.00, 50, 'assets/images/honeylemon.png');
+('Vanilla Cream Puff', 1, 'Original cream puff filled with vanilla custard', 3.00, 100, '../assets/images/vanillapuff.jpg'),
+('Chocolate Cream Puff', 1, 'Signature cream puff with chocolate cream filling', 3.00, 100, '../assets/images/chocopuff.jpg'),
+('Matcha Cream Puff', 1, 'Signature premium cream puff with matcha cream filling', 4.00, 100, '../assets/images/matchapuff.jpg'),
+('Earl Grey Cream Puff', 1, 'Signature premium cream puff with Earl Grey cream filling', 4.00, 100, '../assets/images/earlgreypuff.jpg'),
+('Lotus Biscoff Cream Puff', 1, 'Signature luxury cream puff with lotus biscoff cream filling', 5.00, 100, '../assets/images/biscoffpuff.png'),
+('Tiramisu', 2, 'Classic Italian dessert with layers of coffee-soaked cake and mascarpone', 13.00, 30, '../assets/images/tiramisu.png'),
+('Cheese Cake', 2, 'Deliciously creamy cheesecake with a buttery crust', 13.00, 30, '../assets/images/cheesecake.png'),
+('Brownies', 2, 'Rich, fudgy brownies with a perfect balance of sweetness', 8.00, 30, '../assets/images/brownies.png'),
+('Coffee Latte', 3, 'A rich, aromatic coffee with steamed milk', 6.00, 50, '../assets/images/coffeelatte.png'),
+('Chocolate Latte', 3, 'Smooth chocolate latte made with rich cocoa and milk', 8.00, 50, '../assets/images/chocolatte.png'),
+('Matcha Latte', 3, 'Creamy matcha latte made with premium matcha powder', 10.00, 50, '../assets/images/matchalatte.png'),
+('Americano', 3, 'Strong black coffee made with espresso', 5.00, 50, '../assets/images/americano.png'),
+('Strawberry Latte', 3, 'Refreshing strawberry-flavored latte', 7.00, 50, '../assets/images/strawberrylatte.png'),
+('Yam Latte', 3, 'Sweet and creamy yam-flavored latte', 7.00, 50, '../assets/images/yamlatte.png'),
+('Thai Milk Tea', 3, 'Sweet Thai milk tea with a unique blend of spices', 7.00, 50, '../assets/images/thaimilktea.png'),
+('Thai Green Tea', 3, 'Fragrant Thai green tea with a creamy twist', 7.00, 50, '../assets/images/thaigreentea.png'),
+('Honey Lemon', 3, 'Refreshing honey lemon drink', 6.00, 50, '../assets/images/honeylemon.png');
 
 -- Vouchers
 INSERT INTO Vouchers (voucher_code, discount_percentage, expiry_date) VALUES
