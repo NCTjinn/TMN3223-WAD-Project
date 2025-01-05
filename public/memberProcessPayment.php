@@ -1,6 +1,7 @@
 <?php
 // Start the session and ensure the user is logged in
 session_start();
+header('Content-Type: application/json');
 
 // Include PHPMailer files
 require '../PHPMailer/src/PHPMailer.php';
@@ -100,13 +101,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['payment_method'])) {
     $clear_cart_stmt->bind_param("i", $userId);
     $clear_cart_stmt->execute();
 
+    // Fetch user email
+    $user_query = "SELECT email FROM Users WHERE user_id = ?";
+    $user_stmt = $conn->prepare($user_query);
+    $user_stmt->bind_param("i", $userId);
+    $user_stmt->execute();
+    $user_result = $user_stmt->get_result();
+
+    if ($user_row = $user_result->fetch_assoc()) {
+        $email = $user_row['email'];
+    } else {
+        throw new Exception("User not found");
+    }
+
     // Email order confirmation to user
     try {
         // Fetch transaction details
         $details_sql = "
-            SELECT 
+            SELECT
                 td.product_id,
-                p.product_name,
+                p.name,
                 td.quantity,
                 td.price_per_item,
                 td.subtotal
@@ -117,12 +131,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['payment_method'])) {
         $details_stmt->bind_param("i", $transaction_id);
         $details_stmt->execute();
         $details_result = $details_stmt->get_result();
-    
+   
         // Build email content
         $email_body = "<h1>Order Confirmation</h1>";
-        $email_body .= "<p>Thank you for your purchase, " . htmlspecialchars($firstName) . " " . htmlspecialchars($lastName) . "!</p>";
+        $email_body .= "<p>Thank you for your purchase!</p>";
         $email_body .= "<p>Here are your order details:</p>";
-    
+   
         $email_body .= "<table border='1' cellpadding='5' cellspacing='0'>";
         $email_body .= "<tr>
                             <th>Product Name</th>
@@ -130,45 +144,43 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['payment_method'])) {
                             <th>Price Per Item</th>
                             <th>Subtotal</th>
                         </tr>";
-    
+   
         while ($row = $details_result->fetch_assoc()) {
             $email_body .= "<tr>
-                                <td>" . htmlspecialchars($row['product_name']) . "</td>
+                                <td>" . htmlspecialchars($row['name']) . "</td>
                                 <td>" . $row['quantity'] . "</td>
                                 <td>RM " . number_format($row['price_per_item'], 2) . "</td>
                                 <td>RM " . number_format($row['subtotal'], 2) . "</td>
                             </tr>";
         }
-    
+   
         $email_body .= "</table>";
         $email_body .= "<p><strong>Total Amount:</strong> RM " . number_format($total_amount, 2) . "</p>";
         $email_body .= "<p><strong>Tracking Number:</strong> " . htmlspecialchars($tracking_number) . "</p>";
         $email_body .= "<p><strong>Estimated Delivery:</strong> " . htmlspecialchars($estimated_delivery) . "</p>";
         $email_body .= "<p>We will notify you once your order is shipped. Thank you for shopping with us!</p>";
-    
-        // Send email
-        $mail->SMTPDebug = 0; // Disable debug output
-        $mail->isSMTP(); // Send using SMTP
-        $mail->Host       = 'smtp.gmail.com'; // Set the SMTP server to send through
-        $mail->SMTPAuth   = true; // Enable SMTP authentication
-        $mail->Username   = 'sxdturn@gmail.com'; // SMTP username
-        $mail->Password   = 'sfnbthazaqaurxjo'; // SMTP password
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS; // Enable TLS encryption
-        $mail->Port       = 587; // TCP port to connect to
-    
+   
+        // Server settings
+        $mail->SMTPDebug = 0;
+        $mail->isSMTP();
+        $mail->Host       = 'smtp.gmail.com';
+        $mail->SMTPAuth   = true;
+        $mail->Username   = 'sxdturn@gmail.com';
+        $mail->Password   = 'sfnbthazaqaurxjo';
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->Port       = 587;
+        
         // Recipients
         $mail->setFrom('ncnhcdspufflab@outlook.com', 'PuffLab Team');
         $mail->addAddress($email);
-    
+   
         // Content
-        $mail->isHTML(true); // Set email format to HTML
+        $mail->isHTML(true);
         $mail->Subject = "Your Order Confirmation - PuffLab";
         $mail->Body    = $email_body;
-    
+   
         $mail->send();
-    
     } catch (Exception $e) {
-        // Log email sending error but continue with transaction
         error_log("Email could not be sent. Mailer Error: {$mail->ErrorInfo}");
     }
 
