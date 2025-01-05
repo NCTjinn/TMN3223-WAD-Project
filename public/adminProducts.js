@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
+    attachEventListeners();
     let products = []; // Initialize products array
 
     const addProductBtn = document.getElementById('addProductBtn');
@@ -11,21 +12,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const uploadArea = document.getElementById('uploadArea');
     const imagePreview = document.getElementById('imagePreview');
     const modalTitle = document.getElementById('modalTitle');
-
-    // Profile dropdown functionality
-    const profileIcon = document.getElementById('profile-icon');
-    const profileDropdown = document.getElementById('dropdown-menu');
-
-    profileIcon.addEventListener('click', (e) => {
-        e.stopPropagation();
-        profileDropdown.classList.toggle('active');
-    });
-
-    document.addEventListener('click', (e) => {
-        if (!e.target.closest('.user-dropdown')) {
-            profileDropdown.classList.remove('active');
-        }
-    });
 
     let editIndex = null;
     let tempImage = '';
@@ -374,3 +360,21 @@ document.addEventListener('DOMContentLoaded', function () {
     // Initialize products table
     fetchProducts();
 });
+
+// Event Handlers
+function attachEventListeners() {
+    // Profile dropdown functionality
+    const profileIcon = document.getElementById('profile-icon');
+    const profileDropdown = document.getElementById('dropdown-menu');
+
+    profileIcon.addEventListener('click', (e) => {
+        e.stopPropagation();
+        profileDropdown.classList.toggle('active');
+    });
+
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.user-dropdown')) {
+            profileDropdown.classList.remove('active');
+        }
+    });
+}
