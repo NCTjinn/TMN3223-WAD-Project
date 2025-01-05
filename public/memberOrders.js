@@ -5,11 +5,19 @@ document.addEventListener('DOMContentLoaded', function() {
 
 async function fetchOrders() {
     try {
-        // Add error handling for the response
         const response = await fetch('../api/member_Orders.php');
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+        
+        // Check if response is JSON
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            throw new Error('Server returned non-JSON response');
         }
+        
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+        }
+        
         const data = await response.json();
         
         if (data.error) {
@@ -19,8 +27,8 @@ async function fetchOrders() {
         renderOrders('current-orders-list', data.current_orders || []);
         renderOrders('past-orders-list', data.past_orders || []);
     } catch (error) {
-        console.error('Error fetching orders:', error);
-        showError('Failed to load orders. Please try again later.');
+        console.error('Error details:', error);
+        showError(`Failed to load orders: ${error.message}`);
     }
 }
 
