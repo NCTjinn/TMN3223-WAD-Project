@@ -93,17 +93,18 @@ if (!$product) {
                 <h1><?php echo htmlspecialchars($product['name']); ?></h1>
                 <p class="price">RM <?php echo number_format($product['price'], 2); ?></p>
                 
+                <!-- Replace the existing product-tabs and tab-content divs with this -->
                 <div class="product-tabs">
-                    <button class="tab-btn active" data-tab="ingredients">Ingredients</button>
+                    <button class="tab-btn active" data-tab="description">Product Description</button>
                     <button class="tab-btn" data-tab="serving">Serving Tips</button>
                 </div>
-                
-                <div class="tab-content" id="ingredients">
-                    <p><?php echo nl2br(htmlspecialchars($product['ingredients'] ?? 'Ingredients information coming soon.')); ?></p>
+
+                <div class="tab-content active" id="description">
+                    <p><?php echo nl2br(htmlspecialchars($product['description'] ?? 'Product description coming soon.')); ?></p>
                 </div>
-                
-                <div class="tab-content" id="serving" style="display: none;">
-                    <p><?php echo nl2br(htmlspecialchars($product['serving_tips'] ?? 'Serving tips coming soon.')); ?></p>
+
+                <div class="tab-content" id="serving">
+                    <p><?php echo nl2br(htmlspecialchars($product['serving_tips'] ?? 'Best consumed within one hour, and with love ❤️')); ?></p>
                 </div>
                 
                 <div class="additional-note">
