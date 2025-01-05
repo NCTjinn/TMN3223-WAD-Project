@@ -217,6 +217,7 @@ document.addEventListener('DOMContentLoaded', function () {
         
         if (editing && product) {
             productForm.productName.value = product.name;
+            productForm.category_id.value = product.category_id;
             productForm.productPrice.value = parseFloat(product.price).toFixed(2);
             productForm.productStock.value = product.stock_quantity;
             productForm.productDescription.value = product.description;
@@ -311,7 +312,7 @@ document.addEventListener('DOMContentLoaded', function () {
             stock_quantity: parseInt(productForm.productStock.value),
             description: productForm.productDescription.value.trim(),
             image_url: tempImage || 'https://via.placeholder.com/50',
-            category_id: 1 // Default category
+            category_id: productForm.category_id.value
         };
     
         if (editIndex !== null) {
