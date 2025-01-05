@@ -173,7 +173,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['payment_method'])) {
     }
 
     // Redirect to a confirmation page
-    header("Location: memberOrders.php?transaction_id=$transaction_id");
+    header("Location: memberTrack.php?transaction_id=$transaction_id");
     exit;
 }
 
