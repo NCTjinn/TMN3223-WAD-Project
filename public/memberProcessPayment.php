@@ -46,7 +46,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['payment_method'])) {
         $conn->begin_transaction();
         
         $paymentMethod = $_POST['payment_method'];
-        
+        $payment_status = "processing";
         // Debug log
         error_log("Starting checkout process for user: " . $userId);
         error_log("Payment method: " . $paymentMethod);
@@ -115,7 +115,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['payment_method'])) {
             throw new Exception("Transaction prepare failed: " . $conn->error);
         }
         
-        $transaction_stmt->bind_param("idss", $userId, $total_amount, $paymentMethod, $delivery_address);
+        $transaction_stmt->bind_param("idss", $userId, $total_amount, $payment_status, $delivery_address);
         if (!$transaction_stmt->execute()) {
             throw new Exception("Transaction execute failed: " . $transaction_stmt->error);
         }
