@@ -1,6 +1,20 @@
 <?php
 // Start the session and ensure the user is logged in
 session_start();
+
+// Include PHPMailer files
+require '../PHPMailer/src/PHPMailer.php';
+require '../PHPMailer/src/SMTP.php';
+require '../PHPMailer/src/Exception.php';
+
+// Use PHPMailer namespaces
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
+use PHPMailer\PHPMailer\Exception;
+
+// Create a new PHPMailer instance
+$mail = new PHPMailer(true);
+
 if (!isset($_SESSION['user_id'])) {
     header('Location: publicLogin.html');
     exit;
@@ -85,6 +99,78 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['payment_method'])) {
     $clear_cart_stmt = $conn->prepare($clear_cart_sql);
     $clear_cart_stmt->bind_param("i", $userId);
     $clear_cart_stmt->execute();
+
+    // Email order confirmation to user
+    try {
+        // Fetch transaction details
+        $details_sql = "
+            SELECT 
+                td.product_id,
+                p.product_name,
+                td.quantity,
+                td.price_per_item,
+                td.subtotal
+            FROM Transaction_Details td
+            JOIN Products p ON td.product_id = p.product_id
+            WHERE td.transaction_id = ?";
+        $details_stmt = $conn->prepare($details_sql);
+        $details_stmt->bind_param("i", $transaction_id);
+        $details_stmt->execute();
+        $details_result = $details_stmt->get_result();
+    
+        // Build email content
+        $email_body = "<h1>Order Confirmation</h1>";
+        $email_body .= "<p>Thank you for your purchase, " . htmlspecialchars($firstName) . " " . htmlspecialchars($lastName) . "!</p>";
+        $email_body .= "<p>Here are your order details:</p>";
+    
+        $email_body .= "<table border='1' cellpadding='5' cellspacing='0'>";
+        $email_body .= "<tr>
+                            <th>Product Name</th>
+                            <th>Quantity</th>
+                            <th>Price Per Item</th>
+                            <th>Subtotal</th>
+                        </tr>";
+    
+        while ($row = $details_result->fetch_assoc()) {
+            $email_body .= "<tr>
+                                <td>" . htmlspecialchars($row['product_name']) . "</td>
+                                <td>" . $row['quantity'] . "</td>
+                                <td>RM " . number_format($row['price_per_item'], 2) . "</td>
+                                <td>RM " . number_format($row['subtotal'], 2) . "</td>
+                            </tr>";
+        }
+    
+        $email_body .= "</table>";
+        $email_body .= "<p><strong>Total Amount:</strong> RM " . number_format($total_amount, 2) . "</p>";
+        $email_body .= "<p><strong>Tracking Number:</strong> " . htmlspecialchars($tracking_number) . "</p>";
+        $email_body .= "<p><strong>Estimated Delivery:</strong> " . htmlspecialchars($estimated_delivery) . "</p>";
+        $email_body .= "<p>We will notify you once your order is shipped. Thank you for shopping with us!</p>";
+    
+        // Send email
+        $mail->SMTPDebug = 0; // Disable debug output
+        $mail->isSMTP(); // Send using SMTP
+        $mail->Host       = 'smtp.gmail.com'; // Set the SMTP server to send through
+        $mail->SMTPAuth   = true; // Enable SMTP authentication
+        $mail->Username   = 'sxdturn@gmail.com'; // SMTP username
+        $mail->Password   = 'sfnbthazaqaurxjo'; // SMTP password
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS; // Enable TLS encryption
+        $mail->Port       = 587; // TCP port to connect to
+    
+        // Recipients
+        $mail->setFrom('ncnhcdspufflab@outlook.com', 'PuffLab Team');
+        $mail->addAddress($email);
+    
+        // Content
+        $mail->isHTML(true); // Set email format to HTML
+        $mail->Subject = "Your Order Confirmation - PuffLab";
+        $mail->Body    = $email_body;
+    
+        $mail->send();
+    
+    } catch (Exception $e) {
+        // Log email sending error but continue with transaction
+        error_log("Email could not be sent. Mailer Error: {$mail->ErrorInfo}");
+    }
 
     // Redirect to a confirmation page
     header("Location: memberOrders.php?transaction_id=$transaction_id");
