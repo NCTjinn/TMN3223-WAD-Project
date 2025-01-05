@@ -28,21 +28,28 @@ function getBestSellers() {
 function getNewArrivals() {
     global $conn;
     
+    // Fetch the latest products by product_id in descending order
     $sql = "SELECT p.product_id, p.name, p.price, p.image_url, pc.name as category_name 
             FROM Products p 
             JOIN Product_Categories pc ON p.category_id = pc.category_id
-            ORDER BY p.created_at DESC 
+            ORDER BY p.product_id DESC 
             LIMIT 3";
             
     $result = $conn->query($sql);
     $newArrivals = array();
     
-    while($row = $result->fetch_assoc()) {
-        $newArrivals[] = $row;
+    if ($result) {
+        while($row = $result->fetch_assoc()) {
+            $newArrivals[] = $row;
+        }
+    } else {
+        // Log the SQL error if there's an issue
+        error_log('SQL Error: ' . $conn->error);
     }
     
     return $newArrivals;
 }
+
 
 // Handle the AJAX request
 if(isset($_GET['type'])) {
