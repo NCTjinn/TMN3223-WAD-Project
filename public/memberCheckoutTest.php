@@ -112,16 +112,17 @@ $conn->close();
                 </div>
                 <div class="payment-methods">
                 <h2>Payment Method</h2>
-                <form class="payment-options" method="post" action="memberProcessPayment.php"> <!-- Adjust the action attribute as necessary -->
-                    <select name="payment_method" id="payment_method" class="payment-selector">
-                        <option value="card">Credit/Debit Card</option>
-                        <option value="banking">Online Banking</option>
-                        <option value="touchngo">Touch N' Go</option>
-                        <option value="grabpay">GrabPay</option>
-                        <option value="cash">Cash</option>
-                    </select>
-                    <button class="continue-button" type="submit">Continue</button>
-                </form>
+                <form class="payment-options" method="post" action="memberProcessPayment.php" id="paymentForm">
+                <select name="payment_method" id="payment_method" class="payment-selector" required>
+                    <option value="">Select Payment Method</option>
+                    <option value="card">Credit/Debit Card</option>
+                    <option value="banking">Online Banking</option>
+                    <option value="touchngo">Touch N' Go</option>
+                    <option value="grabpay">GrabPay</option>
+                    <option value="cash">Cash</option>
+                </select>
+                <button type="submit" class="continue-button">Continue</button>
+            </form>
             </div>
 
             <div class="order-summary">

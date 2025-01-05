@@ -1,6 +1,14 @@
 <?php
 // Start the session and ensure the user is logged in
 session_start();
+
+// Add this after session_start()
+if (!isset($_SESSION['user_id']) || !isset($_POST['payment_method'])) {
+    logError("Missing required session data or payment method");
+    header("Location: memberCart.php?error=" . urlencode("Missing required data"));
+    exit;
+}
+
 if (!isset($_SESSION['user_id'])) {
     header('Location: publicLogin.html');
     exit;
