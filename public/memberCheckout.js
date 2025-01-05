@@ -226,4 +226,3 @@ document.addEventListener('DOMContentLoaded', function() {
         addressInput.addEventListener('input', updateDeliveryFee);
         postcodeInput.addEventListener('input', updateDeliveryFee);
     }
-});
