@@ -12,6 +12,11 @@ if ($_SESSION['role'] !== 'member') {
     header("Location: publicLogin.html");
     exit();
 }
+
+if (isset($_GET['error'])) {
+    echo '<div class="error-message">' . htmlspecialchars($_GET['error']) . '</div>';
+}
+
 require_once 'menu_data.php';
 $products = getProducts();
 ?>
