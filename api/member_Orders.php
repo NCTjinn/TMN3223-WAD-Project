@@ -1,7 +1,7 @@
 <?php
 // memberOrders.php
-error_reporting(0); // Disable error reporting for production
-ini_set('display_errors', 0); // Disable error display
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
 session_start();
 header('Content-Type: application/json');
@@ -9,7 +9,7 @@ header('Cache-Control: no-cache, must-revalidate');
 
 // Database configuration
 $config = [
-    'host' => 'sql112.infinityfree.com:3306', // Added port number
+    'host' => 'sql112.infinityfree.com',
     'username' => 'if0_37979402',
     'password' => 'tmn3223ncnhcds',
     'database' => 'if0_37979402_pufflab'
@@ -22,9 +22,7 @@ try {
         throw new Exception("Connection failed: " . $conn->connect_error);
     }
 
-    // Set the charset to ensure proper encoding
-    $conn->set_charset("utf8mb4");
-
+    // Check for user authentication
     if (!isset($_SESSION['user_id'])) {
         throw new Exception('User not authenticated');
     }
@@ -102,7 +100,6 @@ try {
         'error' => true,
         'message' => $e->getMessage()
     ]);
-    exit;
 } finally {
     if (isset($conn)) {
         $conn->close();
