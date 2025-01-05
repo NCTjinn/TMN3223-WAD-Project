@@ -1,71 +1,10 @@
-// Constants and Configuration
-const baseUrl = window.location.hostname === 'localhost' 
-    ? 'http://localhost/TMN3223-WAD-Project' 
-    : 'http://puff-lab.free.nf/';
-
-const API_CONFIG = {
-    baseUrl: baseUrl,
-    debug: true,
-    endpoints: {
-        transactions: `${baseUrl}/api/adminTransactions`
-    },
-    timeout: 5000
-};
-
-// Enhanced fetch function with timeout and better error handling
-async function fetchWithAuth(endpoint, options = {}) {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), API_CONFIG.timeout);
-
-    try {
-        const defaultOptions = {
-            method: 'GET',
-            signal: controller.signal,
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            }
-        };
-
-        const url = endpoint.startsWith('http') ? endpoint : `${API_CONFIG.baseUrl}${endpoint}`;
-        if (API_CONFIG.debug) console.log(`Fetching from: ${url}`);
-
-        const response = await fetch(url, { ...defaultOptions, ...options });
-        const responseText = await response.text();
-
-        if (!response.ok) {
-            if (API_CONFIG.debug) console.log('Error response text:', responseText);
-            
-            // Try to parse error response
-            let errorMessage;
-            try {
-                const errorData = JSON.parse(responseText);
-                errorMessage = errorData.error || errorData.message || 'Unknown error';
-            } catch (e) {
-                errorMessage = responseText || 'Server error';
-            }
-
-            throw new Error(errorMessage);
-        }
-
-        // Parse successful response
-        const data = JSON.parse(responseText);
-        if (API_CONFIG.debug) console.log('Fetched data:', data);
-        return data;
-    } catch (error) {
-        console.error('Error fetching data:', error);
-        throw error;
-    } finally {
-        clearTimeout(timeoutId);
-    }
-}
-
 // API Handlers
 let currentPage = 1;
 const itemsPerPage = 10;
 let filteredTransactions = [];
 
 async function fetchTransactions() {
+    console.log('Fetching transactions...'); // Debug log
     showLoadingState();
     try {
         const startDate = document.getElementById('date-start').value;
@@ -77,13 +16,28 @@ async function fetchTransactions() {
         if (endDate) params.append('end_date', endDate);
         params.append('limit', '1000');
 
-        const url = `${API_CONFIG.endpoints.transactions}?${params.toString()}`;
+        const url = `fetchAdminTransactions.php?${params.toString()}`;
         
-        if (API_CONFIG.debug) console.log('Fetching transactions from:', url);
+        // Debug log directly without using API_CONFIG
+        console.log('Fetching transactions from:', url);
 
-        const data = await fetchWithAuth(url);
-        if (data.status === 'success' && Array.isArray(data.data)) {
+        const response = await fetch(url);
+        console.log('Response status:', response.status); // Debug log for response status
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log('Fetched transactions data:', data); // Debug log for fetched data
+
+        if (data.status === 'error') {
+            throw new Error(data.message || 'Failed to load transactions');
+        }
+
+        if (data.status === 'success' && data.data) {
             filteredTransactions = data.data;
+
+            // Apply search filter if there is a search term
             if (searchTerm) {
                 filteredTransactions = filteredTransactions.filter(transaction => 
                     Object.values(transaction).some(value => 
@@ -91,11 +45,10 @@ async function fetchTransactions() {
                     )
                 );
             }
-            currentPage = 1;
+
+            currentPage = 1; // Reset to the first page
             renderTable();
             hideErrorMessage();
-        } else {
-            throw new Error(data.error || 'Invalid response format');
         }
     } catch (error) {
         console.error('Error fetching transactions:', error);

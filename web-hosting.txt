@@ -1,8 +1,9 @@
 https://www.infinityfree.com/
 
-puff-lab.free.nf
-username: if0_37979402
-password: tmn3223ncnhcds
+username: nctjinn@gmail.com
+password: tmn3223Pufflabs
+
+http://puff-lab.free.nf
 
 MySQL Username if0_37979402 
 MySQL Password tmn3223ncnhcds 
