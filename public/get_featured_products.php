@@ -50,7 +50,6 @@ function getNewArrivals() {
     return $newArrivals;
 }
 
-
 // Handle the AJAX request
 if(isset($_GET['type'])) {
     header('Content-Type: application/json');
