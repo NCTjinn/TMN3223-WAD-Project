@@ -114,34 +114,3 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initially show menu page
     showMenuPage();
 });
-
-
-    const images = [
-        'menu1.png', // Add your image paths here
-        'menu2.png',
-        'menu3.png'
-    ];
-
-    let currentImageIndex = 0;
-    const sliderImage = document.getElementById('sliderImage');
-    
-    // Function to shuffle and display the next image
-    function showNextImage() {
-        // Fade out the current image
-        sliderImage.style.transition = "opacity 1s ease"; // Smooth fade transition
-        sliderImage.style.opacity = 0; // Fade out the current image
-    
-        setTimeout(() => {
-            // Update the image source after the fade-out transition is complete
-            currentImageIndex = (currentImageIndex + 1) % images.length;
-            sliderImage.src = images[currentImageIndex]; // Change image source
-    
-            // Fade in the new image
-            sliderImage.style.transition = "opacity 1s ease"; // Reapply fade transition
-            sliderImage.style.opacity = 1; // Fade in the new image
-        }, 1000); // Wait for fade-out transition to complete before changing the image
-    }
-    
-    // Change image every 3 seconds
-    setInterval(showNextImage, 3000);
-
