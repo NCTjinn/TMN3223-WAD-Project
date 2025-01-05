@@ -34,9 +34,6 @@ if ($_SESSION['role'] !== 'admin') {
             <div class="user-dropdown">
                 <i class="fas fa-user-circle" id="profile-icon"></i>
                 <div class="dropdown-menu" id="dropdown-menu">
-                    <div class="dropdown-header">
-                        <span>Profile</span>
-                    </div>
                     <a href="Logout.php">Logout</a>
                 </div>
             </div>

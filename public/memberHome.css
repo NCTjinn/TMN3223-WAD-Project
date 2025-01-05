@@ -5,6 +5,11 @@
     font-family: 'Poppins', sans-serif;
 }
 
+/* Remove underlines from all links */
+a {
+    text-decoration: none;
+}
+
 /* Color variables */
 :root {
     --sage-green: #C2C9AD;
@@ -198,3 +203,4 @@ body {
     padding: 20px;
     grid-column: 1 / -1;
 }
+

@@ -1,16 +1,31 @@
 <?php
 // Start the session and ensure the user is logged in
 session_start();
+header('Content-Type: application/json');
+
+// Include PHPMailer files
+require '../PHPMailer/src/PHPMailer.php';
+require '../PHPMailer/src/SMTP.php';
+require '../PHPMailer/src/Exception.php';
+
+// Use PHPMailer namespaces
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
+use PHPMailer\PHPMailer\Exception;
+
+// Create a new PHPMailer instance
+$mail = new PHPMailer(true);
+
 if (!isset($_SESSION['user_id'])) {
     header('Location: publicLogin.html');
     exit;
 }
 
 // Database connection
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "PuffLab";
+$servername = "sql112.infinityfree.com";
+$username = "if0_37979402";
+$password = "tmn3223ncnhcds";
+$dbname = "if0_37979402_pufflab";
 
 $conn = new mysqli($servername, $username, $password, $dbname);
 if ($conn->connect_error) {
@@ -86,8 +101,91 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['payment_method'])) {
     $clear_cart_stmt->bind_param("i", $userId);
     $clear_cart_stmt->execute();
 
+    // Fetch user email
+    $user_query = "SELECT email FROM Users WHERE user_id = ?";
+    $user_stmt = $conn->prepare($user_query);
+    $user_stmt->bind_param("i", $userId);
+    $user_stmt->execute();
+    $user_result = $user_stmt->get_result();
+
+    if ($user_row = $user_result->fetch_assoc()) {
+        $email = $user_row['email'];
+    } else {
+        throw new Exception("User not found");
+    }
+
+    // Email order confirmation to user
+    try {
+        // Fetch transaction details
+        $details_sql = "
+            SELECT
+                td.product_id,
+                p.name,
+                td.quantity,
+                td.price_per_item,
+                td.subtotal
+            FROM Transaction_Details td
+            JOIN Products p ON td.product_id = p.product_id
+            WHERE td.transaction_id = ?";
+        $details_stmt = $conn->prepare($details_sql);
+        $details_stmt->bind_param("i", $transaction_id);
+        $details_stmt->execute();
+        $details_result = $details_stmt->get_result();
+   
+        // Build email content
+        $email_body = "<h1>Order Confirmation</h1>";
+        $email_body .= "<p>Thank you for your purchase!</p>";
+        $email_body .= "<p>Here are your order details:</p>";
+   
+        $email_body .= "<table border='1' cellpadding='5' cellspacing='0'>";
+        $email_body .= "<tr>
+                            <th>Product Name</th>
+                            <th>Quantity</th>
+                            <th>Price Per Item</th>
+                            <th>Subtotal</th>
+                        </tr>";
+   
+        while ($row = $details_result->fetch_assoc()) {
+            $email_body .= "<tr>
+                                <td>" . htmlspecialchars($row['name']) . "</td>
+                                <td>" . $row['quantity'] . "</td>
+                                <td>RM " . number_format($row['price_per_item'], 2) . "</td>
+                                <td>RM " . number_format($row['subtotal'], 2) . "</td>
+                            </tr>";
+        }
+   
+        $email_body .= "</table>";
+        $email_body .= "<p><strong>Total Amount:</strong> RM " . number_format($total_amount, 2) . "</p>";
+        $email_body .= "<p><strong>Tracking Number:</strong> " . htmlspecialchars($tracking_number) . "</p>";
+        $email_body .= "<p><strong>Estimated Delivery:</strong> " . htmlspecialchars($estimated_delivery) . "</p>";
+        $email_body .= "<p>We will notify you once your order is shipped. Thank you for shopping with us!</p>";
+   
+        // Server settings
+        $mail->SMTPDebug = 0;
+        $mail->isSMTP();
+        $mail->Host       = 'smtp.gmail.com';
+        $mail->SMTPAuth   = true;
+        $mail->Username   = 'sxdturn@gmail.com';
+        $mail->Password   = 'sfnbthazaqaurxjo';
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->Port       = 587;
+        
+        // Recipients
+        $mail->setFrom('ncnhcdspufflab@outlook.com', 'PuffLab Team');
+        $mail->addAddress($email);
+   
+        // Content
+        $mail->isHTML(true);
+        $mail->Subject = "Your Order Confirmation - PuffLab";
+        $mail->Body    = $email_body;
+   
+        $mail->send();
+    } catch (Exception $e) {
+        error_log("Email could not be sent. Mailer Error: {$mail->ErrorInfo}");
+    }
+
     // Redirect to a confirmation page
-    header("Location: memberOrders.php?transaction_id=$transaction_id");
+    header("Location: memberTrack.php?transaction_id=$transaction_id");
     exit;
 }
 

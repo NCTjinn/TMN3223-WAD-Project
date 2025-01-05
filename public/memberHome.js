@@ -32,24 +32,27 @@ function loadProducts(type) {
         .then(products => {
             productsGrid.innerHTML = ''; // Clear loading state
             
+            if (products.length === 0) {
+                productsGrid.innerHTML = '<div class="error">No products found</div>';
+                return;
+            }
+            
             products.forEach(product => {
-                const productCard = document.createElement('div');
+                const productCard = document.createElement('a');
+                productCard.href = `memberProduct.php?id=${product.product_id}`;
                 productCard.classList.add('product-card');
                 
                 productCard.innerHTML = `
-                    <a href="memberProduct.php?id=${product.product_id}" class="product-link">
-                        <div class="product-image">
-                            ${product.image_url ? 
-                                `<img src="${product.image_url}" alt="${product.name}">` :
-                                `<div class="placeholder-image">${product.name[0]}</div>`
-                            }
-                        </div>
-                        <div class="product-info">
-                            <h3>${product.name}</h3>
-                            <p class="price">RM ${parseFloat(product.price).toFixed(2)}</p>
-                            <p class="category">${product.category_name}</p>
-                        </div>
-                    </a>
+                    <div class="product-image">
+                        <img src="${product.image_url || '../assets/images/placeholder.png'}" 
+                             alt="${product.name}" 
+                             onerror="this.src='../assets/images/placeholder.png'">
+                    </div>
+                    <div class="product-info">
+                        <h3>${product.name}</h3>
+                        <p class="price">RM ${parseFloat(product.price).toFixed(2)}</p>
+                        <p class="category">${product.category_name}</p>
+                    </div>
                 `;
                 
                 productsGrid.appendChild(productCard);

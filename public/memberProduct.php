@@ -25,7 +25,7 @@ if (!$product) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
-<nav>
+    <nav>
         <div class="navbar">
             <div class="logo">
                 <a href="memberHome.php">
@@ -38,7 +38,7 @@ if (!$product) {
                     <a href="memberMenu.php">Menu <i class='bx bxs-chevron-down'></i></a>
                     <ul class="dropdown-content">
                         <li><a href="memberMenu.php">Cream Puff</a></li>
-                        <li><a href="memberMenu.php">Petit Gateux</a></li>
+                        <li><a href="memberMenu.php">Petit Gateaux</a></li>
                         <li><a href="memberMenu.php">Shortcakes</a></li>
                     </ul>
                 </li>
@@ -52,18 +52,16 @@ if (!$product) {
                 <li class="dropdown">
                     <a href="memberAcc.php">My Account <i class='bx bxs-chevron-down'></i></a>
                     <ul class="dropdown-content">
-                        <li><a href="memberAcc.php">Dashboard</a></li> <!-- Link to My Account -->
-                        <li><a href="memberOrders.php">Orders</a></li> <!-- Link to My Orders -->
-                        <li><a href="Logout.php">Logout</a></li> <!-- Link to LogOut -->
+                        <li><a href="memberAcc.php">Dashboard</a></li>
+                        <li><a href="memberOrders.php">Orders</a></li>
+                        <li><a href="Logout.php">Logout</a></li>
                     </ul>
                 </li>
             </ul>
             <div class="icons">
                 <div class="search-box">
                     <input type="text" class="search-txt" placeholder="Type to search...">
-                    <a href="javascript:void(0);" class="search-btn">
-                        <i class='bx bx-search'></i>
-                    </a>
+                    <a href="#" class="search-btn"><i class='bx bx-search'></i></a>
                 </div>
                 <a href="memberCart.php"><i class='bx bx-cart'></i></a>
             </div>
@@ -71,7 +69,7 @@ if (!$product) {
     </nav>
 
     <div class="product-container">
-        <button class="back-btn" onclick="window.location.href='memberProduct.php'">&larr; Back to Menu</button>
+        <button class="back-btn" onclick="window.location.href='memberMenu.php'">&larr; Back to Menu</button>
         
         <div class="product-main">
             <div class="product-gallery">
@@ -80,11 +78,11 @@ if (!$product) {
                          alt="<?php echo htmlspecialchars($product['name']); ?>" 
                          class="product-img">
                 </div>
-                <?php if (isset($product['additional_images'])): ?>
+                <?php if (!empty($product['additional_images'])): ?>
                 <div class="thumbnail-container">
-                    <?php foreach($product['additional_images'] as $image): ?>
+                    <?php foreach ($product['additional_images'] as $image): ?>
                     <img src="<?php echo htmlspecialchars($image); ?>" 
-                         alt="<?php echo htmlspecialchars($product['name']); ?> thumbnail" 
+                         alt="Thumbnail for <?php echo htmlspecialchars($product['name']); ?>" 
                          class="thumbnail">
                     <?php endforeach; ?>
                 </div>
@@ -96,16 +94,16 @@ if (!$product) {
                 <p class="price">RM <?php echo number_format($product['price'], 2); ?></p>
                 
                 <div class="product-tabs">
-                    <button class="tab-btn active" data-tab="ingredients">Ingredients</button>
+                    <button class="tab-btn active" data-tab="description">Product Description</button>
                     <button class="tab-btn" data-tab="serving">Serving Tips</button>
                 </div>
-                
-                <div class="tab-content" id="ingredients">
-                    <p><?php echo nl2br(htmlspecialchars($product['ingredients'] ?? 'Ingredients information coming soon.')); ?></p>
+
+                <div class="tab-content active" id="description">
+                    <p><?php echo nl2br(htmlspecialchars($product['description'] ?? 'Product description coming soon.')); ?></p>
                 </div>
-                
-                <div class="tab-content" id="serving" style="display: none;">
-                    <p><?php echo nl2br(htmlspecialchars($product['serving_tips'] ?? 'Serving tips coming soon.')); ?></p>
+
+                <div class="tab-content" id="serving">
+                    <p><?php echo nl2br(htmlspecialchars($product['serving_tips'] ?? 'Best consumed within one hour, and with love ❤️')); ?></p>
                 </div>
                 
                 <div class="additional-note">
@@ -121,31 +119,31 @@ if (!$product) {
                         <input type="number" value="1" min="1" id="quantity">
                         <button class="qty-btn" onclick="updateQuantity(1)">+</button>
                     </div>
-                    <button class="add-cart-btn" onclick="addToCart(<?php echo $product['product_id']; ?>)">Add To Cart</button>
+                    <button class="add-cart-btn" onclick="addToCart(<?php echo intval($product_id); ?>)">Add To Cart</button>
                 </div>
             </div>
-        </div>
 
-        <?php if (isset($product['faqs']) && !empty($product['faqs'])): ?>
-        <div class="faq-section">
-            <h2>FAQs</h2>
-            <div class="faq-content">
-                <?php foreach($product['faqs'] as $faq): ?>
-                <div class="faq-item">
-                    <h3><?php echo htmlspecialchars($faq['question']); ?></h3>
-                    <p><?php echo htmlspecialchars($faq['answer']); ?></p>
+            <?php if (!empty($product['faqs'])): ?>
+            <div class="faq-section">
+                <h2>FAQs</h2>
+                <div class="faq-content">
+                    <?php foreach ($product['faqs'] as $faq): ?>
+                    <div class="faq-item">
+                        <h3><?php echo htmlspecialchars($faq['question']); ?></h3>
+                        <p><?php echo htmlspecialchars($faq['answer']); ?></p>
+                    </div>
+                    <?php endforeach; ?>
                 </div>
-                <?php endforeach; ?>
             </div>
+            <?php endif; ?>
         </div>
-        <?php endif; ?>
-        </div>
+    </div>
 
-        <footer class="footer">
+    <footer class="footer">
         <div class="footer-left">
             <img src="../assets/images/logo.png" alt="PuffLab Logo" style="max-height: 100px; display: block; margin: auto;">
             <p>
-                Made with love in Kuching, Sarawak, Puff Lab brings you premium Japanese cream puffs with a local twist! From our pop-up freezers to our cozy spot at Lakeview UNIMAS, we’re here to make every bite special. Whether you’re treating yourself or planning an event, our fresh, flavorful, and affordable pastries are crafted to delight. Join the Puff Lab family today—where gourmet desserts meet everyday joy!
+                Made with love in Kuching, Sarawak, Puff Lab brings you premium Japanese cream puffs with a local twist! Whether you’re treating yourself or planning an event, our fresh, flavorful, and affordable pastries are crafted to delight. Join the Puff Lab family today—where gourmet desserts meet everyday joy!
             </p>
         </div>
         <div class="footer-right">
@@ -181,8 +179,6 @@ if (!$product) {
             Copyright &copy; 2024 PuffLab
         </div>
     </footer>
-
-
 
     <script src="script.js"></script>
     <script src="memberCart.js"></script>

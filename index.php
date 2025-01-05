@@ -3,19 +3,19 @@ session_start();
 
 // Check if user is logged in and redirect accordingly
 if (!isset($_SESSION['user_id'])) {
-    header("Location: publicHome.html");
+    header("Location: TMN3223-WAD-Project/public/publicHome.html");
     exit();
 } 
 
 // Redirect based on user's role
 if ($_SESSION['role'] === 'member') {
-    header("Location: memberHome.html");
+    header("Location: TMN3223-WAD-Project/public/memberHome.php");
     exit();
 } elseif ($_SESSION['role'] === 'admin') {
-    header("Location: adminDashboard.php");
+    header("Location: TMN3223-WAD-Project/public/adminDashboard.php");
     exit();
 } else {
-    header("Location: publicHome.html");
+    header("Location: TMN3223-WAD-Project/public/publicHome.html");
     exit();
 }
 

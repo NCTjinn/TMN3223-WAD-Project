@@ -1,9 +1,9 @@
 -- Drop the database if it exists
-DROP DATABASE IF EXISTS PuffLab;
+DROP DATABASE IF EXISTS if0_37979402_pufflab;
 
 -- Database creation and selection
-CREATE DATABASE IF NOT EXISTS PuffLab;
-USE PuffLab;
+CREATE DATABASE IF NOT EXISTS if0_37979402_pufflab;
+USE if0_37979402_pufflab;
 
 -- Drop tables if they exist
 DROP TABLE IF EXISTS Users;

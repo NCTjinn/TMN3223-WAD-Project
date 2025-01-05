@@ -13,7 +13,7 @@ if ($_SESSION['role'] !== 'member') {
     exit();
 }
 // Database connection
-$conn = new mysqli("localhost", "root", "", "PuffLab");
+$conn = new mysqli("sql112.infinityfree.com", "if0_37979402", "tmn3223ncnhcds", "if0_37979402_pufflab");
 
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
@@ -102,26 +102,15 @@ $conn->close();
     <div class="featured-text">
         <h1>ONE BITE IS NEVER ENOUGH</h1>
     </div>
-    <!-- later 
-    <div class="buy-once-more">
-        <h2>BUY ONCE MORE</h2>
-        <div class="previous-purchases">
-            <div class="product-card"></div>
-            <div class="product-card"></div>
-        </div>
-    </div> -->
-
-    <div class="products-section">
-        <div class="tab-buttons">
-            <button class="tab-button active" id="bestsellers-btn">Monthly Bestsellers</button>
-            <button class="tab-button" id="arrivals-btn">New Arrivals</button>
-        </div>
-
-        <div class="products-grid" id="products-grid">
-            <div class="product-card"></div>
-            <div class="product-card"></div>
-            <div class="product-card"></div>
-        </div>
+    
+     <div class="products-section">
+    <div class="tab-buttons">
+        <button class="tab-button active" id="bestsellers-btn">Monthly Bestsellers</button>
+        <button class="tab-button" id="arrivals-btn">New Arrivals</button>
+    </div>
+    <div class="products-grid" id="products-grid">
+        <!-- Products will be loaded here dynamically -->
+    </div>
     </div>
 
     <footer class="footer">

@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
+    attachEventListeners();
     let products = []; // Initialize products array
 
     const addProductBtn = document.getElementById('addProductBtn');
@@ -158,14 +159,41 @@ document.addEventListener('DOMContentLoaded', function () {
     function handleFile(file) {
         if (file && file.type.startsWith('image/')) {
             const reader = new FileReader();
-            reader.onload = function () {
+            reader.onload = async function () {
                 tempImage = reader.result;
                 imagePreview.src = tempImage;
                 imagePreview.classList.remove('hidden');
+                
+                // Send the image to the server for saving
+                await saveImageToServer(file);
             };
             reader.readAsDataURL(file);
         } else {
             alert('Please upload a valid image file.');
+        }
+    }
+
+    async function saveImageToServer(file) {
+        const formData = new FormData();
+        formData.append('image', file);
+    
+        try {
+            const response = await fetch('productmanagement.php?action=uploadImage', {
+                method: 'POST',
+                body: formData
+            });
+    
+            const data = await response.json();
+            if (response.ok && data.success) {
+                // Save the image URL returned by the server
+                tempImage = data.imageUrl;
+                imagePreview.src = tempImage;  // Update image preview
+            } else {
+                alert('Failed to upload image!');
+            }
+        } catch (error) {
+            console.error('Error uploading image:', error);
+            alert('Error uploading image!');
         }
     }
 
@@ -175,6 +203,7 @@ document.addEventListener('DOMContentLoaded', function () {
         
         if (editing && product) {
             productForm.productName.value = product.name;
+            productForm.category_id.value = product.category_id;
             productForm.productPrice.value = parseFloat(product.price).toFixed(2);
             productForm.productStock.value = product.stock_quantity;
             productForm.productDescription.value = product.description;
@@ -227,7 +256,7 @@ document.addEventListener('DOMContentLoaded', function () {
             showConfirmationMessage(`Error: ${error.message}`, 'error');
             throw error;
         }
-    }
+    }    
 
     async function deleteProduct(productId) {
         try {
@@ -269,7 +298,7 @@ document.addEventListener('DOMContentLoaded', function () {
             stock_quantity: parseInt(productForm.productStock.value),
             description: productForm.productDescription.value.trim(),
             image_url: tempImage || 'https://via.placeholder.com/50',
-            category_id: 1 // Default category
+            category_id: productForm.category_id.value
         };
     
         if (editIndex !== null) {
@@ -331,3 +360,21 @@ document.addEventListener('DOMContentLoaded', function () {
     // Initialize products table
     fetchProducts();
 });
+
+// Event Handlers
+function attachEventListeners() {
+    // Profile dropdown functionality
+    const profileIcon = document.getElementById('profile-icon');
+    const profileDropdown = document.getElementById('dropdown-menu');
+
+    profileIcon.addEventListener('click', (e) => {
+        e.stopPropagation();
+        profileDropdown.classList.toggle('active');
+    });
+
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.user-dropdown')) {
+            profileDropdown.classList.remove('active');
+        }
+    });
+}

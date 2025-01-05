@@ -1,59 +1,65 @@
-// Cart management functionality
+// memberCart.js
 const cart = {
     items: [],
     
-    async loadCartItems() {
-        try {
-            const response = await fetch('memberCart_api.php');
-            if (!response.ok) throw new Error('Failed to load cart');
-            this.items = await response.json();
-            this.updateCartDisplay();
-        } catch (error) {
-            console.error('Error loading cart:', error);
-            alert('Failed to load cart items. Please try again.');
-        }
-    },
-    
-    async addItem(productId, quantity) {
-        try {
-            const response = await fetch('memberCart_api.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ product_id: productId, quantity: quantity })
-            });
-            
-            if (!response.ok) {
-                const error = await response.json();
-                throw new Error(error.message || 'Failed to add item');
+    loadCartItems() {
+        const xhr = new XMLHttpRequest();
+        xhr.open('GET', 'memberCart_api.php', true);
+        xhr.onreadystatechange = () => {
+            if (xhr.readyState === 4) {
+                if (xhr.status === 200) {
+                    try {
+                        this.items = JSON.parse(xhr.responseText);
+                        this.updateCartDisplay();
+                    } catch (error) {
+                        console.error('Error parsing cart data:', error);
+                        alert('Failed to load cart items. Please try again.');
+                    }
+                } else {
+                    console.error('Failed to load cart');
+                    alert('Failed to load cart items. Please try again.');
+                }
             }
-            
-            await this.loadCartItems(); // Reload cart after successful addition
-            return true;
-        } catch (error) {
-            console.error('Error adding item:', error);
-            alert('Failed to add item to cart. Please try again.');
-            return false;
-        }
+        };
+        xhr.send();
     },
     
-    async updateQuantity(cartId, newQuantity) {
-        try {
-            const response = await fetch('memberCart_api.php', {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ cart_id: cartId, quantity: newQuantity })
-            });
-            
-            if (!response.ok) throw new Error('Failed to update quantity');
-            await this.loadCartItems();
-        } catch (error) {
-            console.error('Error updating quantity:', error);
-            alert('Failed to update cart. Please try again.');
-        }
+    addItem(productId, quantity) {
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', 'memberCart_api.php', true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        
+        xhr.onreadystatechange = () => {
+            if (xhr.readyState === 4) {
+                if (xhr.status === 200) {
+                    this.loadCartItems();
+                } else {
+                    console.error('Failed to add item');
+                    alert('Failed to add item to cart. Please try again.');
+                }
+            }
+        };
+        
+        xhr.send(`action=add&product_id=${productId}&quantity=${quantity}`);
+    },
+    
+    updateQuantity(cartId, newQuantity) {
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', 'memberCart_api.php', true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        
+        xhr.onreadystatechange = () => {
+            if (xhr.readyState === 4) {
+                if (xhr.status === 200) {
+                    this.loadCartItems();
+                } else {
+                    console.error('Failed to update quantity');
+                    alert('Failed to update cart. Please try again.');
+                }
+            }
+        };
+        
+        xhr.send(`action=update&cart_id=${cartId}&quantity=${newQuantity}`);
     },
     
     calculateTotal() {
@@ -75,7 +81,7 @@ const cart = {
                 <div class="quantity-control">
                     <button onclick="cart.updateQuantity(${item.cart_id}, ${item.quantity - 1})">-</button>
                     <input type="number" value="${item.quantity}" min="1" 
-                        onchange="cart.updateQuantity(${item.cart_id}, this.value)">
+                           onchange="cart.updateQuantity(${item.cart_id}, parseInt(this.value))">
                     <button onclick="cart.updateQuantity(${item.cart_id}, ${item.quantity + 1})">+</button>
                 </div>
                 <span>RM ${(item.price * item.quantity).toFixed(2)}</span>

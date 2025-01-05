@@ -1,14 +1,36 @@
-// Tab switching functionality
-document.querySelectorAll('.tab-btn').forEach(button => {
-    button.addEventListener('click', () => {
-        // Remove active class from all buttons and hide all content
-        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-        document.querySelectorAll('.tab-content').forEach(content => content.style.display = 'none');
-        
-        // Add active class to clicked button and show corresponding content
-        button.classList.add('active');
-        const tabId = button.getAttribute('data-tab');
-        document.getElementById(tabId).style.display = 'block';
+// Add this to your existing script section or publicMenuProductPage.js
+document.addEventListener('DOMContentLoaded', function() {
+    // Tab switching functionality
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    tabButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            // Remove active class from all buttons and contents
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+            tabContents.forEach(content => {
+                content.classList.remove('active');
+                content.style.display = 'none';
+            });
+            
+            // Add active class to clicked button
+            button.classList.add('active');
+            
+            // Show corresponding content
+            const tabId = button.getAttribute('data-tab');
+            const tabContent = document.getElementById(tabId);
+            tabContent.classList.add('active');
+            tabContent.style.display = 'block';
+        });
+    });
+
+    // Initialize thumbnails if they exist
+    const thumbnails = document.querySelectorAll('.thumbnail');
+    thumbnails.forEach(thumbnail => {
+        thumbnail.addEventListener('click', function() {
+            const mainImage = document.querySelector('.main-image img');
+            mainImage.src = this.src;
+        });
     });
 });
 
@@ -21,29 +43,22 @@ function updateQuantity(change) {
     }
 }
 
-// Update the addToCart function
 function addToCart(productId) {
     const quantity = parseInt(document.getElementById('quantity').value);
-    // Make sure cart.js is loaded
     if (typeof cart !== 'undefined') {
-        cart.addItem(productId, quantity).then(success => {
-            if (success) {
-                alert('Item added to cart!');
-            }
-        });
+        // Change addItem to match the cart object's method
+        cart.addItem(productId, quantity)
+            .then(success => {
+                if (success) {
+                    alert('Item added to cart!');
+                }
+            })
+            .catch(error => {
+                console.error('Error adding to cart:', error);
+                alert('Failed to add item to cart. Please try again.');
+            });
     } else {
         console.error('Cart functionality not loaded');
+        alert('Cart functionality is not available. Please refresh the page.');
     }
 }
-
-// Handle thumbnail image switching
-document.addEventListener('DOMContentLoaded', function() {
-    // Add thumbnail click handlers if needed
-    const thumbnails = document.querySelectorAll('.thumbnail');
-    thumbnails.forEach(thumbnail => {
-        thumbnail.addEventListener('click', function() {
-            const mainImage = document.querySelector('.main-image img');
-            mainImage.src = this.src;  // Change main image to the clicked thumbnail
-        });
-    });
-});

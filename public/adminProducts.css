@@ -114,12 +114,6 @@ body {
     visibility: hidden; /* Hidden by default */
 }
 
-/* Badge Parent Container for Positioning */
-.notification-icon {
-    position: relative;
-}
-
-
 /* Active State for Profile Icon */
 .user-dropdown i.active {
     color: #6c7a5d; /* Active color */
@@ -139,8 +133,7 @@ body {
 
 
 /* Dropdown Items */
-.dropdown-menu a,
-.notification-item {
+.dropdown-menu a {
     display: flex;
     align-items: center;
     padding: 12px 20px;
@@ -151,43 +144,13 @@ body {
     transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-.notification-item:last-child,
 .dropdown-menu a:last-child {
     border-bottom: none;
 }
 
-.dropdown-menu a:hover,
-.notification-item:hover {
+.dropdown-menu a:hover {
     background-color: #f5f5f5;
     transform: scale(1.02);
-}
-
-/* Unread Indicator */
-.notification-item .unread-indicator {
-    width: 10px;
-    height: 10px;
-    background-color: #ff5722;
-    border-radius: 50%;
-    margin-right: 15px;
-}
-
-/* Notification Text Section */
-.notification-text {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-}
-
-/* Notification Title */
-.notification-title {
-    font-weight: bold;
-    margin-bottom: 2px;
-}
-
-/* Notification Time */
-.notification-time {
-    font-size: 12px;
-    color: #777;
 }
 
 /* Mark All as Read Button */
@@ -509,7 +472,6 @@ button.mark-all-btn:hover {
     width: 90%;
 }
 
-
 .modal.active {
     display: block;
 }
@@ -551,10 +513,12 @@ button.mark-all-btn:hover {
     font-size: 1rem;
     font-weight: 600;
     color: #555;
+    margin-top: 0.6rem;
 }
 
 .form-group input,
-.form-group textarea {
+.form-group textarea,
+.form-group select {
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 6px;
@@ -564,9 +528,20 @@ button.mark-all-btn:hover {
 }
 
 .form-group input:focus,
-.form-group textarea:focus {
+.form-group textarea:focus,
+.form-group select:focus {
     border-color: #6c7a5d;
     box-shadow: 0 0 4px rgba(108, 122, 93, 0.5);
+}
+
+.form-group select {
+    background-color: #fff;
+    color: #333;
+}
+
+.form-group select option {
+    font-size: 1rem;
+    padding: 10px;
 }
 
 textarea {
@@ -601,12 +576,16 @@ textarea {
 
 /* Image Preview */
 #imagePreview {
-    max-width: 100%;
-    max-height: 150px;
+    max-height: 100px; /* Fixed height */
+    height: 100px; /* Ensures the height is always 100px */
+    width: auto; /* Maintains aspect ratio */
     margin-top: 10px;
     border-radius: 6px;
+    object-fit: contain; /* Maintains aspect ratio within the container */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: block; /* Ensures proper layout */
 }
+
 
 /* Buttons */
 .modal-buttons {
@@ -759,26 +738,9 @@ textarea {
     background-color: #ffffff;
 }
 
-
 .modal-content h2 {
     margin-bottom: 20px;
     color: #333;
-}
-
-/* Dropdown Menu Styling */
-.dropdown-menu a {
-    background: #f9f9f9;
-    border-radius: 4px;
-    margin-bottom: 10px;
-    padding: 10px 15px;
-    font-size: 14px;
-    transition: background-color 0.3s ease, transform 0.3s ease;
-}
-
-.dropdown-menu a:hover {
-    background: #6c7a5d;
-    color: white;
-    transform: scale(1.02);
 }
 
 /* Modal Buttons */
