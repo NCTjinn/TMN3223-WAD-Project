@@ -1,22 +1,3 @@
-// Constants and Configuration
-const baseUrl = window.location.hostname === 'localhost' 
-    ? 'http://localhost/TMN3223-WAD-Project' 
-    : 'http://puff-lab.free.nf/';
-
-const API_CONFIG = {
-    // Base URL - change this based on your environment
-    baseUrl: baseUrl,
-    
-    // API endpoints
-    endpoints: {
-        dashboardStats: `${baseUrl}/api/adminDashboard`,
-        transactions: `${baseUrl}/api/adminTransactions`
-    },
-    
-    // Request timeout in milliseconds
-    timeout: 5000
-};
-
 const CHART_COLORS = {
     primary: '#6c7a5d',
     secondary: '#C2C9AD',
@@ -42,72 +23,34 @@ let dashboardState = {
     chartInstances: {}
 };
 
-// Enhanced fetch function with timeout and better error handling
-async function fetchWithAuth(endpoint, options = {}) {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), API_CONFIG.timeout);
-
-    try {
-        const defaultOptions = {
-            method: 'GET',
-            signal: controller.signal,
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            }
-        };
-
-        const url = endpoint.startsWith('http') ? endpoint : `${API_CONFIG.baseUrl}${endpoint}`;
-        console.log(`Fetching from: ${url}`); // Debug log
-
-        const response = await fetch(url, { ...defaultOptions, ...options });
-
-        if (!response.ok) {
-            // Handle different HTTP error codes
-            switch (response.status) {
-                case 404:
-                    throw new Error(`API endpoint not found: ${endpoint}`);
-                case 401:
-                    throw new Error('Authentication required');
-                case 403:
-                    throw new Error('Access forbidden');
-                case 500:
-                    throw new Error('Internal server error');
-                default:
-                    throw new Error(`HTTP error! status: ${response.status}`);
-            }
-        }
-
-        const data = await response.json();
-        console.log('Fetched data:', data); // Debug log
-        return data;
-    } catch (error) {
-        console.error('Error fetching data:', error);
-        throw error;
-    } finally {
-        clearTimeout(timeoutId);
-    }
-}
-
 // API Handlers
 async function fetchDashboardData() {
     console.log('Fetching dashboard data...'); // Debug log
     showLoadingState();
     try {
-        const data = await fetchWithAuth(API_CONFIG.endpoints.dashboardStats);
-        console.log('Fetched dashboard data:', data); // Debug log
-        if (data.status === 'success') {
-            console.log('Fetched dashboard data:', data.data); // Debug log
+        const response = await fetch(`fetchAdminDashboard.php`);
+        console.log('Response status:', response.status); // Debug log for response status
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log('Fetched dashboard data:', data); // Debug log for fetched data
+
+        if (data.status === 'error') { // Changed to match PHP response format
+            throw new Error(data.message || 'Failed to load dashboard data');
+        }
+
+        if (data.status === 'success' && data.data) { // Added check for success response
             updateDashboard(data.data);
-            updateStats(data.data); // Ensure this function is called
+            updateStats(data.data);
             updateLastUpdated();
             hideErrorMessage();
-        } else {
-            throw new Error(data.error || 'Failed to load dashboard data');
         }
     } catch (error) {
-        console.error('Error fetching dashboard data:', error);
-        showErrorMessage(error.message);
+        console.error("Error fetching dashboard data:", error);
+        document.getElementById('error-message').innerText = "Failed to load dashboard.";
+        document.getElementById('error-message').onclick = () => fetchDashboardData();
     } finally {
         hideLoadingState();
     }
@@ -229,6 +172,12 @@ function initializeLineChart() {
 function updateDashboard(data) {
     console.log('Updating dashboard with data:', data); // Debugging log
 
+    // Early return if essential data is missing
+    if (!data || !data.orderStats || !data.revenue_stats || !data.topProducts) {
+        console.error('Missing required data for updating the dashboard');
+        return;
+    }
+
     // Ensure that orderStats contains the expected values
     const dineInOrders = parseInt(data.orderStats.dineIn) || 0;
     const takeawayOrders = parseInt(data.orderStats.takeaway) || 0;
@@ -241,23 +190,25 @@ function updateDashboard(data) {
     const takeawayPercentage = totalOrders ? ((takeawayOrders / totalOrders) * 100).toFixed(2) : 0;
     const deliveryPercentage = totalOrders ? ((deliveryOrders / totalOrders) * 100).toFixed(2) : 0;
 
+    // Create the statsMap with fallback values using nullish coalescing (??)
     const statsMap = {
         'dineInPercentage': `${dineInPercentage}%`,
         'takeawayPercentage': `${takeawayPercentage}%`,
         'deliveryPercentage': `${deliveryPercentage}%`,
-        'totalRevenue': formatCurrency(data.revenue_stats.total_revenue),
-        'weeklyRevenue': formatCurrency(data.revenue_stats.weekly_revenue),
-        'monthlyRevenue': formatCurrency(data.revenue_stats.monthly_revenue),
-        'topCategory': data.topCategory.name,
-        'topCategoryRevenue': formatCurrency(data.topCategory.revenue),
-        'topProduct': data.topProducts[0]?.name || 'N/A',
-        'topProductUnits': formatNumber(data.topProducts[0]?.units_sold || 0),
-        'topProductRevenue': formatCurrency(data.topProducts[0]?.revenue || 0),
-        'totalCustomers': formatNumber(data.total_customers),
-        'averageOrderValue': formatCurrency(data.average_order_value),
-        'periodRevenue': formatCurrency(data.period_stats?.revenue || 0),
+        'totalRevenue': formatCurrency(data.revenue_stats.total_revenue ?? 0),
+        'weeklyRevenue': formatCurrency(data.revenue_stats.weekly_revenue ?? 0),
+        'monthlyRevenue': formatCurrency(data.revenue_stats.monthly_revenue ?? 0),
+        'topCategory': data.topCategory?.name ?? 'N/A',
+        'topCategoryRevenue': formatCurrency(data.topCategory?.revenue ?? 0),
+        'topProduct': data.topProducts[0]?.name ?? 'N/A',
+        'topProductUnits': formatNumber(data.topProducts[0]?.units_sold ?? 0),
+        'topProductRevenue': formatCurrency(data.topProducts[0]?.revenue ?? 0),
+        'totalCustomers': formatNumber(data.total_customers ?? 0),
+        'averageOrderValue': formatCurrency(data.average_order_value ?? 0),
+        'periodRevenue': formatCurrency(data.period_stats?.revenue ?? 0),
     };
 
+    // Update DOM elements
     Object.entries(statsMap).forEach(([id, value]) => {
         const element = document.getElementById(id);
         if (element) {
@@ -270,9 +221,11 @@ function updateDashboard(data) {
         }
     });
 
+    // Update charts and the "last updated" timestamp
     updateCharts(data);
     updateLastUpdated();
 }
+
 
 function updateCharts(data) {
     const { chartInstances } = dashboardState;
@@ -329,28 +282,41 @@ function updateCharts(data) {
                 const currentDate = new Date().toISOString().split('T')[0];
                 console.log('Current date:', currentDate);
 
-                // Generate complete date range
+                // Generate complete date range based on selected period
                 if (dashboardState.currentPeriod === 'weekly') {
                     const startDate = new Date();
-                    startDate.setDate(startDate.getDate() - 6);
+                    startDate.setDate(startDate.getDate() - 6); // 7 days including today
                     labels = getDatesInRange(startDate, new Date());
                 } else if (dashboardState.currentPeriod === 'monthly') {
                     const startDate = new Date();
-                    startDate.setDate(startDate.getDate() - 29);
+                    startDate.setDate(startDate.getDate() - 29); // 30 days including today
                     labels = getDatesInRange(startDate, new Date());
+                } else if (dashboardState.currentPeriod === 'daily') {
+                    // For daily period, ensure we have every hour (0-23) for each day
+                    labels = Array.from({ length: 24 }, (_, i) => `${i}`.padStart(2, '0') + ":00"); // 24 hours with leading zero
                 } else {
-                    labels = trendData.labels;
+                    labels = trendData.labels; // Default to provided labels if no period matches
                 }
 
-                // Map values to dates, using 0 for missing dates
-                values = labels.map(date => {
-                    const index = trendData.labels.indexOf(date);
-                    return index !== -1 ? trendData.values[index] : 0;
+                // Map values to labels, using 0 for missing data
+                values = labels.map(label => {
+                    // For 'daily', check for the hour in trendData
+                    if (dashboardState.currentPeriod === 'daily') {
+                        // Find the hour in trendData labels (e.g., 11, 15, etc.)
+                        const hour = parseInt(label.split(':')[0], 10); // Get the hour as an integer (e.g., "11:00" -> 11)
+                        const index = trendData.labels.indexOf(hour);
+                        return index !== -1 ? trendData.values[index] : 0; // 0 if missing
+                    } else {
+                        // For 'weekly' or 'monthly', map based on dates
+                        const index = trendData.labels.indexOf(label);
+                        return index !== -1 ? trendData.values[index] : 0; // 0 if missing
+                    }
                 });
 
                 console.log('Generated labels:', labels);
                 console.log('Generated values:', values);
 
+                // Update chart with generated data
                 chartInstances.line.data.labels = labels;
                 chartInstances.line.data.datasets[0].data = values;
                 chartInstances.line.update();
@@ -374,9 +340,9 @@ function updateStats(data) {
     console.log('Updating stats with data:', data); // Debugging log
 
     // Ensure that orderStats contains the expected values
-    const dineInOrders = parseInt(data.orderStats.dineIn) || 0;
-    const takeawayOrders = parseInt(data.orderStats.takeaway) || 0;
-    const deliveryOrders = parseInt(data.orderStats.delivery) || 0;
+    const dineInOrders = parseInt(data.orderStats?.dineIn) || 0;
+    const takeawayOrders = parseInt(data.orderStats?.takeaway) || 0;
+    const deliveryOrders = parseInt(data.orderStats?.delivery) || 0;
 
     const totalOrders = dineInOrders + takeawayOrders + deliveryOrders;
 
@@ -385,27 +351,36 @@ function updateStats(data) {
     const takeawayPercentage = totalOrders ? ((takeawayOrders / totalOrders) * 100).toFixed(2) : 0;
     const deliveryPercentage = totalOrders ? ((deliveryOrders / totalOrders) * 100).toFixed(2) : 0;
 
-    const periodRevenue = data.periodRevenue[dashboardState.currentPeriod] || 0;
+    // Handle currentPeriod safely with fallback value if it's not valid
+    const periodRevenue = data.periodRevenue?.[dashboardState.currentPeriod] ?? 0;
     console.log('Current period:', dashboardState.currentPeriod); // Debug log
     console.log('Period revenue:', periodRevenue); // Debug log
+
+    // Debugging log for topCategory
+    console.log('Top Category data:', data.topCategory);
+
+    // Check if topCategory exists and log its details
+    const topCategoryName = data.topCategory?.name ?? 'N/A';
+    const topCategoryRevenue = data.topCategory?.revenue ?? 0;
 
     const statsMap = {
         'dineInPercentage': `${dineInPercentage}%`,
         'takeawayPercentage': `${takeawayPercentage}%`,
         'deliveryPercentage': `${deliveryPercentage}%`,
-        'totalRevenue': formatCurrency(data.revenue_stats.total_revenue),
-        'weeklyRevenue': formatCurrency(data.revenue_stats.weekly_revenue),
-        'monthlyRevenue': formatCurrency(data.revenue_stats.monthly_revenue),
-        'topCategory': data.topCategory.name,
-        'topCategoryRevenue': formatCurrency(data.topCategory.revenue),
-        'topProduct': data.topProducts[0]?.name || 'N/A',
-        'topProductUnits': formatNumber(data.topProducts[0]?.units_sold || 0),
-        'topProductRevenue': formatCurrency(data.topProducts[0]?.revenue || 0),
-        'totalCustomers': formatNumber(data.total_customers),
-        'averageOrderValue': formatCurrency(data.average_order_value),
+        'totalRevenue': formatCurrency(data.revenue_stats?.total_revenue ?? 0),
+        'weeklyRevenue': formatCurrency(data.revenue_stats?.weekly_revenue ?? 0),
+        'monthlyRevenue': formatCurrency(data.revenue_stats?.monthly_revenue ?? 0),
+        'topCategory': topCategoryName,
+        'topCategoryRevenue': formatCurrency(topCategoryRevenue),
+        'topProduct': data.topProducts?.[0]?.name ?? 'N/A',
+        'topProductUnits': formatNumber(data.topProducts?.[0]?.units_sold ?? 0),
+        'topProductRevenue': formatCurrency(data.topProducts?.[0]?.revenue ?? 0),
+        'totalCustomers': formatNumber(data.total_customers ?? 0),
+        'averageOrderValue': formatCurrency(data.average_order_value ?? 0),
         'periodRevenue': formatCurrency(periodRevenue)
     };
 
+    // Update DOM elements
     Object.entries(statsMap).forEach(([id, value]) => {
         const element = document.getElementById(id);
         if (element) {
@@ -418,6 +393,8 @@ function updateStats(data) {
         }
     });
 }
+
+
 
 // Event Handlers
 function attachEventListeners() {
