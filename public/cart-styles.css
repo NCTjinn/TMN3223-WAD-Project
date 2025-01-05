@@ -73,3 +73,78 @@
     margin-top: 4px;
 }
 
+/* Add/update these styles in cart-styles.css */
+
+.cart-table-header {
+    display: grid;
+    grid-template-columns: 3fr 1fr 1fr 1fr;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--sage-green);
+    text-align: right; /* Right align all header items */
+}
+
+.cart-table-header span:first-child {
+    text-align: left; /* Keep product aligned left */
+}
+
+.cart-item {
+    display: grid;
+    grid-template-columns: 3fr 1fr 1fr 1fr;
+    padding: 1rem 0;
+    align-items: center;
+    border-bottom: 1px solid #eee;
+    text-align: right; /* Right align all items */
+}
+
+.product-info {
+    text-align: left; /* Keep product info aligned left */
+    display: flex;
+    gap: 16px;
+    align-items: center;
+}
+
+.quantity-control {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: flex-end; /* Align to the right */
+    height: 32px; /* Make the control height shorter */
+}
+
+.qty-btn {
+    width: 24px;
+    height: 24px; /* Make buttons smaller */
+    border: 1px solid #ddd;
+    background: #fff;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.quantity-control input {
+    width: 40px; /* Make input narrower */
+    height: 24px; /* Make input shorter */
+    text-align: center;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.cart-total {
+    text-align: right;
+    padding: 1rem 0;
+    font-weight: bold;
+    margin-left: auto;
+    width: 25%; /* Match the width of the last column */
+}
+
+.clear-cart-button {
+    margin: 1rem 0;
+    padding: 0.5rem 1rem;
+    background: #f44336;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
