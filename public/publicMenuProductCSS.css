@@ -227,3 +227,24 @@
     padding: 15px;
     text-align: center;
 }
+
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 15px 25px;
+    background-color: #F2EDD3;
+    color: #1F1F1F;
+    border-radius: 5px;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+    z-index: 10;
+}
+
+.notification.show {
+    opacity: 1;
+}
+
+.notification.error {
+    background-color: #f44336;
+}
