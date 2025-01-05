@@ -58,3 +58,8 @@ function loadProducts(type) {
                 productsGrid.appendChild(productCard);
             });
         })
+        .catch(error => {
+            productsGrid.innerHTML = '<div class="error">Error loading products</div>';
+            console.error('Error:', error);
+        });
+}
