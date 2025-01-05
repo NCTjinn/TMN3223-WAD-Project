@@ -1,5 +1,5 @@
-// Check if cart object already exists and create/update accordingly
-window.cartManager = window.cartManager || {
+// Cart management functionality
+const cart = {
     items: [],
     
     async loadCartItems() {
@@ -73,10 +73,10 @@ window.cartManager = window.cartManager || {
                 </div>
                 <span>RM ${parseFloat(item.price).toFixed(2)}</span>
                 <div class="quantity-control">
-                    <button onclick="cartManager.updateQuantity(${item.cart_id}, ${item.quantity - 1})">-</button>
+                    <button onclick="cart.updateQuantity(${item.cart_id}, ${item.quantity - 1})">-</button>
                     <input type="number" value="${item.quantity}" min="1" 
-                        onchange="cartManager.updateQuantity(${item.cart_id}, this.value)">
-                    <button onclick="cartManager.updateQuantity(${item.cart_id}, ${item.quantity + 1})">+</button>
+                        onchange="cart.updateQuantity(${item.cart_id}, this.value)">
+                    <button onclick="cart.updateQuantity(${item.cart_id}, ${item.quantity + 1})">+</button>
                 </div>
                 <span>RM ${(item.price * item.quantity).toFixed(2)}</span>
             </div>
@@ -88,52 +88,43 @@ window.cartManager = window.cartManager || {
     }
 };
 
-// Initialize cart when page loads using an IIFE to avoid global scope pollution
-(function() {
-    document.addEventListener('DOMContentLoaded', () => {
-        // Load cart items
-        cartManager.loadCartItems();
-        
-        // Handle delivery option selection
-        const optionCards = document.querySelectorAll('.option-card');
-        optionCards.forEach(card => {
-            card.addEventListener('click', () => {
-                optionCards.forEach(c => {
-                    c.classList.remove('selected');
-                    const timeInputs = c.querySelector('.time-inputs');
-                    if (timeInputs) {
-                        timeInputs.classList.add('hidden');
-                    }
-                });
-                card.classList.add('selected');
-                const timeInputs = card.querySelector('.time-inputs');
-                if (timeInputs) {
-                    timeInputs.classList.remove('hidden');
-                }
+// Initialize cart when page loads
+document.addEventListener('DOMContentLoaded', () => {
+    cart.loadCartItems();
+    
+    // Handle delivery option selection
+    const optionCards = document.querySelectorAll('.option-card');
+    optionCards.forEach(card => {
+        card.addEventListener('click', () => {
+            optionCards.forEach(c => {
+                c.classList.remove('selected');
+                c.querySelector('.time-inputs').classList.add('hidden');
             });
+            card.classList.add('selected');
+            card.querySelector('.time-inputs').classList.remove('hidden');
         });
-        
-        // Handle checkout button
-        const checkoutButton = document.getElementById('checkoutButton');
-        if (checkoutButton) {
-            checkoutButton.addEventListener('click', () => {
-                const selectedOption = document.querySelector('.option-card.selected');
-                if (!selectedOption) {
-                    alert('Please select a delivery option');
-                    return;
-                }
-                
-                const dateInput = selectedOption.querySelector('.date-input');
-                const timeInput = selectedOption.querySelector('.time-input');
-                
-                if (!dateInput?.value || !timeInput?.value) {
-                    alert('Please select date and time');
-                    return;
-                }
-                
-                // Proceed to checkout
-                window.location.href = 'memberCheckoutTest.php';
-            });
-        }
     });
-})();
+    
+    // Handle checkout button
+    const checkoutButton = document.getElementById('checkoutButton');
+    if (checkoutButton) {
+        checkoutButton.addEventListener('click', () => {
+            const selectedOption = document.querySelector('.option-card.selected');
+            if (!selectedOption) {
+                alert('Please select a delivery option');
+                return;
+            }
+            
+            const dateInput = selectedOption.querySelector('.date-input');
+            const timeInput = selectedOption.querySelector('.time-input');
+            
+            if (!dateInput.value || !timeInput.value) {
+                alert('Please select date and time');
+                return;
+            }
+            
+            // Proceed to checkout
+            window.location.href = 'memberCheckoutTest.php';
+        });
+    }
+});
