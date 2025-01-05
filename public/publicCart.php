@@ -72,7 +72,9 @@
 
         <div id="cartItems">
             <!-- Cart items will be populated by JavaScript -->
-        </div>
+        </div>  
+
+        <button onclick="cartManager.clearCart()" class="clear-cart-button">Clear Cart</button>
 
         <div class="cart-total">
             Total: <span id="cartTotal">RM 0.00</span>
