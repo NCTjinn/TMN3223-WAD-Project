@@ -43,17 +43,22 @@ function updateQuantity(change) {
     }
 }
 
-// Update the addToCart function
 function addToCart(productId) {
     const quantity = parseInt(document.getElementById('quantity').value);
-    // Make sure cart.js is loaded
     if (typeof cart !== 'undefined') {
-        cart.addItem(productId, quantity).then(success => {
-            if (success) {
-                alert('Item added to cart!');
-            }
-        });
+        // Change addItem to match the cart object's method
+        cart.addItem(productId, quantity)
+            .then(success => {
+                if (success) {
+                    alert('Item added to cart!');
+                }
+            })
+            .catch(error => {
+                console.error('Error adding to cart:', error);
+                alert('Failed to add item to cart. Please try again.');
+            });
     } else {
         console.error('Cart functionality not loaded');
+        alert('Cart functionality is not available. Please refresh the page.');
     }
 }
