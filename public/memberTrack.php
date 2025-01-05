@@ -99,7 +99,7 @@ if (!isset($_SESSION['user_id'])) {
             </div>
             <!-- Continue Button -->
             <div class="continue-button">
-                <button onclick="window.location.href='memberOrders.php'">Continue</button>
+                <button onclick="window.location.href='memberOrders.php'">Continue</button>  <!-- Continue Button -->
             </div>
         </div>
 
