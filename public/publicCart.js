@@ -1,4 +1,3 @@
-// publicCart.js
 class GuestCartManager {
     constructor() {
         this.STORAGE_KEY = 'publicCart';
