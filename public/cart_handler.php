@@ -16,12 +16,17 @@ function getCartProductDetails($productIds) {
     $products = array();
     
     while($row = $result->fetch_assoc()) {
-        $products[$row['product_id']] = $row;
+        // Make sure we use product_id as the key to match our frontend
+        $products[$row['product_id']] = [
+            'product_id' => $row['product_id'],
+            'name' => $row['name'],
+            'price' => $row['price'],
+            'image_url' => $row['image_url']
+        ];
     }
     
     return $products;
 }
-
 // Get product details for cart items
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $data = json_decode(file_get_contents('php://input'), true);
