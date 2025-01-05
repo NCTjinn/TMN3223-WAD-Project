@@ -58,7 +58,7 @@ const checkout = {
     },
 
     calculateDeliveryFee(address) {
-        return deliveryFee ; // Cap at RM10
+        return deliveryFee ; 
     },
 
     updateCheckoutDisplay() {
@@ -78,7 +78,7 @@ const checkout = {
 
         // Calculate totals
         const subtotal = this.calculateSubtotal();
-        const deliveryFee = this.deliveryOption === 'delivery' ? this.deliveryFee : 0;
+        const deliveryFee = this.deliveryOption === 'delivery' ? this.deliveryFee : 5;
         const total = subtotal + deliveryFee;
 
         // Update summary section
@@ -111,8 +111,8 @@ const checkout = {
             const orderData = {
                 items: this.items,
                 deliveryOption: this.deliveryOption,
-                deliveryFee: this.deliveryOption === 'delivery' ? this.deliveryFee : 0,
-                total: this.calculateSubtotal() + (this.deliveryOption === 'delivery' ? this.deliveryFee : 0),
+                deliveryFee: this.deliveryOption === 'delivery' ? this.deliveryFee : 5,
+                total: this.calculateSubtotal() + (this.deliveryOption === 'delivery' ? this.deliveryFee : 5),
                 paymentMethod: paymentMethod,
                 address: {
                     firstName: formData.get('firstName'),
