@@ -4,7 +4,6 @@ session_start();
 if (isset($_GET['error'])) {
     echo '<div class="error-message">' . htmlspecialchars($_GET['error']) . '</div>';
 }
-
 // Check if user is logged in
 if (!isset($_SESSION['user_id'])) {
     header("Location: publicLogin.html");

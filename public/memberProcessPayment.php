@@ -46,7 +46,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['payment_method'])) {
         $conn->begin_transaction();
         
         $paymentMethod = $_POST['payment_method'];
-        $payment_status = "processing";
+        $payment_status = "processing"
         // Debug log
         error_log("Starting checkout process for user: " . $userId);
         error_log("Payment method: " . $paymentMethod);
@@ -107,23 +107,37 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['payment_method'])) {
             throw new Exception("Cart is empty");
         }
 
-        $delivery_address = "{$address['address_line_1']}, {$address['city']}, {$address['state']}, {$address['postcode']}";
-
         // Insert transaction
-        $transaction_sql = "INSERT INTO Transactions (user_id, total_amount, delivery_address, payment_status, shipping_method) VALUES (?, ?, ?, 'successful', 'Delivery')";
+        $transaction_sql = "INSERT INTO Transactions (user_id, total_amount, payment_status, delivery_address) 
+                          VALUES (?, ?, 'successful', ?)";
         $transaction_stmt = $conn->prepare($transaction_sql);
-        $transaction_stmt->bind_param('ids', $userId, $total_amount, $delivery_address);
-        $transaction_stmt->execute();
+        if (!$transaction_stmt) {
+            throw new Exception("Transaction prepare failed: " . $conn->error);
+        }
+        
+        $transaction_stmt->bind_param("idss", $userId, $total_amount, $payment_status, $delivery_address);
+        if (!$transaction_stmt->execute()) {
+            throw new Exception("Transaction execute failed: " . $transaction_stmt->error);
+        }
+        
         $transaction_id = $transaction_stmt->insert_id;
+        error_log("Transaction created with ID: " . $transaction_id);
 
         // Insert transaction details
-        $detail_sql = "INSERT INTO Transaction_Details (transaction_id, product_id, quantity, price_per_item, subtotal) VALUES (?, ?, ?, ?, ?)";
+        $detail_sql = "INSERT INTO Transaction_Details (transaction_id, product_id, quantity, price_per_item, subtotal) 
+                      VALUES (?, ?, ?, ?, ?)";
         $detail_stmt = $conn->prepare($detail_sql);
+        if (!$detail_stmt) {
+            throw new Exception("Detail prepare failed: " . $conn->error);
+        }
+        
         foreach ($items as $item) {
-        $subtotal = $item['price'] * $item['quantity'];
-        $detail_stmt->bind_param('iiidd', $transaction_id, $item['product_id'], $item['quantity'], $item['price'], $subtotal);
-        $detail_stmt->execute();
-    }
+            $subtotal = $item['price'] * $item['quantity'];
+            $detail_stmt->bind_param("iiidd", $transaction_id, $item['product_id'], $item['quantity'], $item['price'], $subtotal);
+            if (!$detail_stmt->execute()) {
+                throw new Exception("Detail execute failed for product_id " . $item['product_id'] . ": " . $detail_stmt->error);
+            }
+        }
 
         // Insert into Orders table
         $tracking_number = 'TRACK_' . uniqid();
