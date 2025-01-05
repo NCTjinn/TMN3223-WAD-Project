@@ -75,20 +75,6 @@ if ($_SESSION['role'] !== 'admin') {
                 </div>
             </div>
 
-            <!--
-            <div class="filter-search">
-                <select id="filterDropdown" class="styled-dropdown">
-                    <option value="all">All Products</option>
-                    <option value="inStock">In Stock</option>
-                    <option value="outOfStock">Out of Stock</option>
-                </select>
-                <div class="search-container">
-                    <input type="text" id="searchBar" placeholder="Search products...">
-                    <i class="fas fa-search search-icon"></i>
-                </div>
-            </div> -->
-
-
             <div id="confirmation-message" class="hidden"></div>
 
             <table class="product-table">
