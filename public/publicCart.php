@@ -39,7 +39,7 @@
                 <li class="dropdown">
                     <a href="myacc.html">My Account <i class='bx bxs-chevron-down'></i></a>
                     <ul class="dropdown-content">
-                        <li><a href="publicHome.html">Log Out</a></li> <!-- Link to LogOut -->
+                        <li><a href="publicLogin.html">Log In</a></li> <!-- Link to LogOut -->
                     </ul>
                 </li>
             </ul>
