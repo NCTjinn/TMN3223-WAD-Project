@@ -119,6 +119,14 @@ if ($_SESSION['role'] !== 'admin') {
                                 <input type="text" id="productName" name="productName" required>
                             </div>
                             <div class="form-group">
+                                <label for="category_id">Category:</label>
+                                <select id="category_id" name="category_id" required>
+                                    <option value="1">Puffs</option>
+                                    <option value="2">Cakes</option>
+                                    <option value="3">Beverages</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
                                 <label for="productPrice">Price:</label>
                                 <input type="number" id="productPrice" name="productPrice" step="0.01" required>
                             </div>

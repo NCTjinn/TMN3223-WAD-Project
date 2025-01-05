@@ -106,34 +106,21 @@ try {
             
             $id = $conn->real_escape_string($data['product_id']);
             
-            // Delete reviews first
-            $sql = "DELETE FROM reviews WHERE product_id = ?";
-            $stmt = $conn->prepare($sql);
-            if (!$stmt) {
-                throw new Exception("Prepare failed: " . $conn->error);
-            }
-            
-            $stmt->bind_param("i", $id);
-            
-            if (!$stmt->execute()) {
-                throw new Exception("Execute failed: " . $stmt->error);
-            }
-            
-            // Delete related user_favorites entries first
-            $sql = "DELETE FROM user_favorites WHERE product_id = ?";
-            $stmt = $conn->prepare($sql);
-            if (!$stmt) {
-                throw new Exception("Prepare failed: " . $conn->error);
-            }
-            
-            $stmt->bind_param("i", $id);
-            
-            if (!$stmt->execute()) {
-                throw new Exception("Execute failed: " . $stmt->error);
-            }
-            
             // Delete related transaction details first
-            $sql = "DELETE FROM transaction_details WHERE product_id = ?";
+            $sql = "DELETE FROM Transaction_Details WHERE product_id = ?";
+            $stmt = $conn->prepare($sql);
+            if (!$stmt) {
+                throw new Exception("Prepare failed: " . $conn->error);
+            }
+            
+            $stmt->bind_param("i", $id);
+            
+            if (!$stmt->execute()) {
+                throw new Exception("Execute failed: " . $stmt->error);
+            }
+
+            //Delete cart items first
+            $sql = "DELETE FROM Cart WHERE product_id = ?";
             $stmt = $conn->prepare($sql);
             if (!$stmt) {
                 throw new Exception("Prepare failed: " . $conn->error);
@@ -159,7 +146,7 @@ try {
                 throw new Exception("Execute failed: " . $stmt->error);
             }
             
-            echo json_encode(["success" => true, "message" => "Product and related reviews deleted successfully"]);
+            echo json_encode(["success" => true, "message" => "Product deleted successfully"]);
             break;
 
         case 'uploadImage':
@@ -182,7 +169,7 @@ try {
                 
                 if (move_uploaded_file($fileTmpPath, $destination)) {
                     // Return the image URL
-                    $imageUrl = '/assets/images/' . $newFileName;
+                    $imageUrl = '../assets/images/' . $newFileName;
 
                     // Encode the image as a base64 string to save it in the database (if required)
                     $imageData = file_get_contents($destination);
