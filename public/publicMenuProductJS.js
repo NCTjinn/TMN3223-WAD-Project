@@ -4,7 +4,7 @@ function createMenuItemElement(item) {
     return `
         <a href="publicProduct.php?id=${item.product_id}" class="menu-item" data-category="${item.category_id}" data-product-id="${item.product_id}">
             <div class="menu-item-image">
-                <img src="${item.image}" alt="${item.name}">
+                <img src="${item.image_url}" alt="${item.name}">
             </div>
             <div class="menu-item-details">
                 <h3 class="menu-item-title">${item.name}</h3>
