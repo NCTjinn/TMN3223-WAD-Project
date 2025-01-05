@@ -113,14 +113,20 @@ if (!$product) {
                     </div>
                 </div>
                 
-                <div class="add-to-cart">
-                    <div class="quantity-control">
-                        <button class="qty-btn" onclick="updateQuantity(-1)">-</button>
-                        <input type="number" value="1" min="1" id="quantity">
-                        <button class="qty-btn" onclick="updateQuantity(1)">+</button>
-                    </div>
-                    <button class="add-cart-btn" onclick="addToCart()">Add To Cart</button>
-                </div>
+                <!-- Replace the existing add-to-cart section with this -->
+<div class="add-to-cart">
+    <div class="quantity-control">
+        <button class="qty-btn" onclick="updateQuantity(-1)">-</button>
+        <input type="number" value="1" min="1" id="quantity">
+        <button class="qty-btn" onclick="updateQuantity(1)">+</button>
+    </div>
+    <button class="add-cart-btn" 
+            data-product-id="<?php echo $product['product_id']; ?>"
+            data-name="<?php echo htmlspecialchars($product['name']); ?>"
+            data-price="<?php echo $product['price']; ?>">
+        Add To Cart
+    </button>
+</div>
             </div>
         </div>
 
@@ -182,5 +188,31 @@ if (!$product) {
     <script src="script.js"></script>
     <script src="publicMenuProductJS.js"></script>
     <script src="publicMenuProductPage.js"></script>
+    <script src="publicCart.js"></script>
+<script>
+// Initialize cartManager
+const cartManager = new GuestCartManager();
+
+// Quantity control functionality
+function updateQuantity(change) {
+    const input = document.getElementById('quantity');
+    const newValue = parseInt(input.value) + change;
+    if (newValue >= 1) {
+        input.value = newValue;
+    }
+}
+
+// Tab switching functionality
+document.querySelectorAll('.tab-btn').forEach(button => {
+    button.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(content => content.style.display = 'none');
+        
+        button.classList.add('active');
+        const tabId = button.getAttribute('data-tab');
+        document.getElementById(tabId).style.display = 'block';
+    });
+});
+</script>
 </body>
 </html>
