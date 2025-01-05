@@ -33,7 +33,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['payment_method'])) {
     $delivery_address = implode(", ", $address);
 
     // Calculate total amount from Cart
-    $cart_query = "SELECT product_id, quantity, (price * quantity) AS total FROM Cart JOIN Products ON Cart.product_id = Products.product_id WHERE user_id = ?";
+    $cart_query = "SELECT Cart.product_id, Cart.quantity, (Products.price * Cart.quantity) AS total 
+    FROM Cart 
+    JOIN Products ON Cart.product_id = Products.product_id 
+    WHERE Cart.user_id = ?";
     $cart_stmt = $conn->prepare($cart_query);
     $cart_stmt->bind_param("i", $userId);
     $cart_stmt->execute();
@@ -42,8 +45,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['payment_method'])) {
     $total_amount = 0;
     $items = [];
     while ($row = $cart_result->fetch_assoc()) {
-        $total_amount += $row['total'];
-        $items[] = $row;
+    $total_amount += $row['total'];
+    $items[] = $row;
     }
 
     // Insert transaction
@@ -61,6 +64,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['payment_method'])) {
         $detail_stmt->execute();
     }
 
+    // Insert into Orders table
+    $tracking_number = uniqid('TRACK_', true);
+    $status = 'processing';
+    $estimated_delivery = date('Y-m-d', strtotime('+7 days')); // Example: estimated delivery in 7 days
+    
+    $orders_sql = "INSERT INTO Orders (transaction_id, tracking_number, status, estimated_delivery) VALUES (?, ?, ?, ?)";
+    $orders_stmt = $conn->prepare($orders_sql);
+    $orders_stmt->bind_param("isss", $transaction_id, $tracking_number, $status, $estimated_delivery);
+    $orders_stmt->execute();
+
     // Update Sales Summary
     $sales_summary_sql = "INSERT INTO Sales_Summary (date, total_orders, gross_sales) VALUES (CURDATE(), 1, ?) ON DUPLICATE KEY UPDATE total_orders = total_orders + 1, gross_sales = gross_sales + VALUES(gross_sales)";
     $sales_summary_stmt = $conn->prepare($sales_summary_sql);
@@ -74,7 +87,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['payment_method'])) {
     $clear_cart_stmt->execute();
 
     // Redirect to a confirmation page
-    header("Location: orderConfirmation.php?transaction_id=$transaction_id");
+    header("Location: memberOrders.php?transaction_id=$transaction_id");
     exit;
 }
 
