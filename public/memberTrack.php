@@ -97,7 +97,12 @@ if (!isset($_SESSION['user_id'])) {
                 <span>Total:</span>
                 <span id="orderTotal">RM 0.00</span>
             </div>
+            <!-- Continue Button -->
+            <div class="continue-button">
+                <button onclick="window.location.href='memberOrders.php'">Continue</button>
+            </div>
         </div>
+
     </div>
 </div>
 
