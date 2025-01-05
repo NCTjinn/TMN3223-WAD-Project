@@ -17,78 +17,163 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
+// Enable error reporting for debugging
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 $userId = $_SESSION['user_id'];
 
-// Ensure there is a payment method posted
+// Function to log errors
+function logError($message, $sql = '', $error = '') {
+    error_log(date('Y-m-d H:i:s') . " - Error: " . $message . "\nSQL: " . $sql . "\nError: " . $error . "\n", 3, "checkout_errors.log");
+}
+
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['payment_method'])) {
-    $paymentMethod = $_POST['payment_method'];
-    
-    // Fetch user's default address
-    $address_query = "SELECT address_line_1, city, state, postcode FROM Addresses WHERE user_id = ? AND is_default = TRUE";
-    $address_stmt = $conn->prepare($address_query);
-    $address_stmt->bind_param("i", $userId);
-    $address_stmt->execute();
-    $address_result = $address_stmt->get_result();
-    $address = $address_result->fetch_assoc();
-    $delivery_address = implode(", ", $address);
+    try {
+        // Start transaction
+        $conn->begin_transaction();
+        
+        $paymentMethod = $_POST['payment_method'];
+        
+        // Fetch user's default address
+        $address_query = "SELECT address_line_1, city, state, postcode FROM Addresses WHERE user_id = ? AND is_default = 1 LIMIT 1";
+        $address_stmt = $conn->prepare($address_query);
+        if (!$address_stmt) {
+            throw new Exception("Address prepare failed: " . $conn->error);
+        }
+        
+        $address_stmt->bind_param("i", $userId);
+        if (!$address_stmt->execute()) {
+            throw new Exception("Address execute failed: " . $address_stmt->error);
+        }
+        
+        $address_result = $address_stmt->get_result();
+        $address = $address_result->fetch_assoc();
+        
+        if (!$address) {
+            throw new Exception("No default address found for user");
+        }
+        
+        $delivery_address = $address['address_line_1'] . ", " . $address['city'] . ", " . $address['state'] . " " . $address['postcode'];
 
-    // Calculate total amount from Cart
-    $cart_query = "SELECT Cart.product_id, Cart.quantity, (Products.price * Cart.quantity) AS total 
-    FROM Cart 
-    JOIN Products ON Cart.product_id = Products.product_id 
-    WHERE Cart.user_id = ?";
-    $cart_stmt = $conn->prepare($cart_query);
-    $cart_stmt->bind_param("i", $userId);
-    $cart_stmt->execute();
-    $cart_result = $cart_stmt->get_result();
+        // Calculate total amount from Cart
+        $cart_query = "SELECT Cart.product_id, Cart.quantity, Products.price, (Products.price * Cart.quantity) as total 
+                      FROM Cart 
+                      JOIN Products ON Cart.product_id = Products.product_id 
+                      WHERE Cart.user_id = ?";
+        $cart_stmt = $conn->prepare($cart_query);
+        if (!$cart_stmt) {
+            throw new Exception("Cart prepare failed: " . $conn->error);
+        }
+        
+        $cart_stmt->bind_param("i", $userId);
+        if (!$cart_stmt->execute()) {
+            throw new Exception("Cart execute failed: " . $cart_stmt->error);
+        }
+        
+        $cart_result = $cart_stmt->get_result();
+        
+        $total_amount = 0;
+        $items = [];
+        while ($row = $cart_result->fetch_assoc()) {
+            $total_amount += $row['total'];
+            $items[] = $row;
+        }
+        
+        if (empty($items)) {
+            throw new Exception("Cart is empty");
+        }
 
-    $total_amount = 0;
-    $items = [];
-    while ($row = $cart_result->fetch_assoc()) {
-    $total_amount += $row['total'];
-    $items[] = $row;
-    }
+        // Insert transaction
+        $transaction_sql = "INSERT INTO Transactions (user_id, total_amount, payment_method, payment_status, delivery_address) 
+                          VALUES (?, ?, ?, 'successful', ?)";
+        $transaction_stmt = $conn->prepare($transaction_sql);
+        if (!$transaction_stmt) {
+            throw new Exception("Transaction prepare failed: " . $conn->error);
+        }
+        
+        $transaction_stmt->bind_param("idss", $userId, $total_amount, $paymentMethod, $delivery_address);
+        if (!$transaction_stmt->execute()) {
+            throw new Exception("Transaction execute failed: " . $transaction_stmt->error);
+        }
+        
+        $transaction_id = $transaction_stmt->insert_id;
 
-    // Insert transaction
-    $transaction_sql = "INSERT INTO Transactions (user_id, total_amount, payment_status, delivery_address) VALUES (?, ?, 'successful', ?)";
-    $transaction_stmt = $conn->prepare($transaction_sql);
-    $transaction_stmt->bind_param("ids", $userId, $total_amount, $delivery_address);
-    $transaction_stmt->execute();
-    $transaction_id = $transaction_stmt->insert_id;
-
-    // Insert transaction details
-    foreach ($items as $item) {
-        $detail_sql = "INSERT INTO Transaction_Details (transaction_id, product_id, quantity, price_per_item, subtotal) VALUES (?, ?, ?, (SELECT price FROM Products WHERE product_id = ?), ?)";
+        // Insert transaction details
+        $detail_sql = "INSERT INTO Transaction_Details (transaction_id, product_id, quantity, price_per_item, subtotal) 
+                      VALUES (?, ?, ?, ?, ?)";
         $detail_stmt = $conn->prepare($detail_sql);
-        $detail_stmt->bind_param("iiidi", $transaction_id, $item['product_id'], $item['quantity'], $item['product_id'], $item['total']);
-        $detail_stmt->execute();
+        if (!$detail_stmt) {
+            throw new Exception("Detail prepare failed: " . $conn->error);
+        }
+        
+        foreach ($items as $item) {
+            $subtotal = $item['price'] * $item['quantity'];
+            $detail_stmt->bind_param("iiidd", $transaction_id, $item['product_id'], $item['quantity'], $item['price'], $subtotal);
+            if (!$detail_stmt->execute()) {
+                throw new Exception("Detail execute failed: " . $detail_stmt->error);
+            }
+        }
+
+        // Insert into Orders table
+        $tracking_number = 'TRACK_' . uniqid();
+        $status = 'processing';
+        $estimated_delivery = date('Y-m-d', strtotime('+7 days'));
+        
+        $orders_sql = "INSERT INTO Orders (transaction_id, tracking_number, status, estimated_delivery) 
+                      VALUES (?, ?, ?, ?)";
+        $orders_stmt = $conn->prepare($orders_sql);
+        if (!$orders_stmt) {
+            throw new Exception("Orders prepare failed: " . $conn->error);
+        }
+        
+        $orders_stmt->bind_param("isss", $transaction_id, $tracking_number, $status, $estimated_delivery);
+        if (!$orders_stmt->execute()) {
+            throw new Exception("Orders execute failed: " . $orders_stmt->error);
+        }
+
+        // Update Sales Summary
+        $sales_summary_sql = "INSERT INTO Sales_Summary (date, total_orders, gross_sales) 
+                            VALUES (CURDATE(), 1, ?) 
+                            ON DUPLICATE KEY UPDATE 
+                            total_orders = total_orders + 1, 
+                            gross_sales = gross_sales + VALUES(gross_sales)";
+        $sales_summary_stmt = $conn->prepare($sales_summary_sql);
+        if (!$sales_summary_stmt) {
+            throw new Exception("Sales summary prepare failed: " . $conn->error);
+        }
+        
+        $sales_summary_stmt->bind_param("d", $total_amount);
+        if (!$sales_summary_stmt->execute()) {
+            throw new Exception("Sales summary execute failed: " . $sales_summary_stmt->error);
+        }
+
+        // Clear user's cart
+        $clear_cart_sql = "DELETE FROM Cart WHERE user_id = ?";
+        $clear_cart_stmt = $conn->prepare($clear_cart_sql);
+        if (!$clear_cart_stmt) {
+            throw new Exception("Clear cart prepare failed: " . $conn->error);
+        }
+        
+        $clear_cart_stmt->bind_param("i", $userId);
+        if (!$clear_cart_stmt->execute()) {
+            throw new Exception("Clear cart execute failed: " . $clear_cart_stmt->error);
+        }
+
+        // Commit transaction
+        $conn->commit();
+
+        // Redirect to confirmation page
+        header("Location: memberOrders.php?transaction_id=$transaction_id");
+        exit;
+
+    } catch (Exception $e) {
+        // Rollback transaction on error
+        $conn->rollback();
+        logError("Checkout failed", "", $e->getMessage());
+        header("Location: memberCart.php?error=checkout_failed");
+        exit;
     }
-
-    // Insert into Orders table
-    $tracking_number = uniqid('TRACK_', true);
-    $status = 'processing';
-    $estimated_delivery = date('Y-m-d', strtotime('+7 days')); // Example: estimated delivery in 7 days
-    
-    $orders_sql = "INSERT INTO Orders (transaction_id, tracking_number, status, estimated_delivery) VALUES (?, ?, ?, ?)";
-    $orders_stmt = $conn->prepare($orders_sql);
-    $orders_stmt->bind_param("isss", $transaction_id, $tracking_number, $status, $estimated_delivery);
-    $orders_stmt->execute();
-
-    // Update Sales Summary
-    $sales_summary_sql = "INSERT INTO Sales_Summary (date, total_orders, gross_sales) VALUES (CURDATE(), 1, ?) ON DUPLICATE KEY UPDATE total_orders = total_orders + 1, gross_sales = gross_sales + VALUES(gross_sales)";
-    $sales_summary_stmt = $conn->prepare($sales_summary_sql);
-    $sales_summary_stmt->bind_param("d", $total_amount);
-    $sales_summary_stmt->execute();
-
-    // Clear user's cart
-    $clear_cart_sql = "DELETE FROM Cart WHERE user_id = ?";
-    $clear_cart_stmt = $conn->prepare($clear_cart_sql);
-    $clear_cart_stmt->bind_param("i", $userId);
-    $clear_cart_stmt->execute();
-
-    // Redirect to a confirmation page
-    header("Location: memberOrders.php?transaction_id=$transaction_id");
-    exit;
 }
 
 $conn->close();
