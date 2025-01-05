@@ -47,9 +47,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['payment_method'])) {
         
         $paymentMethod = $_POST['payment_method'];
         $payment_status = "processing"
-        // Debug log
-        error_log("Starting checkout process for user: " . $userId);
-        error_log("Payment method: " . $paymentMethod);
         
         // Fetch user's default address
         $address_query = "SELECT address_line_1, city, state, postcode FROM Addresses WHERE user_id = ? AND is_default = 1 LIMIT 1";
