@@ -10,7 +10,19 @@ if (!isset($_SESSION['user_id'])) {
 
 function getLatestTransaction($user_id) {
     global $conn;
-    $sql = "SELECT t.transaction_id, t.total_amount, o.status, o.estimated_delivery, o.tracking_number 
+    $sql = "SELECT 
+                t.transaction_id,
+                t.total_amount,
+                t.delivery_fee,
+                t.tax_amount,
+                t.shipping_method,
+                t.delivery_address,
+                t.transaction_date,
+                o.status,
+                o.tracking_number,
+                o.estimated_delivery,
+                (SELECT SUM(td.subtotal) FROM Transaction_Details td 
+                 WHERE td.transaction_id = t.transaction_id) as subtotal
             FROM Transactions t 
             LEFT JOIN Orders o ON t.transaction_id = o.transaction_id 
             WHERE t.user_id = ? 
@@ -25,9 +37,14 @@ function getLatestTransaction($user_id) {
 
 function getTransactionDetails($transaction_id) {
     global $conn;
-    $sql = "SELECT td.quantity, td.subtotal, p.name 
+    $sql = "SELECT 
+                td.quantity,
+                td.price_per_item,
+                td.subtotal,
+                p.name,
+                p.image_url
             FROM Transaction_Details td 
-            JOIN Products p ON td.product_id = p.product_id 
+            JOIN Products p ON td.product_id = p.product_id
             WHERE td.transaction_id = ?";
 
     $stmt = $conn->prepare($sql);

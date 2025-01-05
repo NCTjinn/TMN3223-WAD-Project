@@ -2,7 +2,7 @@
 const checkout = {
     items: [],
     deliveryOption: null,
-    deliveryFee: 1.99,
+    deliveryFee: 5.00,
 
     async loadUserDetails() {
         try {
@@ -58,20 +58,7 @@ const checkout = {
     },
 
     calculateDeliveryFee(address) {
-        // Basic distance-based calculation (replace with actual logic)
-        if (!address) return 0;
-        
-        // Example distance calculation - replace with actual logic
-        const baseDistance = 5; // km
-        const baseFee = 1.99;
-        const extraKmFee = 0.50;
-        
-        // Mock distance calculation based on postcode
-        const postcode = address.postcode;
-        const distance = postcode ? Math.abs(parseInt(postcode) - 93350) / 1000 : baseDistance;
-        
-        const fee = baseFee + Math.max(0, (distance - baseDistance) * extraKmFee);
-        return Math.min(fee, 10); // Cap at RM10
+        return deliveryFee ; 
     },
 
     updateCheckoutDisplay() {
@@ -91,7 +78,7 @@ const checkout = {
 
         // Calculate totals
         const subtotal = this.calculateSubtotal();
-        const deliveryFee = this.deliveryOption === 'delivery' ? this.deliveryFee : 0;
+        const deliveryFee = this.deliveryOption === 'delivery' ? this.deliveryFee : 5;
         const total = subtotal + deliveryFee;
 
         // Update summary section
@@ -124,8 +111,8 @@ const checkout = {
             const orderData = {
                 items: this.items,
                 deliveryOption: this.deliveryOption,
-                deliveryFee: this.deliveryOption === 'delivery' ? this.deliveryFee : 0,
-                total: this.calculateSubtotal() + (this.deliveryOption === 'delivery' ? this.deliveryFee : 0),
+                deliveryFee: this.deliveryOption === 'delivery' ? this.deliveryFee : 5,
+                total: this.calculateSubtotal() + (this.deliveryOption === 'delivery' ? this.deliveryFee : 5),
                 paymentMethod: paymentMethod,
                 address: {
                     firstName: formData.get('firstName'),
@@ -219,6 +206,7 @@ document.addEventListener('DOMContentLoaded', function() {
             checkout.updateCheckoutDisplay();
         });
     });
+});
 
     // Handle address input for delivery fee calculation
     const addressInput = document.querySelector('input[placeholder="Address Line 1*"]');
