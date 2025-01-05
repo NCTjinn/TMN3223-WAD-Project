@@ -6,6 +6,10 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
+// Enable error reporting for debugging
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 // Database connection
 $servername = "sql112.infinityfree.com";
 $username = "if0_37979402";
@@ -17,15 +21,15 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Enable error reporting for debugging
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
 $userId = $_SESSION['user_id'];
 
-// Function to log errors
+// Enhanced error logging function
 function logError($message, $sql = '', $error = '') {
-    error_log(date('Y-m-d H:i:s') . " - Error: " . $message . "\nSQL: " . $sql . "\nError: " . $error . "\n", 3, "checkout_errors.log");
+    $errorLog = date('Y-m-d H:i:s') . " - Error: " . $message . "\nSQL: " . $sql . "\nError: " . $error . "\n";
+    error_log($errorLog, 3, "checkout_errors.log");
+    
+    // Store error in session for displaying to user
+    $_SESSION['checkout_error'] = $message;
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['payment_method'])) {
@@ -34,6 +38,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['payment_method'])) {
         $conn->begin_transaction();
         
         $paymentMethod = $_POST['payment_method'];
+        
+        // Debug log
+        error_log("Starting checkout process for user: " . $userId);
+        error_log("Payment method: " . $paymentMethod);
         
         // Fetch user's default address
         $address_query = "SELECT address_line_1, city, state, postcode FROM Addresses WHERE user_id = ? AND is_default = 1 LIMIT 1";
@@ -49,6 +57,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['payment_method'])) {
         
         $address_result = $address_stmt->get_result();
         $address = $address_result->fetch_assoc();
+        
+        // Debug log address
+        error_log("Address query result: " . print_r($address, true));
         
         if (!$address) {
             throw new Exception("No default address found for user");
@@ -80,6 +91,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['payment_method'])) {
             $items[] = $row;
         }
         
+        // Debug log cart items
+        error_log("Cart items: " . print_r($items, true));
+        error_log("Total amount: " . $total_amount);
+        
         if (empty($items)) {
             throw new Exception("Cart is empty");
         }
@@ -98,6 +113,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['payment_method'])) {
         }
         
         $transaction_id = $transaction_stmt->insert_id;
+        error_log("Transaction created with ID: " . $transaction_id);
 
         // Insert transaction details
         $detail_sql = "INSERT INTO Transaction_Details (transaction_id, product_id, quantity, price_per_item, subtotal) 
@@ -111,7 +127,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['payment_method'])) {
             $subtotal = $item['price'] * $item['quantity'];
             $detail_stmt->bind_param("iiidd", $transaction_id, $item['product_id'], $item['quantity'], $item['price'], $subtotal);
             if (!$detail_stmt->execute()) {
-                throw new Exception("Detail execute failed: " . $detail_stmt->error);
+                throw new Exception("Detail execute failed for product_id " . $item['product_id'] . ": " . $detail_stmt->error);
             }
         }
 
@@ -132,9 +148,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['payment_method'])) {
             throw new Exception("Orders execute failed: " . $orders_stmt->error);
         }
 
+        error_log("Order created with tracking number: " . $tracking_number);
+
         // Update Sales Summary
+        $current_date = date('Y-m-d');
         $sales_summary_sql = "INSERT INTO Sales_Summary (date, total_orders, gross_sales) 
-                            VALUES (CURDATE(), 1, ?) 
+                            VALUES (?, 1, ?) 
                             ON DUPLICATE KEY UPDATE 
                             total_orders = total_orders + 1, 
                             gross_sales = gross_sales + VALUES(gross_sales)";
@@ -143,7 +162,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['payment_method'])) {
             throw new Exception("Sales summary prepare failed: " . $conn->error);
         }
         
-        $sales_summary_stmt->bind_param("d", $total_amount);
+        $sales_summary_stmt->bind_param("sd", $current_date, $total_amount);
         if (!$sales_summary_stmt->execute()) {
             throw new Exception("Sales summary execute failed: " . $sales_summary_stmt->error);
         }
@@ -160,8 +179,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['payment_method'])) {
             throw new Exception("Clear cart execute failed: " . $clear_cart_stmt->error);
         }
 
+        error_log("Cart cleared for user: " . $userId);
+
         // Commit transaction
         $conn->commit();
+        error_log("Transaction committed successfully");
 
         // Redirect to confirmation page
         header("Location: memberOrders.php?transaction_id=$transaction_id");
@@ -170,8 +192,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['payment_method'])) {
     } catch (Exception $e) {
         // Rollback transaction on error
         $conn->rollback();
-        logError("Checkout failed", "", $e->getMessage());
-        header("Location: memberCart.php?error=checkout_failed");
+        $error_message = $e->getMessage();
+        logError("Checkout failed", "", $error_message);
+        header("Location: memberCart.php?error=" . urlencode($error_message));
         exit;
     }
 }
