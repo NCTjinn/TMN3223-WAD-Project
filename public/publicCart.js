@@ -1,5 +1,4 @@
 // publicCart.js
-this.STORAGE_KEY = 'publicCart';
 class GuestCartManager {
     constructor() {
         this.STORAGE_KEY = 'publicCart';
@@ -44,26 +43,50 @@ class GuestCartManager {
         });
     }
 
+    // Add removeFromCart method
+    removeFromCart(productId) {
+        const cart = this.getCart();
+        cart.items = cart.items.filter(item => item.id !== productId);
+        this.saveCart(cart);
+        this.updateCartDisplay();
+        this.showNotification('Item removed from cart');
+    }
+
+    // Update clearCart method
+    clearCart() {
+        const emptyCart = {
+            items: [],
+            lastUpdated: new Date().toISOString()
+        };
+        this.saveCart(emptyCart);
+        this.showNotification('Cart cleared successfully');
+    }
+
     // Handle adding item to cart
     handleAddToCart(button) {
+        console.log('Add to cart clicked', button.dataset); // Add this for debugging
         const productData = {
-            id: parseInt(button.dataset.id),
+            id: parseInt(button.dataset.productId),
             name: button.dataset.name,
             price: parseFloat(button.dataset.price),
             quantity: parseInt(document.getElementById('quantity')?.value || 1),
             note: document.querySelector('.note-box textarea')?.value || ''
         };
+        console.log('Product data:', productData); // Add this for debugging
 
+    
         const cart = this.getCart();
         const existingItemIndex = cart.items.findIndex(item => item.id === productData.id);
-
+    
         if (existingItemIndex > -1) {
             cart.items[existingItemIndex].quantity += productData.quantity;
         } else {
             cart.items.push(productData);
         }
-
+    
         this.saveCart(cart);
+        this.updateCartDisplay();
+        this.updateCartCount();
         this.showNotification('Item added to cart successfully!');
     }
 
@@ -156,61 +179,67 @@ class GuestCartManager {
         }
     }
 
-    // In publicCart.js, modify the updateCartDisplay method
-async updateCartDisplay() {
-    const cartItems = document.getElementById('cartItems');
-    if (!cartItems) return;
-
-    const cart = this.getCart();
+    async updateCartDisplay() {
+        const cartItems = document.getElementById('cartItems');
+        if (!cartItems) return;
     
-    if (cart.items.length === 0) {
-        cartItems.innerHTML = '<div class="empty-cart">Your cart is empty</div>';
-        return;
-    }
-
-    const productIds = cart.items.map(item => item.id);
-    const productDetails = await this.getProductDetails(productIds);
-
-    cartItems.innerHTML = cart.items.map(item => {
-        const product = productDetails[item.id] || {};
-        const imageUrl = product.image_url || 'placeholder.jpg';
-
-        return `
-            <div class="cart-item" data-item-id="${item.id}">
-                <div class="product-info">
-                    <div class="cart-item-image">
-                        <img src="${imageUrl}" alt="${product.name || item.name}"
-                             onerror="this.src='placeholder.jpg'">
+        const cart = this.getCart();
+        
+        if (cart.items.length === 0) {
+            cartItems.innerHTML = '<div class="empty-cart">Your cart is empty</div>';
+            this.updateCartTotal();
+            return;
+        }
+    
+        const productIds = cart.items.map(item => item.id);
+        const productDetails = await this.getProductDetails(productIds);
+    
+        cartItems.innerHTML = cart.items.map(item => {
+            const product = productDetails[item.id] || {};
+            const itemPrice = parseFloat(product.price || item.price);
+            const subtotal = itemPrice * item.quantity;
+            const imageUrl = product.image_url || 'placeholder.jpg';
+    
+            return `
+                <div class="cart-item" data-item-id="${item.id}">
+                    <div class="product-info">
+                        <div class="cart-item-image">
+                            <img src="${imageUrl}" alt="${product.name || item.name}"
+                                 onerror="this.src='placeholder.jpg'">
+                        </div>
+                        <div class="item-details">
+                            <span class="item-name">${product.name || item.name}</span>
+                            ${item.note ? `<small class="item-note">${item.note}</small>` : ''}
+                        </div>
                     </div>
-                    <div class="item-details">
-                        <span class="item-name">${product.name || item.name}</span>
-                        ${item.note ? `<small class="item-note">${item.note}</small>` : ''}
+                    <div class="item-price">RM ${itemPrice.toFixed(2)}</div>
+                    <div class="quantity-control">
+                        <button class="qty-btn" ${item.quantity <= 1 ? 'disabled' : ''}>-</button>
+                        <input type="number" value="${item.quantity}" min="1" 
+                               data-cart-item-id="${item.id}" readonly>
+                        <button class="qty-btn">+</button>
                     </div>
+                    <div class="item-subtotal">
+                        RM ${subtotal.toFixed(2)}
+                    </div>
+                    <button class="remove-item" onclick="cartManager.removeFromCart(${item.id})">
+                        <i class='bx bx-trash'></i>
+                    </button>
                 </div>
-                <div class="item-price">RM ${parseFloat(product.price || item.price).toFixed(2)}</div>
-                <div class="quantity-control">
-                    <button class="qty-btn" ${item.quantity <= 1 ? 'disabled' : ''}>-</button>
-                    <input type="number" value="${item.quantity}" min="1" 
-                           data-cart-item-id="${item.id}" readonly>
-                    <button class="qty-btn">+</button>
-                </div>
-                <div class="item-subtotal">
-                    RM ${(parseFloat(product.price || item.price) * item.quantity).toFixed(2)}
-                </div>
-                <button class="remove-item" onclick="cartManager.removeFromCart(${item.id})">
-                    <i class='bx bx-trash'></i>
-                </button>
-            </div>
-        `;
-    }).join('');
-
-    this.updateCartTotal();
+            `;
+        }).join('');
+    
+        this.updateCartTotal();
     }
 
     // Update cart total
+    // Update updateCartTotal method
     updateCartTotal() {
         const cart = this.getCart();
-        const total = cart.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        const total = cart.items.reduce((sum, item) => {
+            const itemPrice = parseFloat(item.price);
+            return sum + (itemPrice * item.quantity);
+        }, 0);
         
         const cartTotal = document.getElementById('cartTotal');
         const checkoutTotal = document.getElementById('checkoutTotal');
