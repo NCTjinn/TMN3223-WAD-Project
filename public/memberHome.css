@@ -137,12 +137,12 @@ body {
 
 /* Add these styles to memberHome.css */
 .product-card {
+    text-decoration: none; 
     background: white;
     border-radius: 8px;
     overflow: hidden;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     transition: transform 0.2s ease;
-    text-decoration: none;
     color: inherit;
     aspect-ratio: auto;
 }
