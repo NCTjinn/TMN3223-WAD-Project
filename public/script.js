@@ -1,9 +1,3 @@
-// Create and append search results container
-const searchContainer = document.querySelector('.search-box');
-const searchResults = document.createElement('div');
-searchResults.className = 'search-results';
-searchContainer.appendChild(searchResults);
-
 document.querySelector('.search-btn').addEventListener('click', function(e) {
     const input = document.querySelector('.search-txt');
     if (input.classList.contains('open')) {
