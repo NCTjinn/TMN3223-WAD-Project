@@ -251,16 +251,6 @@ class GuestCartManager {
     updateCartCount() {
         const cart = this.getCart();
         const totalItems = cart.items.reduce((sum, item) => sum + item.quantity, 0);
-        
-        const cartIcon = document.querySelector('.bx-cart');
-        if (cartIcon) {
-            const badge = cartIcon.querySelector('.cart-count') || document.createElement('span');
-            badge.className = 'cart-count';
-            badge.textContent = totalItems || '';
-            if (!cartIcon.querySelector('.cart-count')) {
-                cartIcon.appendChild(badge);
-            }
-        }
     }
 
     // Show notification

@@ -169,12 +169,11 @@
     }
 
 .cart-item {
-    display: grid;
-    grid-template-columns: 3fr 1fr 1fr 1fr auto; /* 3 columns for product info, price, quantity, and subtotal */
-    gap: 16px;
+    display: grid
+    grid-template-columns: 3fr 1fr 1fr 1fr;
+    padding: 1.5rem 0;
     align-items: center;
-    padding: 16px;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid #C2C9AD;
 }
 
 .product-info {
