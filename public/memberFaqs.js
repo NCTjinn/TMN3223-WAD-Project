@@ -22,7 +22,6 @@ document.addEventListener('DOMContentLoaded', function() {
         setTimeout(() => successDiv.remove(), 3000);
     }
 
-
     // Function to create FAQ HTML element
     function createFaqElement(faq) {
         const faqItem = document.createElement('div');
@@ -76,13 +75,20 @@ document.addEventListener('DOMContentLoaded', function() {
             const response = await fetch('faqsmanagement.php?action=fetch');
             if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             
-            const faqs = await response.json();
+            const data = await response.json();
             
             if (loadingSpinner) {
                 loadingSpinner.style.display = 'none';
             }
 
-            if (!faqs || faqs.length === 0) {
+            // Check if the response has the expected structure
+            if (!data || !data.status === 'success' || !Array.isArray(data.data)) {
+                throw new Error('Invalid response format');
+            }
+
+            const faqs = data.data;
+
+            if (faqs.length === 0) {
                 faqSection.innerHTML = '<p class="empty-message">No FAQs available at the moment.</p>';
                 return;
             }
