@@ -1,11 +1,3 @@
-// sample product
-const menuItems = [
-    { id: 1, name: 'Classic Cream Puff', price: 'RM 4.99', category: 'CREAM PUFF', url: 'products/classic-cream-puff.html' },
-    { id: 2, name: 'Iced Coffee', price: 'RM 3.99', category: 'DRINK', url: 'products/iced-coffee.html' },
-    { id: 3, name: 'Gift Box', price: 'RM 24.99', category: 'GIFTING', url: 'products/gift-box.html' },
-    { id: 4, name: 'Party Platter', price: 'RM 49.99', category: 'CATERING', url: 'products/party-platter.html' }
-];
-
 // Create and append search results container
 const searchContainer = document.querySelector('.search-box');
 const searchResults = document.createElement('div');
