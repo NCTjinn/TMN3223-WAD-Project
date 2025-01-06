@@ -453,11 +453,11 @@ body {
 }
 
 .continue-button button {
-    background-color: #f04e30; /* Change color to match your theme */
+    background-color: #1F1F1F; /* Change color to match your theme */
     color: white;
     border: none;
     padding: 10px 20px;
-    margin-top: 20px;
+    align-content: center;
     cursor: pointer;
     border-radius: 5px;
     font-size: 16px;
@@ -543,3 +543,5 @@ body {
     grid-column: 1;
     }
     }
+
+    

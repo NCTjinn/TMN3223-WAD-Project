@@ -115,6 +115,11 @@ const cart = {
     updateCartDisplay() {
         const cartItems = document.getElementById('cartItems');
         if (!cartItems) return;
+
+        if (cart.items.length === 0) {
+            cartItems.innerHTML = '<div class="empty-cart">Your cart is empty</div>';
+            return;
+        }
         
         cartItems.innerHTML = this.items.map(item => `
             <div class="cart-item" data-item-id="${item.cart_id}">
@@ -184,14 +189,13 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    const clearCartButton = document.getElementById('clear-cart-button');
+    const clearCartButton = document.querySelector('.clear-cart-button');
     if (clearCartButton) {
-    clearCartButton.addEventListener('click', () => {
+        clearCartButton.addEventListener('click', () => {
         cart.clearCart(); // Calls the clearCart method to clear the cart
-    });
+        });
     }
 
-    
     // Handle checkout button
     const checkoutButton = document.getElementById('checkoutButton');
     if (checkoutButton) {

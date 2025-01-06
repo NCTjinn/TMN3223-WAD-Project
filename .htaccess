@@ -22,9 +22,9 @@ RewriteRule ^api/auth/?$ api/auth.php [QSA,L]
 
 # Set JSON content type for API responses
 <IfModule mod_headers.c>
-    # Header set Access-Control-Allow-Origin "*"
-    # Header set Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
-    # Header set Access-Control-Allow-Headers "Content-Type, Authorization"
+    Header set Access-Control-Allow-Origin "*"
+    Header set Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
+    Header set Access-Control-Allow-Headers "Content-Type, Authorization"
     Header set Content-Type "application/json" env=API_REQUEST
 </IfModule>
 

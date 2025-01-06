@@ -74,6 +74,25 @@ function updateCartItem($user_id, $cart_id, $quantity) {
     return $stmt->execute();
 }
 
+// Remove cart item
+function removeCartItem($user_id, $product_id) {
+    global $conn;
+    $sql = "DELETE FROM Cart WHERE user_id = ? AND product_id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("ii", $user_id, $product_id);
+    return $stmt->execute();
+}
+
+
+// Clear all items from the cart for the user
+function clearCart($user_id) {
+    global $conn;
+    $sql = "DELETE FROM Cart WHERE user_id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $user_id);
+    return $stmt->execute();
+}
+
 // Handle requests
 $user_id = checkAuth();
 
@@ -100,7 +119,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                 echo json_encode(['error' => 'Failed to update cart']);
             }
             break;
-            
+        
+        case 'remove':
+            if (removeCartItem($user_id, $_POST['product_id'])) {
+                echo json_encode(['success' => true]);
+            } else {
+                http_response_code(500);
+                echo json_encode(['error' => 'Failed to remove item from cart']);
+            }
+            break;
+
+        case 'clear':
+            if (clearCart($user_id)) {
+                echo json_encode(['success' => true]);
+            } else {
+                http_response_code(500);
+                echo json_encode(['error' => 'Failed to clear cart']);
+            }
+            break;
+
         default:
             http_response_code(400);
             echo json_encode(['error' => 'Invalid action']);

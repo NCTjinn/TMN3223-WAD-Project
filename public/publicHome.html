@@ -1,21 +1,15 @@
-<?php
-session_start();
-require_once 'menu_data.php';
-$categories = getCategories();
-$products = getProducts();
-?>
+<!-- publichome.html (Public Home Page) -->
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>PuffLab Menu</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PuffLab Home</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css">
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="publicMenuProductCSS.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="memberHome.css">
 </head>
-
 <body>
     <nav>
         <div class="navbar">
@@ -60,41 +54,20 @@ $products = getProducts();
         </div>
     </nav>
 
-    <!-- Menu Page -->
-<!-- Text overlay on the image 
-    <div class="header">
-        <div class="image-slider">
-            <img id="sliderImage" src="../assets/images/menu1.png" alt="Menu Item" class="slider-image">
-            <h1 class="overlay-text">Menu</h1> 
-        </div>
-    </div> -->
-    
-    <div class="menu-container" id="menuPage">
-        <div class="product-description">
-            <p>Discover our handcrafted delights, perfect for every occasion!</p>
-        </div>
-        <!-- Replace your static filter buttons with dynamic categories -->
-        <div class="filter-container">
-            <button class="filter-btn active" data-category="ALL">ALL</button>
-            <?php foreach($categories as $category): ?>
-            <button class="filter-btn" data-category="<?php echo htmlspecialchars($category['category_id']); ?>">
-            <?php echo htmlspecialchars($category['name']); ?>
-            </button>
-            <?php endforeach; ?>
-        </div>
-        <!-- Replace your static menu grid with dynamic products -->
-        <div class="menu-grid" id="menuGrid">
-        <?php foreach($products as $product): ?>
-        <a href="publicProduct.php?id=<?php echo htmlspecialchars($product['product_id']); ?>" class="menu-item" data-category="<?php echo htmlspecialchars($product['category_id']); ?>">
-        <div class="menu-item-image">
-        <img src="<?php echo htmlspecialchars($product['image_url']); ?>" alt="<?php echo htmlspecialchars($product['name']); ?>">
-        </div>
-        <div class="menu-item-details">
-        <h3 class="menu-item-title"><?php echo htmlspecialchars($product['name']); ?></h3>
-        <p class="menu-item-price"> RM <?php echo number_format($product['price'], 2); ?> </p>
-        </div>
-        </a>
-        <?php endforeach; ?>
+    <div class="hero"></div>
+
+    <div class="featured-text">
+        <h1>ONE BITE IS NEVER ENOUGH</h1>
+    </div>
+
+    <!-- In your publicHome.html, replace the products-section div with: -->
+    <div class="products-section">
+    <div class="tab-buttons">
+        <button class="tab-button active" id="bestsellers-btn">Monthly Bestsellers</button>
+        <button class="tab-button" id="arrivals-btn">New Arrivals</button>
+    </div>
+    <div class="products-grid" id="products-grid">
+        <!-- Products will be loaded here dynamically -->
     </div>
     </div>
 
@@ -110,16 +83,16 @@ $products = getProducts();
                 <div class="footer-col2">
                     <h4>CUSTOMER CARE</h4>
                     <ul>
-                        <li><a href="tnc.html">Terms & Conditions</a></li>
-                        <li><a href="privacy.html">Privacy Policy</a></li>
-                        <li><a href="faq.html">FAQs</a></li>
+                        <li><a href="publicTNC.html">Terms & Conditions</a></li>
+                        <li><a href="publicPrivacyPolicy.html">Privacy Policy</a></li>
+                        <li><a href="publicFaqs.html">FAQs</a></li>
                     </ul>
                 </div>
                 <div class="footer-col3">
                     <h4>STORE INFORMATION</h4>
                     <ul>
-                        <li><a href="aboutus.html">About Us</a></li>
-                        <li><a href="contactus.html">Contact Us</a></li>
+                        <li><a href="publicAboutUs.html">About Us</a></li>
+                        <li><a href="publicContactUs.html">Contact Us</a></li>
                     </ul>
                 </div>
             </div>
@@ -138,8 +111,8 @@ $products = getProducts();
             Copyright &copy; 2024 PuffLab
         </div>
     </footer>
-    <script src="publicMenuProductJS.js"></script>
+
     <script src="script.js"></script>
-    
+    <script src="publicHome.js"></script>
 </body>
 </html>

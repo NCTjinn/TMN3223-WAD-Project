@@ -91,7 +91,7 @@ $products = getProducts();
         </div>
         <div class="menu-item-details">
         <h3 class="menu-item-title"><?php echo htmlspecialchars($product['name']); ?></h3>
-        <p class="menu-item-price">RM <?php echo number_format($product['price'], 2); ?></p>
+        <p class="menu-item-price"> RM <?php echo number_format($product['price'], 2); ?> </p>
         </div>
         </a>
         <?php endforeach; ?>

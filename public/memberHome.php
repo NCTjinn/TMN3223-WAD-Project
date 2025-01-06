@@ -153,7 +153,5 @@ $conn->close();
             Copyright &copy; 2024 PuffLab
         </div>
     </footer>
-
-
 </body>
 </html>

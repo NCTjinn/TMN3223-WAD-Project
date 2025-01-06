@@ -1,4 +1,3 @@
-// Add this to your existing script section or publicMenuProductPage.js
 document.addEventListener('DOMContentLoaded', function() {
     // Tab switching functionality
     const tabButtons = document.querySelectorAll('.tab-btn');
@@ -46,7 +45,7 @@ function updateQuantity(change) {
 function addToCart(productId) {
     const quantity = parseInt(document.getElementById('quantity').value);
     if (typeof cart !== 'undefined') {
-        // Change addItem to match the cart object's method
+        // Now addItem returns a Promise, so you can use .then() and .catch()
         cart.addItem(productId, quantity)
             .then(success => {
                 if (success) {

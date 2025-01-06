@@ -24,9 +24,9 @@
                 <li class="dropdown">
                     <a href="publicMenu.php">Menu <i class='bx bxs-chevron-down'></i></a>
                     <ul class="dropdown-content">
-                        <li><a href="publicMenu.php">Cream Puff</a></li>
-                        <li><a href="publicMenu.php">Petit Gateux</a></li>
-                        <li><a href="publicMenu.php">Shortcakes</a></li>
+                        <li><a href="publicMenu.php">Puffs</a></li>
+                        <li><a href="publicMenu.php">Cakes</a></li>
+                        <li><a href="publicMenu.php">Beverages</a></li>
                     </ul>
                 </li>
                 <li class="dropdown">

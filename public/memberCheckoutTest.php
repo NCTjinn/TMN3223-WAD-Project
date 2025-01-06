@@ -99,44 +99,70 @@ $conn->close();
         </div>
     </nav>
     
-    <div class="container">
-        <h1>Checkout</h1>
-        <div class="checkout-grid">
+    <div class="container" style="max-width: 1400px; padding: 2rem 4rem;">
+        <h1 style="font-size: 2.5rem; margin-bottom: 2rem; color: #1F1F1F;">Checkout</h1>
+
+        <div class="checkout-grid" style="grid-template-columns: 2fr 1fr; gap: 2rem;">
             <div class="checkout-form">
-                <div class="delivery-address">
-                    <h2>Delivery Address</h2>
-                    <div class="autofill-section">
-                        <p><?php echo htmlspecialchars($user_address['address_line_1'] . ", " . $user_address['city'] . ", " . $user_address['state'] . " - " . $user_address['postcode']); ?></p>
+                <!-- Delivery Address Section -->
+                <div class="order-details" style="margin-bottom: 2rem;">
+                    <h2><i class='bx bx-map'></i> Delivery Address</h2>
+                    <div class="divider"></div>
+                    <div class="address-input-container">
+                        <div class="autofill-section">
+                            <p><?php echo htmlspecialchars($user_address['address_line_1'] . ", " . $user_address['city'] . ", " . $user_address['state'] . " - " . $user_address['postcode']); ?></p>
+                        </div>
                     </div>
-                    <!-- Add additional delivery info modification if necessary -->
                 </div>
-                <div class="payment-methods">
-                <h2>Payment Method</h2>
-                <form class="payment-options" method="post" action="memberProcessPayment.php" id="paymentForm">
-                <select name="payment_method" id="payment_method" class="payment-selector" required>
-                    <option value="">Select Payment Method</option>
-                    <option value="card">Credit/Debit Card</option>
-                    <option value="banking">Online Banking</option>
-                    <option value="touchngo">Touch N' Go</option>
-                    <option value="grabpay">GrabPay</option>
-                    <option value="cash">Cash</option>
-                </select>
-                <button type="submit" class="continue-button">Continue</button>
-            </form>
+
+                <!-- Payment Methods Section -->
+                <div class="order-details">
+                    <h2><i class='bx bx-credit-card'></i> Payment Method</h2>
+                    <div class="divider"></div>
+                    <form class="payment-options" method="post" action="memberProcessPayment.php" id="paymentForm">
+                        <div class="delivery-options" style="grid-template-columns: repeat(2, 1fr); gap: 1.5rem;">
+                            <div class="option-card" onclick="document.getElementById('payment_card').checked = true">
+                                <input type="radio" id="payment_card" name="payment_method" value="card" required>
+                                <i class='bx bx-credit-card-front'></i>
+                                <h3>Credit/Debit Card</h3>
+                            </div>
+                            <div class="option-card" onclick="document.getElementById('payment_banking').checked = true">
+                                <input type="radio" id="payment_banking" name="payment_method" value="banking">
+                                <i class='bx bx-bank'></i>
+                                <h3>Online Banking</h3>
+                            </div>
+                            <div class="option-card" onclick="document.getElementById('payment_tng').checked = true">
+                                <input type="radio" id="payment_tng" name="payment_method" value="touchngo">
+                                <i class='bx bx-wallet'></i>
+                                <h3>Touch N' Go</h3>
+                            </div>
+                            <div class="option-card" onclick="document.getElementById('payment_grabpay').checked = true">
+                                <input type="radio" id="payment_grabpay" name="payment_method" value="grabpay">
+                                <i class='bx bx-money'></i>
+                                <h3>GrabPay</h3>
+                            </div>
+                        </div>
+                        <button type="submit" class="continue-button">Proceed to Payment</button>
+                    </form>
+                </div>
             </div>
 
-            <div class="order-summary">
-                <h2>Order Summary</h2>
+            <!-- Order Summary Section -->
+            <div class="order-details" style="height: auto;">
+                <h2><i class='bx bx-cart'></i> Order Summary</h2>
+                <div class="divider"></div>
                 <div class="summary-items" id="orderItems">
                     <?php foreach ($cart_items as $item): ?>
-                        <div class="item">
+                        <div class="order-item">
                             <span><?php echo htmlspecialchars($item['name']); ?> x<?php echo htmlspecialchars($item['quantity']); ?></span>
                             <span>RM <?php echo number_format($item['price'] * $item['quantity'], 2); ?></span>
                         </div>
                     <?php endforeach; ?>
                 </div>
-                <div class="summary-details">
-                    <p>Total: RM <?php echo number_format($total_price, 2); ?></p>
+                <div class="divider"></div>
+                <div class="summary-total" style="font-size: 1.2rem;">
+                    <span>Total Amount:</span>
+                    <span>RM <?php echo number_format($total_price, 2); ?></span>
                 </div>
             </div>
         </div>
